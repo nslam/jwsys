@@ -62,7 +62,7 @@ class Section(models.Model):
     semester = models.CharField(max_length=20)
     year = models.IntegerField()
     classroom = models.ForeignKey(Classroom, null=True, on_delete=models.SET_NULL)
-    time_slot = models.ForeignKey('Time_slot', null=True, on_delete=models.SET_NULL)
+    time_slot = models.ForeignKey('TimeSlot', null=True, on_delete=models.SET_NULL)
     max_number = models.IntegerField()
 
 
@@ -82,13 +82,13 @@ class Prereq(models.Model):
     precourse = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='subCourses')
 
 
-class Time_slot(models.Model):
+class TimeSlot(models.Model):
     day = models.IntegerField()
     start_time = models.TimeField()
     end_time = models.TimeField()
 
 
-class Classroom_equipment(models.Model):
+class ClassroomEquipment(models.Model):
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
     equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE)
 
