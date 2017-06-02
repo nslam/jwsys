@@ -55,6 +55,7 @@ class Classroom(models.Model):
     building = models.CharField(max_length=100)
     room_number = models.IntegerField()
     capacity = models.IntegerField()
+    equipment = models.ManyToManyField('Equipment')
 
 
 class Section(models.Model):
@@ -86,11 +87,6 @@ class TimeSlot(models.Model):
     day = models.IntegerField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-
-
-class ClassroomEquipment(models.Model):
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
-    equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE)
 
 
 class Equipment(models.Model):
