@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
+</head>
+<body>
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">删除课程</h1>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <label for="courseInfo">搜索（课程号或课程名）</label>
+            <input type="text" class="form-control" name="courseInfo" id="courseInfo"><br>
+            <div class="text-center">
+                <button id="search" class="btn btn-default">点击搜索</button>
+                <button id="delete" class="btn btn-danger">删除所选项</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <table class="table table-striped" id="courseTable">
+                <thead>
+                <tr>
+                    <th>*</th>
+                    <th>课程号</th>
+                    <th>课程名</th>
+                    <th>开课学院</th>
+                    <th>学分</th>
+                    <th>学时</th>
+                    <th>考核方式</th>
+                    <!--可加其他信息-->
+                </tr>
+                </thead>
+                <tbody>
+                {{% for item in courseList}}
+                <tr class="item">
+                    <td><input type="checkbox" name="check"></td>
+                    <td>{{item.course_number}}</td>
+                    <td>{{item.title}}</td>
+                    <td>{{item.department}}</td>
+                    <td>{{item.credit}}</td>
+                    <td>{{item.week_hour}}</td>
+                    <td>{{item.method}}</td>
+                </tr>
+                {{% endfor %}}
+
+
+                <tr class="item">
+                    <td><input type="checkbox" name="check"></td>
+                    <td>211C00020</td>
+                    <td>面向对象的程序设♂计</td>
+                    <td>计算机科学与技术学院</td>
+                    <td>2.5</td>
+                    <td>3.0</td>
+                    <td>闭卷考试</td>
+                </tr>
+                <tr class="item">
+                    <td><input type="checkbox" name="check"></td>
+                    <td>211C00040</td>
+                    <td>数字逻辑设计</td>
+                    <td>计算机科学与技术学院</td>
+                    <td>4.0</td>
+                    <td>5.0</td>
+                    <td>闭卷考试</td>
+                </tr>
+                <!--<tr>-->
+                <!--<td>Sachin</td>-->
+                <!--<td>Mumbai</td>-->
+                <!--<td>400003</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<td>Uma</td>-->
+                <!--<td>Pune</td>-->
+                <!--<td>411027</td>-->
+                <!--</tr>-->
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="text-center col-md-6 col-md-offset-3">
+                <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="../js/jquery-1.11.2.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            $("#search").click(
+                function () {
+
+                }
+            );
+            $("#delete").click(
+                function () {
+                    var list = [];
+
+                    $(".item").each(function () {
+                        var temp = $(this).children().eq(0);
+                        var chkbox = temp.children();
+
+                        if(chkbox.prop('checked'))
+                        {
+                            var id = chkbox.parent().parent().children().get(1).innerHTML;
+                            list.push(id);
+                        }
+                    });
+                    alert(list);
+                    //$.post();
+                }
+            );
+            //Delete.... use each() to traversal
+        }
+    );
+</script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../js/bootstrap.js"></script>
+</body>
+</html>

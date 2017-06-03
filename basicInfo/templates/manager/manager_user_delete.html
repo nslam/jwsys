@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
+</head>
+<body>
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">删除用户</h1>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <label for="userNo">搜索（学工号，模糊搜索）</label>
+            <input type="text" class="form-control" id="userNo"><br>
+            <label>
+                <input type="radio" name="type" id="student" value="student" checked>
+                学生
+            </label>
+            <label>
+                <input type="radio" name="type" id="teacher" value="teacher">
+                教师
+            </label>
+            <div class="text-center">
+                <button id="search" class="btn btn-default">点击搜索</button>
+                <button id="delete" class="btn btn-danger">删除所选项</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <table class="table table-striped" id="courseTable">
+                <thead>
+                <tr>
+                    <th>*</th>
+                    <th>学工号</th>
+                    <th>姓名</th>
+                    <th>学院</th>
+                    <!--可加其他信息-->
+                </tr>
+                </thead>
+                <tbody id="tableBody">
+                {{% for item in userList}}
+                <tr class="item">
+                    <td><input type="checkbox" name="check"></td>
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.department}}</td>
+                </tr>
+                {{% endfor %}}
+
+                <!--Test-->
+                <tr class="item">
+                    <td><input type="checkbox" name="check"></td>
+                    <td>3100101234</td>
+                    <td>亦可赛艇</td>
+                    <td>计算机科学与技术学院</td>
+                </tr>
+                <tr class="item">
+                    <td><input type="checkbox" name="check"></td>
+                    <td>3100101233</td>
+                    <td>江可泽民</td>
+                    <td>计算机科学与技术学院</td>
+                </tr>
+                <!--<tr>-->
+                <!--<td>Sachin</td>-->
+                <!--<td>Mumbai</td>-->
+                <!--<td>400003</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<td>Uma</td>-->
+                <!--<td>Pune</td>-->
+                <!--<td>411027</td>-->
+                <!--</tr>-->
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="text-center col-md-6 col-md-offset-3">
+                <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="../js/jquery-1.11.2.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            $("#search").click(
+                function () {
+
+                }
+            );
+            
+            $("#delete").click(
+              function () {
+                  var list = [];
+
+                  $(".item").each(function () {
+                     var temp = $(this).children().eq(0);
+                     var chkbox = temp.children();
+
+                     if(chkbox.prop('checked'))
+                     {
+                         var id = chkbox.parent().parent().children().get(1).innerHTML;
+                         list.push(id);
+                     }
+                  });
+                  alert(list);
+                  //$.post();
+              }  
+            );
+            //Delete.... use each() to traversal
+        }
+    );
+</script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../js/bootstrap.js"></script>
+</body>
+</html>

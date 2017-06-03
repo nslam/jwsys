@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
+</head>
+<body>
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:<span id="stuId"></span></li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">学生成绩分析</h1>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <table class="table table-responsive" id="gradePoint">
+                <caption style="text-align: center">成绩统计</caption>
+                <thead>
+                    <tr>
+                        <th>平均分</th>
+                        <th>总学分绩点</th>
+                        <th>平均绩点</th>
+                        <th>本专业排名</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="avgPts">{{avg}}</td>
+                    <td id="gp">{{gp}}</td>
+                    <td id="gpa">{{gpa}}</td>
+                    <td id="rank">{{rank}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <hr>
+            <table class="table table-responsive" id="creditProcess">
+                <!--need change-->
+                <caption style="text-align: center">学分进展</caption>
+                <thead>
+                <tr>
+                    <th>已获得学分</th>
+                    <th>毕业要求总学分</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="creditGet">{{credit_earned}}</td>
+                    <td id="creditRequired">{{credit_required}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <hr>
+
+        </div>
+        <hr>
+        <div class="row">
+            <div class="text-center col-md-6 col-md-offset-3">
+                <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="../js/jquery-1.11.2.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+
+        }
+    );
+
+</script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../js/bootstrap.js"></script>
+<script>
+    //Graph generation
+</script>
+</body>
+</html>

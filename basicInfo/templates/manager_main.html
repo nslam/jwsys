@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:{{username}}</li>
+    </ul>
+    <ul class="nav navbar-right">
+        <li role="presentation"><a href="#">修改密码</a></li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">教务管理系统</h1>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <h4><strong>个人信息</strong></h4>
+            <p>查询/填写/修改个人信息</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击查询&修改</button></a>
+        </div>
+        <div class="text-center col-sm-4">
+            <h4><strong>查询&修改课程信息</strong></h4>
+            <p>查询以及修改课程信息</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击查询&修改</button></a>
+        </div>
+        <div class="text-center col-sm-4">
+            <h4><strong>删除课程</strong></h4>
+            <p>删除已开课程</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击删除</button></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <h4><strong>用户添加</strong></h4>
+            <p>添加用户信息</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击添加</button></a>
+        </div>
+        <div class="col-sm-4 text-center">
+            <h4><strong>用户信息查询&修改</strong></h4>
+            <p>查询/填写/修改用户信息</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击查询/修改</button></a>
+        </div>
+        <div class="col-sm-4 text-center">
+            <h4><strong>更改用户类别</strong></h4>
+            <p>更改学生和教师的类别</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击更改</button></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <h4><strong>删除用户</strong></h4>
+            <p>删除已有用户</p>
+            <a href="#"><button type="button" class="btn btn-info btn-block">点击删除</button></a>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="text-center col-md-6 col-md-offset-3">
+            <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+        </div>
+    </div>
+    <hr>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery-1.11.2.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.js"></script>
+</body>
+</html>

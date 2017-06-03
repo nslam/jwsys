@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'jwsysDB',
         'USER': 'root',
-        'PASSWORD': 'thelam',
+        'PASSWORD': '445416824',
         'HOST': 'localhost',
         'PORT': '3306',
     }
