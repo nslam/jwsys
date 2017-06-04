@@ -3,18 +3,18 @@ from django.contrib.auth.models import User
 
 
 class Department(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     building = models.CharField(max_length=100)
 
 
 class Major(models.Model):
-    name = models.CharField(max_length=50, default='')
+    name = models.CharField(max_length=50, default='', unique=True)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
 
 
 class Instructor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_file = models.FileField(upload_to=None)
+    photo_file = models.ImageField(upload_to=None)
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
@@ -22,14 +22,14 @@ class Instructor(models.Model):
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_file = models.FileField(upload_to=None)
+    photo_file = models.ImageField(upload_to=None)
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
 
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_file = models.FileField(upload_to=None)
+    photo_file = models.ImageField(upload_to=None)
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     tot_cred = models.IntegerField(default=0)
@@ -39,7 +39,7 @@ class Student(models.Model):
 
 
 class Course(models.Model):
-    course_number = models.CharField(max_length=100)
+    course_number = models.CharField(max_length=100, unique=True)
     title = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
     credits = models.IntegerField()
@@ -59,6 +59,9 @@ class Classroom(models.Model):
     capacity = models.IntegerField()
     equipment = models.ManyToManyField('Equipment')
 
+    class Meta:
+        unique_together = ('building', 'room_number')
+
 
 class Section(models.Model):
     course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
@@ -67,11 +70,17 @@ class Section(models.Model):
     max_number = models.IntegerField()
     instructor = models.ForeignKey(Instructor, null=True, on_delete=models.SET_NULL)
 
+    class Meta:
+        unique_together = ('course', 'semester', 'year', 'instructor')
+
 
 class Takes(models.Model):
     student = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
     section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
     score = models.IntegerField()
+
+    class Meta:
+        unique_together = ('student', 'section')
 
 
 class TimeSlot(models.Model):
@@ -79,6 +88,9 @@ class TimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
 
+    class Meta:
+        unique_together('day', 'start_time', 'end_time')
+
 
 class Equipment(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
