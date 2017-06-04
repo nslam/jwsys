@@ -63,8 +63,6 @@ class Section(models.Model):
     course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
     semester = models.CharField(max_length=20)
     year = models.IntegerField()
-    classroom = models.ForeignKey(Classroom, null=True, on_delete=models.SET_NULL)
-    time_slot = models.ForeignKey('TimeSlot', null=True, on_delete=models.SET_NULL)
     max_number = models.IntegerField()
 
 
