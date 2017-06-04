@@ -44,6 +44,7 @@ class Course(models.Model):
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
     credits = models.IntegerField()
     week_hour = models.IntegerField()
+    type = models.CharField(max_length=20)
 
 
 class Log(models.Model):
