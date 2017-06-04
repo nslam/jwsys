@@ -45,6 +45,7 @@ class Course(models.Model):
     credits = models.IntegerField()
     week_hour = models.IntegerField()
     type = models.CharField(max_length=20)
+    precourse = models.ForeignKey('Course', null=True, on_delete=models.SET_NULL)
 
 
 class Log(models.Model):
@@ -64,22 +65,13 @@ class Section(models.Model):
     semester = models.CharField(max_length=20)
     year = models.IntegerField()
     max_number = models.IntegerField()
-
-
-class Teaches(models.Model):
     instructor = models.ForeignKey(Instructor, null=True, on_delete=models.SET_NULL)
-    section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
 
 
 class Takes(models.Model):
     student = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
     section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
     score = models.IntegerField()
-
-
-class Prereq(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='allPreCourses')
-    precourse = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='subCourses')
 
 
 class TimeSlot(models.Model):
