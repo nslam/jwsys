@@ -63,33 +63,13 @@ class Classroom(models.Model):
         unique_together = ('building', 'room_number')
 
 
-class Section(models.Model):
-    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
-    semester = models.CharField(max_length=20)
-    year = models.IntegerField()
-    max_number = models.IntegerField()
-    instructor = models.ForeignKey(Instructor, null=True, on_delete=models.SET_NULL)
-
-    class Meta:
-        unique_together = ('course', 'semester', 'year', 'instructor')
-
-
-class Takes(models.Model):
-    student = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
-    section = models.ForeignKey(Section, null=True, on_delete=models.SET_NULL)
-    score = models.IntegerField()
-
-    class Meta:
-        unique_together = ('student', 'section')
-
-
 class TimeSlot(models.Model):
     day = models.IntegerField()
     start_time = models.TimeField()
     end_time = models.TimeField()
 
     class Meta:
-        unique_together('day', 'start_time', 'end_time')
+        unique_together = ('day', 'start_time', 'end_time')
 
 
 class Equipment(models.Model):
