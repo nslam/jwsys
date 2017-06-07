@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
+</head>
+<body>
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:<span id="teacherId"></span></li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">成绩修改</h1>
+            <h2 class="text-center">请选择要修改成绩的课程</h2>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <table class="table table-striped" id="courseTable">
+                <thead>
+                <tr>
+                    <th>开课号</th>
+                    <th>课程号</th>
+                    <th>课程名</th>
+                    <th>开课学院</th>
+                    <th>学分</th>
+                    <!--Join with table SECTION-->
+                    <!--可加其他信息 显示已经录入的-->
+                </tr>
+                </thead>
+                <tbody>
+                {{% for i in courseList %}}
+                <tr class="item">
+                    <td class="section_info">{{i.section_info}}</td>
+                    <td class="course_number">{{i.course_number}}</td>
+                    <td>{{i.title}}</td>
+                    <td>{{i.department}}</td>
+                    <td>{{i.credit}}</td>
+                </tr>
+                {{% endfor %}}
+                <tr class="item">
+                    <td class="section_info">XXX</td>
+                    <td class="course_number">211C00020</td>
+                    <td >面向对象的程序设计</td>
+                    <td>计算机科学与技术学院</td>
+                    <td>2.5</td>
+                </tr>
+                <!--<tr>-->
+                <!--<td>Sachin</td>-->
+                <!--<td>Mumbai</td>-->
+                <!--<td>400003</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<td>Uma</td>-->
+                <!--<td>Pune</td>-->
+                <!--<td>411027</td>-->
+                <!--</tr>-->
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="text-center col-md-6 col-md-offset-3">
+                <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="../js/jquery-1.11.2.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            $(".item").click(function () {
+                var sectionInfo = $(this).children().get(0).innerHTML
+                var courseNumber = $(this).children().get(1).innerHTML;
+                //...
+                alert(sectionInfo);
+                alert(courseNumber);
+                //..Redirect
+            });
+        }
+    );
+
+</script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../js/bootstrap.js"></script>
+</body>
+</html>

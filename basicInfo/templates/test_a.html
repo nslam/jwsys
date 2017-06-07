@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>A</title>
+</head>
+<body>
+
+<div>
+    <label for="value">要传入的值</label>
+    <input type="text" id="value"/>
+    <button id="submit">提交</button>
+</div>
+
+<script src="js/jquery-1.11.2.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            $("#submit").click(
+                function () {
+                    //alert($("#value").val());
+                    window.top.open("test_b.html?id="+$("#value").val());
+                }
+            );
+        }
+    );
+</script>
+</body>
+</html>

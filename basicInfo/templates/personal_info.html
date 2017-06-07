@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
+</head>
+<body>
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:{{username}}</li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">个人信息</h1>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="text-left col-md-6 col-md-offset-3">
+            <div>
+                <label for="uploadPic">照片上传</label>
+                <img src="" id="pic" width="150" height="150" alt="个人照片" align="right">
+                <input type="file" id="uploadPic">
+                <button class="btn btn-default" id="upload">上传</button>
+            </div>
+            <hr><br>
+            <form class="form-horizontal text-center">
+                <div class="form-group">
+                    <label for="no" class="col-sm-2 control-label">学工号</label>
+                    <div class="col-sm-10">
+                        <label class="form-control" id="no"></label>
+                    </div>
+                    <label for="name" class="col-sm-2 control-label">姓名</label>
+                    <div class="col-sm-10">
+                        <label class="form-control" id="name"></label>
+                    </div>
+                    <label for="gender" class="col-sm-2 control-label">性别</label>
+                    <div class="col-sm-10">
+                        <label class="form-control" id="gender"></label>
+                    </div>
+                    <label for="dept" class="col-sm-2 control-label">学院</label>
+                    <div class="col-sm-10">
+                        <label class="form-control" id="dept"></label>
+                    </div>
+                    <label for="major" class="col-sm-2 control-label">专业</label>
+                    <div class="col-sm-10">
+                        <label class="form-control" id="major"></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone_number" class="col-sm-2 control-label">电话号码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="phone_number">
+                    </div>
+                    <label for="address" class="col-sm-2 control-label">住址</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="address">
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-default" value="提交修改" id="submit">
+            </form>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="text-center col-md-6 col-md-offset-3">
+            <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+        </div>
+    </div>
+    <hr>
+</div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery-1.11.2.min.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            //Fetch info
+            $("#upload").click(function () {
+                top.location.reload();
+
+            });//Upload pic and refresh
+
+            $("#submit").click(function () {
+                top.location.reload();//Upload info & refresh
+
+            });
+        }
+    );
+
+</script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.js"></script>
+</body>
+</html>
