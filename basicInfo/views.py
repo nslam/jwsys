@@ -1,6 +1,8 @@
 from django.shortcuts import render, render_to_response
 from .models import *
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.contrib import auth
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
@@ -30,6 +32,10 @@ def login(request):
     # Session or Cookies may be needed, request.user needs to change globally
     # m = Member.objects.get(username=username)
     # request.session['member_id'] = m.id
+    if not user.is_active:
+        status = 'User is not active!'
+        return render(request, 'login.html', {'status': status})
+    auth.login(request=request, user=user)
     if type == 'Student':
         return render(request, 'student_main.html', {'username': username})
     elif type == 'Teacher':
@@ -47,8 +53,7 @@ def setPassword(request):
         originPwd = request.POST['originPwd']
         newPwd = request.POST['newPwd']
         newPwdAgain = request.POST['newPwdAgain']
-        #Session may be needed
-        usr = request.user
+        #Check success, modify failed
         flag = request.user.check_password(originPwd)
         if flag is False:
             status = 'Original password is not correct!'
