@@ -14,7 +14,7 @@ class Major(models.Model):
 
 class Instructor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_file = models.ImageField(upload_to=None)
+    photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
@@ -22,14 +22,14 @@ class Instructor(models.Model):
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_file = models.ImageField(upload_to=None)
+    photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
 
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_file = models.ImageField(upload_to=None)
+    photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     tot_cred = models.IntegerField(default=0)
