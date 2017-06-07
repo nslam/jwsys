@@ -7,7 +7,7 @@
     <title>教务管理系统</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -32,7 +32,7 @@
         <div class="text-left col-md-6 col-md-offset-3">
             <div>
                 <label for="uploadPic">照片上传</label>
-                <img src="" id="pic" width="150" height="150" alt="个人照片" align="right">
+                <img src="{{ pic_src }}" id="pic" width="150" height="150" alt="个人照片" align="right">
                 <input type="file" id="uploadPic">
                 <button class="btn btn-default" id="upload">上传</button>
             </div>
@@ -41,33 +41,33 @@
                 <div class="form-group">
                     <label for="no" class="col-sm-2 control-label">学工号</label>
                     <div class="col-sm-10">
-                        <label class="form-control" id="no"></label>
+                        <label class="form-control" id="no">{{ userid }}</label>
                     </div>
                     <label for="name" class="col-sm-2 control-label">姓名</label>
                     <div class="col-sm-10">
-                        <label class="form-control" id="name"></label>
+                        <label class="form-control" id="name">{{ name }}</label>
                     </div>
                     <label for="gender" class="col-sm-2 control-label">性别</label>
                     <div class="col-sm-10">
-                        <label class="form-control" id="gender"></label>
+                        <label class="form-control" id="gender">{{ gender }}</label>
                     </div>
                     <label for="dept" class="col-sm-2 control-label">学院</label>
                     <div class="col-sm-10">
-                        <label class="form-control" id="dept"></label>
+                        <label class="form-control" id="dept">{{ dept }}</label>
                     </div>
                     <label for="major" class="col-sm-2 control-label">专业</label>
                     <div class="col-sm-10">
-                        <label class="form-control" id="major"></label>
+                        <label class="form-control" id="major">{{ major }}</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="phone_number" class="col-sm-2 control-label">电话号码</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="phone_number">
+                        <input type="text" class="form-control" id="phone_number" value="{{ phone_number }}">
                     </div>
                     <label for="address" class="col-sm-2 control-label">住址</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="address">
+                        <input type="text" class="form-control" id="address" value="{{ address }}">
                     </div>
                 </div>
                 <input type="submit" class="btn btn-default" value="提交修改" id="submit">
@@ -83,20 +83,15 @@
 </div>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="js/jquery-1.11.2.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
     $(document).ready(
         function () {
             //Fetch info
             $("#upload").click(function () {
-                top.location.reload();
-
+                //top.location.reload();
             });//Upload pic and refresh
 
-            $("#submit").click(function () {
-                top.location.reload();//Upload info & refresh
-
-            });
         }
     );
 

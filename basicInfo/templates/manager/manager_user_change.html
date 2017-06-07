@@ -7,7 +7,7 @@
     <title>教务管理系统</title>
 
     <!-- Bootstrap -->
-    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -32,10 +32,11 @@
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
             <form class="form-horizontal text-center">
+                {% csrf_token %}
                 <div class="form-group">
                     <label for="searchNo" class="col-sm-2 control-label">待搜索学工号</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="searchNo">
+                        <input type="text" class="form-control" id="searchNo" name="id">
                     </div>
                     <label>待搜索类型</label>
                     <label>
@@ -69,7 +70,7 @@
 </div>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="../js/jquery-1.11.2.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
 //    $(document).ready(
 //        function () {

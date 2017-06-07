@@ -7,7 +7,7 @@
 <title>教务管理系统</title>
 
 <!-- Bootstrap -->
-<link href="css/bootstrap.css" rel="stylesheet">
+<link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -22,7 +22,7 @@
         <li role="presentation">欢迎:{{username}}</li>
     </ul>
     <ul class="nav  navbar-right">
-      <li role="presentation"><a href="#">修改密码</a></li>
+      <li role="presentation"><a href="/basicInfo/setPassword/">修改密码</a></li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -38,12 +38,12 @@
     <div class="col-sm-4 text-center">
         <h4><strong>个人信息</strong></h4>
         <p>查询/填写/修改个人信息</p>
-      <a href="#"><button type="button" class="btn btn-info btn-block">点击查看</button></a>
+      <a href="/basicInfo/changeInfo/"><button type="button" class="btn btn-info btn-block">点击查看</button></a>
     </div>
     <div class="text-center col-sm-4">
         <h4><strong>成绩查询</strong></h4>
         <p>查询个人成绩</p>
-        <a href="#"><button type="button" class="btn btn-info btn-block">点击查询</button></a>
+        <a href="/gradeManage/stuGradeQuery/"><button type="button" class="btn btn-info btn-block">点击查询</button></a>
         <!-- Left for other use
       <h4>Adding <strong>Labels</strong></h4>
       <p>Using the insert panel, add labels to your page by using the label component.</p>
@@ -67,9 +67,8 @@
   <hr>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
-<script src="js/jquery-1.11.2.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 
-<!-- Include all compiled plugins (below), or include individual files as needed --> 
-<script src="js/bootstrap.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
 </body>
 </html>

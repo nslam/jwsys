@@ -7,7 +7,8 @@
     <title>教务管理系统</title>
 
     <!-- Bootstrap -->
-    <link href="../css/bootstrap.css" rel="stylesheet">
+   <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -53,12 +54,6 @@
                     <td>{{i.rank}}</td>
                 </tr>
                 {{% endfor %}}
-                <!--Test-->
-                <tr>
-                    <td>3150000000</td>
-                    <td>95</td>
-                    <td>1</td>
-                </tr>
                 </tbody>
             </table>
             <button class="btn btn-default" id="print">打印成绩</button>
@@ -85,7 +80,7 @@
     </div>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="../js/jquery-1.11.2.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
     $(document).ready(
         function () {
@@ -94,9 +89,8 @@
     );
 
 </script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="../js/bootstrap.js"></script>
-<script src="../js/Chart.js"></script>
+
+<script src="https://cdn.bootcss.com/Chart.js/2.6.0/Chart.js"></script>
 <script type="text/javascript">
 
     var data = {
