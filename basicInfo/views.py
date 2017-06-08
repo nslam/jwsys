@@ -30,12 +30,27 @@ def login(request):
     if not user.is_active:
         status = 'User is not active!'
         return render(request, 'login.html', {'status': status})
+    if type == 'Student':
+        try:
+            test=user.student
+        except:
+            return render(request, 'login.html', {'status': 'You are not a student!'})
+    if type == 'Teacher':
+        try:
+            test = user.instructor
+        except:
+            return render(request, 'login.html', {'status': 'You are not a instructor!'})
+    # if type == 'Manager':
+    #     try:
+    #         test = user.manager
+    #     except:
+    #         return render(request, 'login.html', {'status': 'You are not a manager!'})
     auth.login(request=request, user=user)
     # Check type !!!!! Here I do not check that....
     if type == 'Student':
         return render(request, 'student_main.html', {'username': username})
     elif type == 'Teacher':
-        return render(request, 'instructor_main.html', {'username': username })
+        return render(request, 'instructor_main.html', {'username': username})
     elif type == 'Manager':
         return render(request, 'manager_main.html', {'username': username})
 
@@ -43,7 +58,7 @@ def login(request):
 @login_required
 def setPassword(request):
     if request.method == 'GET':
-        return render(request, 'changepwd.html', {'status':'true'})
+        return render(request, 'changepwd.html', {'status': 'true'})
     else:
         originPwd = request.POST['originPwd']
         newPwd = request.POST['newPwd']
@@ -57,13 +72,13 @@ def setPassword(request):
             request.user.set_password(newPwd)
             request.user.save()
             status = 'Password changed successful!'
-        return render(request, 'changepwd.html', {'status':status})
+        return render(request, 'changepwd.html', {'status': status})
 
 
 @login_required
 def changeInfo(request):
     if request.method == 'GET':
-        #Fetch info into the form & render
+        # Fetch info into the form & render
         return render(request, 'personal_info.html')
     else:
         if request.POST['identity'] == 'student':
