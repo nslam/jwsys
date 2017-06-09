@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'basicInfo',
+    'courseArrange',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jwsysDB',
         'USER': 'root',
-        'PASSWORD': 'thelam',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '3306',
     }
