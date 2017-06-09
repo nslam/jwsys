@@ -17,7 +17,6 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="teacherId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -32,7 +31,7 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
-            <label>平均分：<span id="avgPts"></span></label>
+            <label>平均分：{{ avg }}</label>
         </div>
     </div>
     <hr>
@@ -43,7 +42,6 @@
                 <tr>
                     <th>学号</th>
                     <th>成绩</th>
-                    <th>排名</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,7 +49,6 @@
                 <tr>
                     <td>{{i.id}}</td>
                     <td>{{i.grade}}</td>
-                    <td>{{i.rank}}</td>
                 </tr>
                 {{% endfor %}}
                 </tbody>
@@ -100,10 +97,11 @@
                 fillColor : "rgba(220,220,220,0.5)",
                 strokeColor : "rgba(220,220,220,1)",
                 text: 'Score',
-                data : [5,12,40,30,12]
+                data : {{ distribution }}
             }
         ]
     };
+
     $(document).ready(function () {
         var ctx = $("#myChart").get(0).getContext("2d");
         var myBar = new Chart(ctx,
@@ -112,7 +110,7 @@
                 data: data,
                 options:{
                     legend:{
-                        position: 'top',
+                        position: 'top'
                     },
                     title:{
                         display:true,

@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1 class="text-center">课程成绩修改</h1>
-            <h2>当前课程：<span id="courseName"></span></h2>
+            <h2>当前课程：{{ courseNumber }}</h2>
         </div>
     </div>
     <hr>
@@ -34,11 +34,13 @@
         <form role="form">
             <p>请输入验证码：</p>
             <label id="verify" for="verifyID"></label>
-            <input type="text" id="verifyID" class="form-control" name="verifyID" placeholder="请输入验证码">
+            <input type="text" id="verifyID" class="form-row" name="verifyID" placeholder="请输入验证码">
         </form>
         <hr>
-        <form role="form" method="post" action="/gradeManage/gradeModifyDetails/" onsubmit="return check()">
+        <form role="form" method="post" action="/basicInfo/gradeModifyDetails/" onsubmit="return check()">
         {% csrf_token %}
+        <label for="sectionId">开课号</label>
+        <input type="text" class="form-row" name="sectionId" id="sectionId" value="{{ sectionId }}" disabled>
             <table class="table table-responsive">
                 <thead>
                 <tr>
@@ -50,7 +52,7 @@
                 {{% for i in gradeList %}}
                 <tr>
                     <td>{i.id}</td>
-                    <td><input type="text" class="form-control" id="g{{i.id}}" name="g{{ i.id }}">{{i.grade}}</td>
+                    <td><input type="text" class="form-control" id="{{i.id}}" name="{{ i.id }}">{{i.grade}}</td>
                 </tr>
                 {{% endfor %}}
                 </tbody>
@@ -71,7 +73,8 @@
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
     $(document).ready(
-        function () {
+        function ()
+        {
             $("#verify").text(Math.round(Math.random() * 100000));
         }
     );
@@ -82,7 +85,17 @@
             alert("验证码输入错误");
             return false;
         }
-        return true;
+        var status = true;
+        $(".form-control").each(
+            function ()
+            {
+                if($(this).val() == '' || $(this).val() < 0 || $(this).val() > 100)
+                return status = false;
+            }
+        );
+        if(status == false)
+            alert("输入数据有误！\n如空数据、成绩范围有误...");
+        return status;
     }
 
 </script>
