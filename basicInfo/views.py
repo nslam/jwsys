@@ -257,6 +257,66 @@ def gradeInputDetails(request):
 
 
 @login_required
+def gradeQuery(request):
+    ret = []
+    user = User.objects.get(request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
+        return HttpResponse('You are not a instructor!')
+    teaches = Teaches.objects.filter(instructor=user.instructor)
+    for teach in teaches:
+        section = teach.section
+        takes = Takes.objects.filter(section=section)
+        if takes[0].score is not None:
+            ret.append({
+                'sectionId': section.id,
+                'courseNumber': section.course.course_number,
+                'title': section.course.title,
+                'credit': section.course.credits
+            })
+    return render(request, 'instructor/instructor_grade_query.html', ret)
+
+
+@login_required
+def gradeQueryDetails(request):
+    ret = {}
+    user = User.objects.get(request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
+        return HttpResponse('You are not a instructor!')
+    section = Section.objects.get(id=request.GET['sectionId'])
+    takes = Takes.objects.filter(section=section)
+    dis1 = 0
+    dis2 = 0
+    dis3 = 0
+    dis4 = 0
+    dis5 = 0
+    gradeList = []
+    total = 0
+    for take in takes:
+        username = str(take.student.user.get_username())
+        grade = take.score
+        total += grade
+        gradeList.append({
+            username: grade
+        })
+        if grade < 60:
+            dis1 += 1
+        elif grade < 70:
+            dis2 += 1
+        elif grade < 80:
+            dis3 += 1
+        elif grade < 90:
+            dis4 += 1
+        else:
+            dis5 += 1
+    ret['avg'] = total / len(takes)
+    ret['gradeList'] = gradeList
+    ret['distribution'] = [dis1, dis2, dis3, dis4, dis5]
+    render(request, 'instructor/instructor_grade_query_details.html', ret)
+
+
+@login_required
 def changeCourse(request):
     if request.user.manager is None:
         return HttpResponse('You are not a manager!')
