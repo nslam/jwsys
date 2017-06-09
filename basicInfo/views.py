@@ -150,17 +150,63 @@ def stuGradeQuery(request):
 
 
 @login_required
+def stuGradeAnalysis(request):
+    user = request.user
+    type = getType(user)
+    if type != 'Student':
+        return HttpResponse('You are not a student!')
+    takes = Takes.objects.filter(student=user.student)
+    ret = {}
+    gp = 0
+    totalCredits = 0
+    for take in takes:
+        gp += getGradePoint(take.score) * take.section.course.credits
+        totalCredits += take.section.course.credits
+    ret['gp'] = gp
+    if totalCredits == 0:
+        ret['gpa'] = 0
+    else:
+        ret['gpa'] = gp / totalCredits
+    return render(request, 'student/stu_grade_analysis.html', ret)
+
+
+@login_required
 def addCourse(request):
-    if request.user.instructor is None:
+    user = User.objects.get(request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
-    instructor = request.user.instructor
-    info = request.POST['info']
-    if Course.objects.get(info=info):
-        return HttpResponse('The course already exists!')
-    course = Course()
-    course.info = info
-    course.save()
-    return HttpResponse('success')
+    if request.method == 'GET':
+        return render(request, 'instructor/instructor_course_apply.html', {'dept': user.instructor.department})
+    else:
+        course = Course.objects.create()
+        course.course_number = str(course.id)
+        course.title = request.POST['title']
+        course.credits = request.POST['credits']
+        course.week_hour = request.POST['weekHour']
+        course.method = request.POST['method']
+        course.save()
+        return HttpResponse('Success')
+
+
+@login_required
+def queryCourse(request):
+    ret = []
+    user = User.objects.get(request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
+        return HttpResponse('You are not a instructor!')
+    candidates = CourseCandiate.objects.filter(instructor=user.instructor.id)
+    for candidate in candidates:
+        course = candidate.course
+        ret.append({
+            'title': course.title,
+            'method': course.method,
+            'courseNumber': course.course_number,
+            'credit': course.credits,
+            'weekHour': course.week_hour
+        })
+    render(request, 'instructor/instructor_course_query.html', ret)
 
 
 @login_required

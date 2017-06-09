@@ -9,4 +9,5 @@ urlpatterns=[
     url(r'^addStudent/$', views.addStudent),
     url(r'^addInstructor/$', views.addInstructor),
     url(r'^stuGradeQuery/$', views.stuGradeQuery),
+    url(r'^stuGradeAnalysis/$', views.stuGradeAnalysis),
 ]
