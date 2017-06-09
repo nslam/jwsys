@@ -38,7 +38,7 @@ class Student(models.Model):
     tot_cred = models.IntegerField(default=0)
     major = models.ForeignKey(Major, null=True, on_delete=models.SET_NULL)
     matriculate = models.IntegerField()
-    graduate = models.IntegerField()
+    graduate = models.IntegerField(null=True)
     gender = models.IntegerField()
 
 
