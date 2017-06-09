@@ -33,13 +33,12 @@
             <table class="table table-striped" id="gradeTable">
                 <thead>
                 <tr>
-                    <th>选课号</th>
                     <th>课程号</th>
                     <th>课程名</th>
                     <th>学分</th>
                     <th>成绩</th>
                     <th>绩点</th>
-                    <th>排名</th>
+
                     <!--Join with table SECTION-->
                     <!--可加其他信息-->
                 </tr>
@@ -47,13 +46,11 @@
                 <tbody>
                 {{% for item in gradeList %}}
                 <tr>
-                    <td>{{item.section_info}}</td>
-                    <td>{{item.course_number}}</td>
+                    <td>{{item.courseNumber}}</td>
                     <td>{{item.title}}</td>
                     <td>{{item.credit}}</td>
                     <td>{{item.grade}}</td>
-                    <td>{{item.grade_point}}</td>
-                    <td>{{item.rank}}</td>
+                    <td>{{item.gradePoint}}</td>
                 </tr>
                 {{% endfor %}}
 
@@ -88,7 +85,7 @@
     $(document).ready(
         function () {
             $("#analysis").click(function () {
-                $.get("123" + "/analysis/");
+                $.get('/basicInfo/stuGradeQuery/');
             });
 
             $("#print").click(function () {

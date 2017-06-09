@@ -90,9 +90,10 @@
             $(".item").click(function () {
                 var sectionInfo = $(this).children().get(0).innerHTML;
                 var courseNumber = $(this).children().get(1).innerHTML;
-                //...
-                alert(sectionInfo);
-                alert(courseNumber);
+                //To details
+                $.get("/gradeManage/gradeQueryDetails/",
+                    {'section_info': sectionInfo,
+                    'course_number': courseNumber});
                 //..Redirect
             });
         }

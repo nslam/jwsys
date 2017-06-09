@@ -16,7 +16,6 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="teacherId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -46,20 +45,14 @@
                 <tbody>
                 {{% for i in courseList %}}
                 <tr class="item">
-                    <td class="section_info">{{i.section_info}}</td>
-                    <td class="course_number">{{i.course_number}}</td>
+                    <td class="section_info">{{i.sectionId}}</td>
+                    <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.department}}</td>
                     <td>{{i.credit}}</td>
                 </tr>
                 {{% endfor %}}
-                <tr class="item">
-                    <td class="section_info">XXX</td>
-                    <td class="course_number">211C00020</td>
-                    <td >面向对象的程序设计</td>
-                    <td>计算机科学与技术学院</td>
-                    <td>2.5</td>
-                </tr>
+
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
                 <!--<td>Mumbai</td>-->
@@ -90,10 +83,11 @@
             $(".item").click(function () {
                 var sectionInfo = $(this).children().get(0).innerHTML;
                 var courseNumber = $(this).children().get(1).innerHTML;
-                   //...
-                alert(sectionInfo);
-                alert(courseNumber);
-                //..Redirect
+                $.get("/basicInfo/gradeInputDetails/",
+                    {'sectionId': sectionInfo,
+                    'courseNumber': courseNumber});
+                //..Redirect Backward
+                //alert(sectionInfo + courseNumber);
             });
         }
     );

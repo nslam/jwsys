@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="teacherId"></span></li>
+        <li role="presentation">欢迎:{{ username }}</li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -35,7 +35,6 @@
                 <tr>
                     <th>课程号</th>
                     <th>课程名</th>
-                    <th>开课学院</th>
                     <th>学分</th>
                     <th>学时</th>
                     <th>考核方式</th>
@@ -46,9 +45,8 @@
                 <tbody>
                 {% for i in courseList %}
                 <tr>
-                    <td>{i.course_number}</td>
+                    <td>{i.courseNumber}</td>
                     <td>{i.title}</td>
-                    <td>{i.department}</td>
                     <td>{i.credit}</td>
                     <td>{i.week_hour}</td>
                     <td>{i.method}</td>
