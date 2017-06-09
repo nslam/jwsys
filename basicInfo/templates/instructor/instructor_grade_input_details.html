@@ -24,7 +24,7 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1 class="text-center">课程成绩录入</h1>
-            <h2>当前课程：<span id="courseName"></span></h2>
+            <h2>当前课程：{{ courseNumber }}</h2>
         </div>
     </div>
     <hr>
@@ -32,7 +32,7 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
-        <form role="form" method="post" action="/gradeManage/gradeInputDetails/" onsubmit="return check()">
+        <form role="form" method="post" action="/basicInfo/gradeInputDetails/" onsubmit="return check()">
         {% csrf_token %}
         <label for="sectionId">开课号</label>
         <input type="text" class="form-row" name="sectionId" id="sectionId" value="{{ sectionId }}" disabled>
@@ -76,7 +76,7 @@
             }
         );
         if(status == false)
-            alert("输入数据有误！\n如空数据、成绩范围有误...")
+            alert("输入数据有误！\n如空数据、成绩范围有误...");
         return status;
     }
 </script>
