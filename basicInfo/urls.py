@@ -19,4 +19,8 @@ urlpatterns = [
     url(r'^gradeModifyDetails/$', views.gradeInputDetails),
     url(r'^gradeQuery/$', views.gradeQuery),
     url(r'^gradeQueryDetails/$', views.gradeQueryDetails),
+    url(r'^changeCourse/$', views.changeCourse),
+    url(r'^dropCourse/$', views.dropCourse),
+    url(r'^modifyUser/$', views.modifyUser),
+    url(r'^deleteUser/$', views.deleteUser),
 ]
