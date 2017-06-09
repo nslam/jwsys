@@ -196,15 +196,34 @@ def queryCourse(request):
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
-    candidates = CourseCandiate.objects.filter(instructor=user.instructor.id)
-    for candidate in candidates:
-        course = candidate.course
+    teaches = Teaches.objects.filter(instructor=user.instructor.id)
+    for teach in teaches:
+        course = teach.section.course
         ret.append({
             'title': course.title,
             'method': course.method,
             'courseNumber': course.course_number,
             'credit': course.credits,
             'weekHour': course.week_hour
+        })
+    render(request, 'instructor/instructor_course_query.html', ret)
+
+
+@login_required
+def gradeInput(request):
+    ret = []
+    user = User.objects.get(request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
+        return HttpResponse('You are not a instructor!')
+    teaches = Teaches.objects.filter(instructor=user.instructor.id)
+    for teach in teaches:
+        course = teach.section.course
+        ret.append({
+            'sectionId': teach.section.id,
+            'title': course.title,
+            'courseNumber': course.course_number,
+            'credit': course.credits
         })
     render(request, 'instructor/instructor_course_query.html', ret)
 

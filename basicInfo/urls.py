@@ -10,4 +10,7 @@ urlpatterns=[
     url(r'^addInstructor/$', views.addInstructor),
     url(r'^stuGradeQuery/$', views.stuGradeQuery),
     url(r'^stuGradeAnalysis/$', views.stuGradeAnalysis),
+    url(r'^addCourse/$', views.addCourse),
+    url(r'^queryCourse/$', views.queryCourse),
+    url(r'^gradeInput/$', views.gradeInput),
 ]
