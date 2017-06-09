@@ -87,15 +87,16 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
-//    $(document).ready(
-//        function () {
-//            $("#search").click(
-//                function () {
-//
-//                }
-//            );
-//        }
-//    );
+    $(document).ready(
+        function () {
+            $("#search").click(
+                function () {
+                    var info = $("#courseInfo").val();
+                    $.get("/basicInfo/changeCourse/", {'courseNumber': info});
+                }
+            );
+        }
+    );
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../js/bootstrap.js"></script>
