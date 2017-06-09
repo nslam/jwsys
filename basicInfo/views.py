@@ -218,14 +218,42 @@ def gradeInput(request):
         return HttpResponse('You are not a instructor!')
     teaches = Teaches.objects.filter(instructor=user.instructor.id)
     for teach in teaches:
-        course = teach.section.course
+        section = teach.section
+        takes = Takes.objects.filter(section=section)
+        if takes[0].score is not None:
+            continue
+        course = section.course
         ret.append({
             'sectionId': teach.section.id,
             'title': course.title,
             'courseNumber': course.course_number,
             'credit': course.credits
         })
-    render(request, 'instructor/instructor_course_query.html', ret)
+    render(request, 'instructor/instructor_grade_input.html', ret)
+
+
+@login_required
+def gradeInputDetails(request):
+    ret = []
+    user = User.objects.get(request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
+        return HttpResponse('You are not a instructor!')
+    if request.method == 'GET':
+        takes = Takes.objects.filter(section=Section.objects.get(id=request.GET['sectionId']))
+        for take in takes:
+            ret.append({
+                'username': take.student.user.get_username()
+            })
+        return render(request, 'instructor/instructor_grade_input_details.html', ret)
+    else:
+        section = Section.objects.get(id=request.POST['sectionId'])
+        takes = Takes.objects.filter(section=section)
+        for take in takes:
+            username = take.student.user.get_username()
+            take.score = request.POST[username]
+            take.save()
+        return HttpResponse('success')
 
 
 @login_required

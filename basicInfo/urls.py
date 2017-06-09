@@ -1,7 +1,8 @@
 from django.conf.urls import url
 
 from . import views
-urlpatterns=[
+
+urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^login/$', views.login),
     url(r'^setPassword/$', views.setPassword),
@@ -13,4 +14,5 @@ urlpatterns=[
     url(r'^addCourse/$', views.addCourse),
     url(r'^queryCourse/$', views.queryCourse),
     url(r'^gradeInput/$', views.gradeInput),
+    url(r'^gradeInputDetails/$', views.gradeInputDetails),
 ]
