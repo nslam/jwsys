@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from courseArrange.models import *
 
 
 class Department(models.Model):
@@ -18,7 +19,8 @@ class Instructor(models.Model):
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
-    gender=models.IntegerField()
+    gender = models.IntegerField()
+
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -38,6 +40,7 @@ class Student(models.Model):
     matriculate = models.IntegerField()
     graduate = models.IntegerField()
     gender = models.IntegerField()
+
 
 class Course(models.Model):
     course_number = models.CharField(max_length=100, unique=True)
@@ -75,3 +78,9 @@ class TimeSlot(models.Model):
 
 class Equipment(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+
+class Takes(models.Model):
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)

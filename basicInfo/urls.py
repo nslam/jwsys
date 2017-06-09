@@ -8,4 +8,5 @@ urlpatterns=[
     url(r'^changeInfo/$', views.changeInfo),
     url(r'^addStudent/$', views.addStudent),
     url(r'^addInstructor/$', views.addInstructor),
+    url(r'^stuGradeQuery/$', views.stuGradeQuery),
 ]

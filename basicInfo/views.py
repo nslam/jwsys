@@ -5,6 +5,18 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+import math
+
+
+def getGradePoint(grade):
+    if grade >= 95:
+        return 5
+    elif grade < 60:
+        return 0
+    elif grade < 95 and grade >= 92:
+        return 4.8
+    else:
+        return 4.8 - math.ceil(92 - grade) / 3 * 0.3
 
 
 def getType(user):
@@ -101,7 +113,7 @@ def changeInfo(request):
         item = user.student
     elif type == 'Instructor':
         item = user.instructor
-    elif type=='Manager':
+    elif type == 'Manager':
         item = user.manager
     if request.method == 'GET':
         ret['phoneNumber'] = item.phone_number
@@ -116,10 +128,25 @@ def changeInfo(request):
             ret['dept'] = None
         return render(request, 'personal_info.html', ret)
     else:
-        item.address=request.POST['address']
-        item.phone_number=request.POST['phoneNumber']
+        item.address = request.POST['address']
+        item.phone_number = request.POST['phoneNumber']
         item.save()
         return HttpResponse('success')
+
+
+@login_required
+def stuGradeQuery(request):
+    user = request.user
+    type = getType(user)
+    if type != 'Student':
+        return HttpResponse('You are not a student!')
+    takes = Takes.objects.filter(student=user.student)
+    ret = []
+    for take in takes:
+        ret.append({'title': take.section.course.title, 'courseNumber': take.section.course.course_number,
+                    'credit': take.section.course.credits, 'grade': take.score,
+                    'gradePoint': getGradePoint(take.score)})
+    return render(request, 'student/stu_grade_query.html', ret)
 
 
 @login_required
@@ -204,6 +231,7 @@ def searchLog(request):
     for log in logs:
         ret.append(log)
     return JsonResponse(ret)
+
 #
 #
 # @login_required
