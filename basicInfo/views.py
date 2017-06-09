@@ -7,6 +7,23 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
 
+def getType(user):
+    try:
+        student = user.student
+        ret = 'Student'
+    except:
+        try:
+            instructor = user.instructor
+            ret = 'Instructor'
+        except:
+            try:
+                manager = user.manager
+                ret = 'Manager'
+            except:
+                ret = 'none'
+    return ret
+
+
 def index(request):
     status = 'true'
     return render(request, 'login.html', {'status': status})
@@ -32,10 +49,10 @@ def login(request):
         return render(request, 'login.html', {'status': status})
     if type == 'Student':
         try:
-            test=user.student
+            test = user.student
         except:
             return render(request, 'login.html', {'status': 'You are not a student!'})
-    if type == 'Teacher':
+    if type == 'Instructor':
         try:
             test = user.instructor
         except:
@@ -49,7 +66,7 @@ def login(request):
     # Check type !!!!! Here I do not check that....
     if type == 'Student':
         return render(request, 'student_main.html', {'username': username})
-    elif type == 'Teacher':
+    elif type == 'Instructor':
         return render(request, 'instructor_main.html', {'username': username})
     elif type == 'Manager':
         return render(request, 'manager_main.html', {'username': username})
@@ -77,21 +94,31 @@ def setPassword(request):
 
 @login_required
 def changeInfo(request):
+    ret = {}
+    user = User.objects.get(id=request.user.id)
+    type = getType(user)
+    if type == 'Student':
+        item = user.student
+    elif type == 'Instructor':
+        item = user.instructor
+    elif type=='Manager':
+        item = user.manager
     if request.method == 'GET':
-        # Fetch info into the form & render
-        return render(request, 'personal_info.html')
+        ret['phoneNumber'] = item.phone_number
+        ret['address'] = item.address
+        ret['gender'] = item.gender
+        ret['userId'] = user.id
+        if type == 'Student':
+            ret['major'] = item.major.name
+            ret['dept'] = item.major.department
+        else:
+            ret['major'] = None
+            ret['dept'] = None
+        return render(request, 'personal_info.html', ret)
     else:
-        if request.POST['identity'] == 'student':
-            info = request.user.student
-        elif request.POST['identity'] == 'instructor':
-            info = request.user.instructor
-        elif request.POST['identity'] == 'manager':
-            info = request.user.manager
-        if info is None:
-            return HttpResponse('No such person!')
-        info.address = request.POST['address']
-        info.phone_number = request.POST['phone_number']
-        info.save()
+        item.address=request.POST['address']
+        item.phone_number=request.POST['phoneNumber']
+        item.save()
         return HttpResponse('success')
 
 
@@ -177,60 +204,60 @@ def searchLog(request):
     for log in logs:
         ret.append(log)
     return JsonResponse(ret)
+#
+#
+# @login_required
+# def inputScore(request):
+#     if request.user.instructor is None:
+#         return HttpResponse('You are not a instrctor!')
+#     section = section.Objects.get(id=request.POST['sectionId'])
+#     students = section.student_set.all()
+#     for student in students:
+#         insert
+#         record
+#         to
+#         Takes
+#     return HttpResponse('success')
+#
+#
+# @login_required
+# def teacherGetScore(request):
+#     if request.user.instructor is None:
+#         return HttpResponse('You are not a instrctor!')
+#     section = section.Objects.get(id=request.POST['sectionId'])
+#     students = section.student_set.all()
+#     ret = []
+#     for student in students:
+#         ret.append({'id': student.id, 'score': student.score})
+#     return JsonResponse(ret)
+#
+# #
+# # @login_required
+# # def changeScore(request):
+# #     if request.user.instructor is None:
+# #         return HttpResponse('You are not a instrctor!')
+# #     if request.user.check_password(request.POST['password']) is False:
+# #         return HttpResponse('Password is wrong!')
+# #     section = section.Objects.get(id=request.POST['sectionId'])
+# #     student = request.POST['studentId']
+# #     student.score = request.POST['score']
+# #     return HttpResponse('success')
+#
+#
+# @login_required
+# def studentGetScore(request):
+#     if request.user.student is None:
+#         return HttpResponse('You are not a student!')
+#     student = request.user.student
+#     sections = student.section_set.all()
+#     for section in sections:
+#         ret.append({'sectionId': section.id, 'score': section.score})
+#     return JsonResponse(ret)
 
 
-@login_required
-def inputScore(request):
-    if request.user.instructor is None:
-        return HttpResponse('You are not a instrctor!')
-    section = section.Objects.get(id=request.POST['sectionId'])
-    students = section.student_set.all()
-    for student in students:
-        insert
-        record
-        to
-        Takes
-    return HttpResponse('success')
-
-
-@login_required
-def teacherGetScore(request):
-    if request.user.instructor is None:
-        return HttpResponse('You are not a instrctor!')
-    section = section.Objects.get(id=request.POST['sectionId'])
-    students = section.student_set.all()
-    ret = []
-    for student in students:
-        ret.append({'id': student.id, 'score': student.score})
-    return JsonResponse(ret)
-
-
-@login_required
-def changeScore(request):
-    if request.user.instructor is None:
-        return HttpResponse('You are not a instrctor!')
-    if request.user.check_password(request.POST['password']) is False:
-        return HttpResponse('Password is wrong!')
-    section = section.Objects.get(id=request.POST['sectionId'])
-    student = request.POST['studentId']
-    student.score = request.POST['score']
-    return HttpResponse('success')
-
-
-@login_required
-def studentGetScore(request):
-    if request.user.student is None:
-        return HttpResponse('You are not a student!')
-    student = request.user.student
-    sections = student.section_set.all()
-    for section in sections:
-        ret.append({'sectionId': section.id, 'score': section.score})
-    return JsonResponse(ret)
-
-
-@login_required
-def analyzeScore(request):
-    student = request.user.student
-    scores = student.score.all()
-    ret = [avg_score, GP, GPA, Rank, Credit_earned, Credit_required]
-    return JsonResponse(ret)
+# @login_required
+# def analyzeScore(request):
+#     student = request.user.student
+#     scores = student.score.all()
+#     ret = [avg_score, GP, GPA, Rank, Credit_earned, Credit_required]
+#     return JsonResponse(ret)

@@ -18,13 +18,14 @@ class Instructor(models.Model):
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
-
+    gender=models.IntegerField()
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
+    gender = models.IntegerField()
 
 
 class Student(models.Model):
@@ -36,7 +37,7 @@ class Student(models.Model):
     major = models.ForeignKey(Major, null=True, on_delete=models.SET_NULL)
     matriculate = models.IntegerField()
     graduate = models.IntegerField()
-
+    gender = models.IntegerField()
 
 class Course(models.Model):
     course_number = models.CharField(max_length=100, unique=True)
