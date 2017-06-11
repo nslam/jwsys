@@ -62,14 +62,14 @@
                 </tr>
                 </thead>
                 <tbody id="tableBody">
-                {{% for item in userList%}}
+                {% for item in userList%}
                 <tr class="item">
                     <td><input type="checkbox" name="check"></td>
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.department}}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
 
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
@@ -112,8 +112,11 @@
                          list.push(id);
                      }
                   });
+                  if(list.empty())
+                      alert("未选中任何用户！");
+                  else
                  // alert(list);
-                  $.post("/basicInfo/deleteUser/", {'userList': list});
+                    $.post("/basicInfo/deleteUser/", {'userList': list});
               }  
             );
             //Delete.... use each() to traversal

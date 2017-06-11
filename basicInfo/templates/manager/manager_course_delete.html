@@ -54,17 +54,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{% for item in courseList %}}
+                {% for item in courseList %}
                 <tr class="item">
                     <td><input type="checkbox" name="check"></td>
                     <td>{{item.courseNumber}}</td>
                     <td>{{item.title}}</td>
                     <td>{{item.department}}</td>
-                    <td>{{item.credit}}</td>
+                    <td>{{item.credits}}</td>
                     <td>{{item.weekHour}}</td>
                     <td>{{item.method}}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
 
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
@@ -113,7 +113,10 @@
                             list.push(id);
                         }
                     });
-                    $.post("/basic/dropCourse/", {"courseList":list});
+                    if(list.empty())
+                        alert("未选中任何课程！");
+                    else
+                        $.post("/basic/dropCourse/", {"courseList":list});
                     //$.post();
                 }
             );

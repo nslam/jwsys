@@ -31,7 +31,7 @@
     <div class="row">
         <div class="text-left col-lg-10 col-lg-offset-1">
             <label for="courseInfo">搜索（课程号）</label>
-            <input type="text" class="form-control" name="courseInfo" id="courseInfo"><br>
+            <input type="text" class="form-control" name="courseId" id="courseId"><br>
             <div class="text-center">
                 <!--GET-->
                 <button id="search" class="btn btn-default">点击搜索</button>
@@ -47,7 +47,7 @@
                         {% csrf_token %}
                         <label for="course_number" class="col-sm-2 control-label">课程号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="courseNumber" id="course_number" value="{{ courseNumber }}" disabled>
+                            <input type="text" class="form-control" name="courseId" id="course_number" value="{{ courseId }}" disabled>
                         </div>
                         <label for="title" class="col-sm-2 control-label">课程名</label>
                         <div class="col-sm-10">
@@ -59,7 +59,7 @@
                         </div>
                         <label for="credit" class="col-sm-2 control-label">学分</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="credit" id="credit" value="{{ credit }}">
+                            <input type="text" class="form-control" name="credits" id="credit" value="{{ credits }}">
                         </div>
                         <label for="week_hour" class="col-sm-2 control-label">学时</label>
                         <div class="col-sm-10">
@@ -92,7 +92,7 @@
             $("#search").click(
                 function () {
                     var info = $("#courseInfo").val();
-                    $.get("/basicInfo/changeCourse/", {'courseNumber': info});
+                    $.get("/basicInfo/changeCourse/", {'courseId': info});
                 }
             );
         }

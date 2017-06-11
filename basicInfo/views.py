@@ -105,7 +105,14 @@ def setPassword(request):
 
 
 @login_required
+def uploadPic(request):
+    # TODO: 上传照片
+    return HttpResponse('<script> alert("Function unrealized.."); </script>')
+
+
+@login_required
 def changeInfo(request):
+    # TODO: 'GET'还需要返回照片地址 picSrc
     ret = {}
     user = User.objects.get(id=request.user.id)
     type = getType(user)
@@ -118,11 +125,11 @@ def changeInfo(request):
     if request.method == 'GET':
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
-        ret['gender'] = item.gender
-        ret['userId'] = user.id
+        ret['gender'] = '男' if(item.gender == 1) else '女'
+        ret['userId'] = user.username  # Set username as ID shown outside
         if type == 'Student':
             ret['major'] = item.major.name
-            ret['dept'] = item.major.department
+            ret['dept'] = item.major.department.name
         else:
             ret['major'] = None
             ret['dept'] = None
@@ -131,7 +138,7 @@ def changeInfo(request):
         item.address = request.POST['address']
         item.phone_number = request.POST['phoneNumber']
         item.save()
-        return HttpResponse('success')
+        return HttpResponse('<script> alert("修改成功！"); </script>')
 
 
 @login_required
@@ -146,11 +153,12 @@ def stuGradeQuery(request):
         ret.append({'title': take.section.course.title, 'courseNumber': take.section.course.course_number,
                     'credit': take.section.course.credits, 'grade': take.score,
                     'gradePoint': getGradePoint(take.score)})
-    return render(request, 'student/stu_grade_query.html', ret)
+    return render(request, 'student/stu_grade_query.html', {'gradeList': ret})
 
 
 @login_required
 def stuGradeAnalysis(request):
+    # TODO: 专业排名和学分进展功能(加入要求的总学分）
     user = request.user
     type = getType(user)
     if type != 'Student':
@@ -159,10 +167,16 @@ def stuGradeAnalysis(request):
     ret = {}
     gp = 0
     totalCredits = 0
+    scores = 0
+    num = 0
     for take in takes:
+        scores += take.score
+        num += 1
         gp += getGradePoint(take.score) * take.section.course.credits
         totalCredits += take.section.course.credits
+    ret['avg'] = scores * 1.0 / num
     ret['gp'] = gp
+    ret['creditEarned'] = totalCredits
     if totalCredits == 0:
         ret['gpa'] = 0
     else:
@@ -172,27 +186,29 @@ def stuGradeAnalysis(request):
 
 @login_required
 def addCourse(request):
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
     if request.method == 'GET':
-        return render(request, 'instructor/instructor_course_apply.html', {'dept': user.instructor.department})
+        return render(request, 'instructor/instructor_course_apply.html', {'dept': user.instructor.department.name})
     else:
         course = Course.objects.create()
         course.course_number = str(course.id)
+        course.department = user.instructor.department
         course.title = request.POST['title']
         course.credits = request.POST['credits']
         course.week_hour = request.POST['weekHour']
         course.method = request.POST['method']
+        course.type = request.POST['type']
         course.save()
-        return HttpResponse('Success')
+        return HttpResponse('<script>alert("课程添加成功！");</script>')
 
 
 @login_required
 def queryCourse(request):
     ret = []
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
@@ -206,13 +222,13 @@ def queryCourse(request):
             'credit': course.credits,
             'weekHour': course.week_hour
         })
-    render(request, 'instructor/instructor_course_query.html', ret)
+    return render(request, 'instructor/instructor_course_query.html', {'courseList': ret})
 
 
 @login_required
 def gradeInput(request):
     ret = []
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
@@ -229,13 +245,13 @@ def gradeInput(request):
             'courseNumber': course.course_number,
             'credit': course.credits
         })
-    render(request, 'instructor/instructor_grade_input.html', ret)
+    return render(request, 'instructor/instructor_grade_input.html', {'courseList': ret})
 
 
 @login_required
 def gradeInputDetails(request):
     ret = []
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
@@ -245,7 +261,9 @@ def gradeInputDetails(request):
             ret.append({
                 'username': take.student.user.get_username()
             })
-        return render(request, 'instructor/instructor_grade_input_details.html', ret)
+        return render(request, 'instructor/instructor_grade_input_details.html',
+                      {'gradeList': ret, 'sectionId': request.GET['sectionId'],
+                       'courseNumber': request.GET['courseNumber']})
     else:
         section = Section.objects.get(id=request.POST['sectionId'])
         takes = Takes.objects.filter(section=section)
@@ -253,13 +271,13 @@ def gradeInputDetails(request):
             username = take.student.user.get_username()
             take.score = request.POST[username]
             take.save()
-        return HttpResponse('success')
+        return HttpResponse('<script>alert("成绩输入成功！");</script>')
 
 
 @login_required
 def gradeQuery(request):
     ret = []
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
@@ -274,13 +292,13 @@ def gradeQuery(request):
                 'title': section.course.title,
                 'credit': section.course.credits
             })
-    return render(request, 'instructor/instructor_grade_query.html', ret)
+    return render(request, 'instructor/instructor_grade_query.html', {'courseList': ret})
 
 
 @login_required
 def gradeQueryDetails(request):
     ret = {}
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Instructor':
         return HttpResponse('You are not a instructor!')
@@ -298,7 +316,8 @@ def gradeQueryDetails(request):
         grade = take.score
         total += grade
         gradeList.append({
-            username: grade
+            'username': username,
+            'grade': grade
         })
         if grade < 60:
             dis1 += 1
@@ -318,55 +337,69 @@ def gradeQueryDetails(request):
 
 @login_required
 def changeCourse(request):
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Manager':
         return HttpResponse('You are not a manager!')
     if request.method == 'GET':
-        course = Course.objects.get(id=request.GET['courseId'])
-        ret = {
-            'courseNumber': course.course_number,
-            'title': course.title,
-            'credits': course.credits,
-            'department': course.department,
-            'weekHour': course.week_hour,
-            'method': course.method
-        }
-        render(request, 'manager/manager_course_modify.html', ret)
+        try:
+            course = Course.objects.get(course_number=request.GET['courseId'])
+        except:
+            return render(request, 'manager/manager_course_modify.html')
+        else:
+            ret = {
+                'courseNumber': course.course_number,
+                'title': course.title,
+                'credits': course.credits,
+                'department': course.department.name,
+                'weekHour': course.week_hour,
+                'method': course.method
+            }
+            return render(request, 'manager/manager_course_modify.html', ret)
     else:
-        course = Course.objects.get(id=request.GET['courseId'])
+        course = Course.objects.get(course_number=request.POST['courseId'])
         course.title = request.POST['title']
         course.credits = request.POST['credits']
         course.method = request.POST['method']
-        course.department = request.POST['department']
+        course.department = Department.objects.get(name=request.POST['department'])
         course.week_hour = request.POST['weekHour']
         course.save()
-        return HttpResponse('success')
+        return HttpResponse('<script>alert("课程修改成功！");</script>')
 
 
 @login_required
 def dropCourse(request):
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Manager':
         return HttpResponse('You are not a manager!')
     if request.method == 'GET':
-        course = Course.objects.get(id=request.GET['courseId'])
-        ret = {
-            'courseNumber': course.course_number,
-            'title': course.title,
-            'credits': course.credits,
-            'department': course.department,
-            'weekHour': course.week_hour,
-            'method': course.method
-        }
-        render(request, 'manager/manager_course_delete.html', ret)
+        try:
+            course = Course.objects.get(course_number=request.GET['courseId'])
+        except:
+            return render(request, 'manager/manager_course_delete.html')
+        else:
+            ret = [{
+                'courseNumber': course.course_number,
+                'title': course.title,
+                'credits': course.credits,
+                'department': course.department.name,
+                'weekHour': course.week_hour,
+                'method': course.method
+            }]
+            return render(request, 'manager/manager_course_delete.html', {'courseList':ret})
     else:
-        courseIds = request.POST['courseId']
+        courseIds = request.POST['courseList']
         for courseId in courseIds:
             course = Course.objects.get(id=courseId)
             course.delete()
-        return HttpResponse('success')
+        return HttpResponse('<script>alert("课程删除成功！");</script>')
+
+
+@login_required
+def addUser(request):
+    # TODO: 通过文件解析创建学生/教师
+    return HttpResponse("Function unrealized...")
 
 
 @login_required
@@ -404,79 +437,92 @@ def addInstructor(request):
 
 @login_required
 def modifyUser(request):
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Manager':
         return HttpResponse('You are not a manager!')
     if request.method == 'GET':
-        user = User.objects.get(username=request.GET['username'])
-        type = request.GET['type']
-        if type == 'Student':
-            item = user.student
+        try:
+            user = User.objects.get(username=request.GET['username'])
+        except:
+            return render(request, 'manager/manager_user_query_modify.html')
         else:
-            item = user.instructor
-        ret = {
-            'id': user.id,
-            'name': user.get_full_name(),
-            'gender': item.gender,
-            'address': item.address,
-            'phoneNumber': item.phone_number
-        }
-        if type == 'Student':
-            ret['department'] = item.major.department
-            ret['major'] = item.major.name
-        else:
-            ret['department'] = item.department
-            ret['major'] = None
-        return render(request, 'manager/manager_user_query_modify.html', ret)
+            type = request.GET['type']
+            if type == 'Student':
+                item = user.student
+            else:
+                item = user.instructor
+            if item is None:
+                return render(request, 'manager/manager_user_query_modify.html')
+            ret = {
+                'type': type,
+                'id': user.username,
+                'name': user.get_full_name(),
+                'gender': '男' if(item.gender == 1) else '女',
+                'address': item.address,
+                'phoneNumber': item.phone_number
+            }
+            if type == 'Student':
+                ret['department'] = item.major.department.name
+                ret['major'] = item.major.name
+            else:
+                ret['department'] = item.department.name
+                ret['major'] = None
+            return render(request, 'manager/manager_user_query_modify.html', ret)
     else:
-        user = User.objects.get(id=request.GET['userId'])
+        user = User.objects.get(id=request.POST['id'])
         type = request.POST['type']
         if type == 'Student':
             item = user.student
-            item.gender = request.POST['gender']
+            item.gender = 1 if(request.POST['gender'] == '男') else 2
             item.major = Major.objects.get(name=request.POST['major'])
+            item.department = Department.objects.gets(name=request.POST['department'])
             item.address = request.POST['address']
             item.phone_number = request.POST['phoneNumber']
             item.save()
         else:
             item = user.instructor
-            item.gender = request.POST['gender']
-            item.major = request.POST['major']
+            item.gender = 1 if(request.POST['gender'] == '男') else 2
+            #item.major = request.POST['major']
             item.address = request.POST['address']
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
             item.save()
-        return HttpResponse('success')
+        return HttpResponse('<script>alert("信息修改成功！");</script>')
 
 
 @login_required
 def deleteUser(request):
-    user = User.objects.get(request.user.id)
+    user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Manager':
         return HttpResponse('You are not a manager!')
     if request.method == 'GET':
-        user = User.objects.get(username=request.GET['username'])
-        if type == 'Student':
-            ret = {
-                'username': user.get_username(),
-                'name': user.get_full_name(),
-                'department':user.student.major.department
-            }
+        try:
+            user = User.objects.get(username=request.GET['username'])
+        except:
+            return render(request, 'manager/manager_user_delete.html')
         else:
-            ret = {
-                'username': user.get_username(),
-                'name': user.get_full_name(),
-                'department':user.instructor.department
-            }
-        return render(request, 'manager/manager_user_delete.html', ret)
+            if type == 'Student':
+                ret = {
+                    'id': user.get_username(),
+                    'name': user.get_full_name(),
+                    'department':user.student.major.department.name
+                }
+            else:
+                ret = {
+                    'id': user.get_username(),
+                    'name': user.get_full_name(),
+                    'department':user.instructor.department.name
+                }
+            return render(request, 'manager/manager_user_delete.html', ret)
     else:
-        usernames = request.POST['username']
+        usernames = request.POST['userList']
         for username in usernames:
             user = User.objects.get(username=username)
             user.delete()
-        return HttpResponse('success')
+        return HttpResponse('<script>alert("用户删除成功！");</script>')
+
 
 @login_required
 def searchLog(request):

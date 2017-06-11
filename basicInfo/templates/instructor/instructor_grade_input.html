@@ -42,14 +42,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{% for i in courseList %}}
+                {% for i in courseList %}
                 <tr class="item">
                     <td class="section_info">{{i.sectionId}}</td>
                     <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
 
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->

@@ -45,12 +45,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{% for i in gradeList%}}
+                {% for i in gradeList %}
                 <tr>
-                    <td>{{i.id}}</td>
+                    <td>{{i.username}}</td>
                     <td>{{i.grade}}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
                 </tbody>
             </table>
             <button class="btn btn-default" id="print">打印成绩</button>
@@ -81,7 +81,11 @@
 <script>
     $(document).ready(
         function () {
+            $("#print").click(
+                function () {
 
+                }
+            );
         }
     );
 

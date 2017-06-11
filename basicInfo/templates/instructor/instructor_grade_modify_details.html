@@ -49,12 +49,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{% for i in gradeList %}}
+                {% for i in gradeList %}
                 <tr>
-                    <td>{i.id}</td>
+                    <td>{{i.id}}</td>
                     <td><input type="text" class="form-control" id="{{i.id}}" name="{{ i.id }}">{{i.grade}}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
                 </tbody>
             </table>
             <input type="submit" class="btn btn-default" id="submit" value="提交更改">
