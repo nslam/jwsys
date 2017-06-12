@@ -20,6 +20,8 @@ class Instructor(models.Model):
     address = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
     gender = models.IntegerField()
+    birthday = models.DateTimeField(null=True, default=None)
+    nickName = models.DateTimeField(null=True, default=None)
 
 
 class Manager(models.Model):
@@ -28,6 +30,8 @@ class Manager(models.Model):
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     gender = models.IntegerField()
+    birthday = models.DateTimeField(null=True, default=None)
+    nickName = models.DateTimeField(null=True, default=None)
 
 
 class Student(models.Model):
@@ -40,6 +44,8 @@ class Student(models.Model):
     matriculate = models.IntegerField()
     graduate = models.IntegerField(null=True)
     gender = models.IntegerField()
+    birthday = models.DateTimeField(null=True, default=None)
+    nickName = models.DateTimeField(null=True, default=None)
 
 
 class Course(models.Model):
@@ -50,7 +56,7 @@ class Course(models.Model):
     week_hour = models.IntegerField()
     type = models.CharField(max_length=20)
     precourse = models.ForeignKey('Course', null=True, on_delete=models.SET_NULL)
-    method=models.CharField(max_length=30)
+    method = models.CharField(max_length=30)
 
 
 class Log(models.Model):
