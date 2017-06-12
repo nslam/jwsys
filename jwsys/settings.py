@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'basicInfo',
     'courseArrange',
+    'shareSource',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jwsysDB',
         'USER': 'root',
-        'PASSWORD': 'hkj111111',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306',
     }
