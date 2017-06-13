@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>共享资源</title>
+</head>
+<body>
+    {%  if content %}
+        <ul>
+            {%  for onecontent in content %}
+                <li>
+                    {{ onecontent.id }}/{{ onecontent.title }}/{{ onecontent.year }}/
+                    <a href="{{ onecontent.source_link }}">课程资源</a>/
+                    <a href="{{ onecontent.homework_link }}">作业</a>
+                </li>
+            {%  endfor %}
+        </ul>
+{% else  %}
+    <p>No course available</p>
+{% endif %}
+</body>
+</html>
