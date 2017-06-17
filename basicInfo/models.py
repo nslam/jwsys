@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from courseArrange.models import *
 
 
 class Department(models.Model):
@@ -88,6 +87,6 @@ class Equipment(models.Model):
 
 
 class Takes(models.Model):
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    section = models.ForeignKey('courseArrange.Section', on_delete=models.CASCADE)
     score = models.IntegerField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
