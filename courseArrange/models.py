@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-
 class Section(models.Model):
     course = models.ForeignKey('basicInfo.Course', null=True, on_delete=models.SET_NULL)
     semester = models.CharField(max_length=20)

@@ -1,6 +1,6 @@
-from courseSelection.models import Teaches, User, Instructor, \
-Student, Section, Course, SecTimeClassroom, TimeSlot
-
+from django.contrib.auth.models import User
+from basicInfo.models import Instructor, Student, Course, TimeSlot, Takes
+from courseArrange.models import Teaches, Section, SecTimeClassroom
 
 class InstructorOperations(object):
 
