@@ -75,8 +75,8 @@ class Classroom(models.Model):
 
 class TimeSlot(models.Model):
     day = models.IntegerField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.IntegerField()
+    end_time = models.IntegerField()
 
     class Meta:
         unique_together = ('day', 'start_time', 'end_time')
