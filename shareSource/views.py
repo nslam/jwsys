@@ -9,8 +9,8 @@ def mainForm(req):
     section_list = Section.objects.all()
     contents=[]
     for onesection in section_list:
-        newcontents={'id': onesection.id, 'title': onesection.course.title,
-                    'year': onesection.year, 'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
+        newcontents={'id': onesection.course_id, 'title': onesection.course.title,
+                    'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
         contents.append(newcontents)
     return render(req, 'mainForm.html', {'content': contents})
 
