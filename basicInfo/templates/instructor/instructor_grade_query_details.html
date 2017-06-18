@@ -78,12 +78,13 @@
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.js"></script>
 <script>
     $(document).ready(
         function () {
             $("#print").click(
                 function () {
-
+                    $("body").print();
                 }
             );
         }

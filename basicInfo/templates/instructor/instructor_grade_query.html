@@ -44,7 +44,7 @@
                 <tbody>
                 {% for i in courseList %}
                 <tr class="item">
-                    <td class="section_info">{{i.sectionId}}</td>
+                    <a href="basicInfo/gradeQueryDetails/?sectionId={{ i.sectionId }}"><td class="section_info">{{i.sectionId}}</td></a>
                     <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
@@ -75,10 +75,11 @@
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.js"></script>
 <script>
     $(document).ready(
         function () {
-            $(".item").click(function () {
+            /*$(".item").click(function () {
                 var sectionInfo = $(this).children().get(0).innerHTML;
                 var courseNumber = $(this).children().get(1).innerHTML;
                 //To details
@@ -86,7 +87,7 @@
                     {'sectionId': sectionInfo,
                     'courseNumber': courseNumber});
                 //..Redirect
-            });
+            });*/
         }
     );
 

@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^queryCourse/$', views.queryCourse),
     url(r'^gradeInput/$', views.gradeInput),
     url(r'^gradeInputDetails/$', views.gradeInputDetails),
-    url(r'^gradeModify/$', views.gradeInput),
+    url(r'^gradeModify/$', views.gradeModify),
     url(r'^gradeModifyDetails/$', views.gradeInputDetails),
     url(r'^gradeQuery/$', views.gradeQuery),
     url(r'^gradeQueryDetails/$', views.gradeQueryDetails),

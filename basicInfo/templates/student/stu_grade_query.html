@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="stuId"></span></li>
+        <li role="presentation">欢迎:{{username}}</li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -68,7 +68,7 @@
             </table>
             <div class="text-right">
                 <button class="btn btn-default" id="print">打印成绩</button>
-                <button class="btn btn-info" id="analysis">个人成绩分析</button>
+                <a href="/basicInfo/stuGradeAnalysis/"><button class="btn btn-info" id="analysis">个人成绩分析</button></a>
             </div>
         </div>
         <hr>
@@ -81,15 +81,16 @@
     </div>
 </div>
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
-<script type="javascript">
+<script src="http://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.js"></script>
+<script>
     $(document).ready(
         function () {
-            $("#analysis").click(function () {
-                $.get('/basicInfo/stuGradeQuery/');
-            });
+            //$("#analysis").click(function () {
+              //  $.get('/basicInfo/stuGradeQuery/');
+            //});
 
             $("#print").click(function () {
-
+                $("#gradeTable").print();
             });
         }
     );

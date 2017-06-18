@@ -182,7 +182,7 @@ def stuGradeQuery(request):
         ret.append({'title': take.section.course.title, 'courseNumber': take.section.course.course_number,
                     'credit': take.section.course.credits, 'grade': take.score,
                     'gradePoint': getGradePoint(take.score)})
-    return render(request, 'student/stu_grade_query.html', {'gradeList': ret})
+    return render(request, 'student/stu_grade_query.html', {'gradeList': ret, 'username': user.username})
 
 
 @login_required
@@ -255,6 +255,29 @@ def queryCourse(request):
 
 
 @login_required
+def gradeModify(request):
+    ret = []
+    user = User.objects.get(id=request.user.id)
+    type = getType(user)
+    if type != 'Instructor':
+        return HttpResponse('You are not a instructor!')
+    teaches = Teaches.objects.filter(instructor=user.instructor.id)
+    for teach in teaches:
+        section = teach.section
+        takes = Takes.objects.filter(section=section)
+        if takes[0].score is None:
+            continue
+        course = section.course
+        ret.append({
+            'sectionId': teach.section.id,
+            'title': course.title,
+            'courseNumber': course.course_number,
+            'credit': course.credits
+        })
+    return render(request, 'instructor/instructor_grade_modify.html', {'courseList': ret})
+
+
+@login_required
 def gradeInput(request):
     ret = []
     user = User.objects.get(id=request.user.id)
@@ -288,7 +311,8 @@ def gradeInputDetails(request):
         takes = Takes.objects.filter(section=Section.objects.get(id=request.GET['sectionId']))
         for take in takes:
             ret.append({
-                'username': take.student.user.get_username()
+                'username': take.student.user.get_username(),
+                'grade': '' if(take.score is None) else take.score
             })
         return render(request, 'instructor/instructor_grade_input_details.html',
                       {'gradeList': ret, 'sectionId': request.GET['sectionId'],

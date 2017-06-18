@@ -44,7 +44,7 @@
                 <tbody>
                 {% for i in courseList %}
                 <tr class="item">
-                    <td class="section_info">{{i.sectionId}}</td>
+                    <a href="/basicInfo/gradeInputDetails/?sectionId={{ i.sectionId }}"><td class="section_info">{{i.sectionId}}</td></a>
                     <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
@@ -78,7 +78,7 @@
 <script>
     $(document).ready(
         function () {
-            $(".item").click(function () {
+            /*$(".item").click(function () {
                 var sectionInfo = $(this).children().get(0).innerHTML;
                 var courseNumber = $(this).children().get(1).innerHTML;
                 $.get("/basicInfo/gradeInputDetails/",
@@ -86,7 +86,7 @@
                     'courseNumber': courseNumber});
                 //..Redirect Backward
                 //alert(sectionInfo + courseNumber);
-            });
+            });*/
         }
     );
 
