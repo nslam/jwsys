@@ -135,9 +135,9 @@ def uploadPic(request):
     elif type == 'Manager':
         item = user.manager
     item.photo_file = request.FILES['photo']
-    item.photo_file.name = request.user.id + '__image.jpg'
+    item.photo_file.name = str(request.user.id) + '__image.jpg'
     item.save()
-    return HttpResponse('<script> alert("Function unrealized.."); </script>')
+    return HttpResponse('<script> alert("上传照片成功！"); </script>')
 
 
 @login_required
@@ -153,7 +153,8 @@ def changeInfo(request):
     elif type == 'Manager':
         item = user.manager
     if request.method == 'GET':
-        ret['picSrc'] = '../media/images' + item.photo_file.name
+        ret['picSrc'] = '/basicInfo/media/' + item.photo_file.name
+        print(ret['picSrc'])
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
         ret['gender'] = '男' if (item.gender == 1) else '女'

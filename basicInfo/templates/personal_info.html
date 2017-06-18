@@ -31,11 +31,11 @@
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
             <div>
-                <form method="post" action="/basicInfo/uploadPic/">
+                <form method="post" action="/basicInfo/uploadPic/" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label for="uploadPic">照片上传</label>
                     <img src="{{ picSrc }}" id="pic" width="150" height="150" alt="个人照片" align="right">
-                    <input type="file" id="uploadPic">
+                    <input type="file" name="photo" id="uploadPic">
                     <input type="submit" class="btn btn-default" value="上传" id="upload">
                 </form>
             </div>
