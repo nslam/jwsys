@@ -1,10 +1,13 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, redirect, reverse, render_to_response
 from .models import *
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from courseArrange.models import Teaches, Section
+from django.utils.datastructures import MultiValueDictKeyError
+from django.template.loader import get_template
 import math
 
 
@@ -17,6 +20,21 @@ def getGradePoint(grade):
         return 4.8
     else:
         return 4.8 - math.ceil(92 - grade) / 3 * 0.3
+
+
+def stuMain(request):
+    username = request.user
+    return render(request, 'student_main.html', {'username': username})
+
+
+def instructorMain(request):
+    username = request.user
+    return render(request, 'instructor_main.html', {'username': username})
+
+
+def managerMain(request):
+    username = request.user
+    return render(request, 'manager_main.html', {'username': username})
 
 
 def getType(user):
@@ -68,20 +86,20 @@ def login(request):
         try:
             test = user.instructor
         except:
-            return render(request, 'login.html', {'status': 'You are not a instructor!'})
-    # if type == 'Manager':
-    #     try:
-    #         test = user.manager
-    #     except:
-    #         return render(request, 'login.html', {'status': 'You are not a manager!'})
+            return render(request, 'login.html', {'status': 'You are not an instructor!'})
+    if type == 'Manager':
+        try:
+            test = user.manager
+        except:
+            return render(request, 'login.html', {'status': 'You are not a manager!'})
     auth.login(request=request, user=user)
     # Check type !!!!! Here I do not check that....
     if type == 'Student':
-        return render(request, 'student_main.html', {'username': username})
+        return HttpResponseRedirect('/basicInfo/stuMain')
     elif type == 'Instructor':
-        return render(request, 'instructor_main.html', {'username': username})
+        return HttpResponseRedirect('/basicInfo/instructorMain')
     elif type == 'Manager':
-        return render(request, 'manager_main.html', {'username': username})
+        return HttpResponseRedirect('/basicInfo/managerMain')
 
 
 @login_required
@@ -101,7 +119,8 @@ def setPassword(request):
             request.user.set_password(newPwd)
             request.user.save()
             status = 'Password changed successful!'
-        return render(request, 'changepwd.html', {'status': status})
+            auth.logout(request)
+        return HttpResponseRedirect('/basicInfo/')
 
 
 @login_required
@@ -125,7 +144,7 @@ def changeInfo(request):
     if request.method == 'GET':
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
-        ret['gender'] = '男' if (item.gender == 1) else '女'
+        ret['gender'] = '男' if(item.gender == 1) else '女'
         ret['userId'] = user.username  # Set username as ID shown outside
         if type == 'Student':
             ret['major'] = item.major.name
@@ -344,7 +363,7 @@ def changeCourse(request):
     if request.method == 'GET':
         try:
             course = Course.objects.get(course_number=request.GET['courseId'])
-        except:
+        except (UnboundLocalError, MultiValueDictKeyError):
             return render(request, 'manager/manager_course_modify.html')
         else:
             ret = {
@@ -355,9 +374,10 @@ def changeCourse(request):
                 'weekHour': course.week_hour,
                 'method': course.method
             }
-            return render(request, 'manager/manager_course_modify.html', ret)
+            return JsonResponse(ret)
     else:
-        course = Course.objects.get(course_number=request.POST['courseId'])
+        courseNumber = request.POST['courseId']
+        course = Course.objects.get(course_number=courseNumber)
         course.title = request.POST['title']
         course.credits = request.POST['credits']
         course.method = request.POST['method']
@@ -376,7 +396,7 @@ def dropCourse(request):
     if request.method == 'GET':
         try:
             course = Course.objects.get(course_number=request.GET['courseId'])
-        except:
+        except (UnboundLocalError, MultiValueDictKeyError):
             return render(request, 'manager/manager_course_delete.html')
         else:
             ret = [{
@@ -387,13 +407,13 @@ def dropCourse(request):
                 'weekHour': course.week_hour,
                 'method': course.method
             }]
-            return render(request, 'manager/manager_course_delete.html', {'courseList': ret})
+            return JsonResponse({'courseList': ret})
     else:
-        courseIds = request.POST['courseList']
+        courseIds = request.POST.getlist('courseList[]')
         for courseId in courseIds:
-            course = Course.objects.get(id=courseId)
+            course = Course.objects.get(course_number=courseId)
             course.delete()
-        return HttpResponse('<script>alert("课程删除成功！");</script>')
+        return HttpResponse('课程删除成功')
 
 
 @login_required
@@ -444,37 +464,36 @@ def modifyUser(request):
     if request.method == 'GET':
         try:
             user = User.objects.get(username=request.GET['username'])
-        except:
+        except (UnboundLocalError, MultiValueDictKeyError):
             return render(request, 'manager/manager_user_query_modify.html')
         else:
-            type = request.GET['type']
-            if type == 'Student':
+            usertype = request.GET['type']
+            if usertype == 'Student':
                 item = user.student
             else:
                 item = user.instructor
-            if item is None:
-                return render(request, 'manager/manager_user_query_modify.html')
             ret = {
-                'type': type,
+                'type': usertype,
                 'id': user.username,
                 'name': user.get_full_name(),
-                'gender': '男' if (item.gender == 1) else '女',
+                'gender': '男' if(item.gender == 1) else '女',
                 'address': item.address,
                 'phoneNumber': item.phone_number
             }
-            if type == 'Student':
+            if usertype == 'Student':
                 ret['department'] = item.major.department.name
                 ret['major'] = item.major.name
             else:
                 ret['department'] = item.department.name
-                ret['major'] = None
-            return render(request, 'manager/manager_user_query_modify.html', ret)
+                ret['major'] = ''
+            return JsonResponse(ret)
+            #return render(request, 'manager/manager_user_query_modify.html', ret)
     else:
-        user = User.objects.get(id=request.POST['id'])
-        type = request.POST['type']
-        if type == 'Student':
+        user = User.objects.get(username=request.POST['id'])
+        usertype = request.POST['type']
+        if usertype == 'Student':
             item = user.student
-            item.gender = 1 if (request.POST['gender'] == '男') else 2
+            item.gender = 1 if(request.POST['gender'] == '男') else 2
             item.major = Major.objects.get(name=request.POST['major'])
             item.department = Department.objects.gets(name=request.POST['department'])
             item.address = request.POST['address']
@@ -482,8 +501,8 @@ def modifyUser(request):
             item.save()
         else:
             item = user.instructor
-            item.gender = 1 if (request.POST['gender'] == '男') else 2
-            # item.major = request.POST['major']
+            item.gender = 1 if(request.POST['gender'] == '男') else 2
+            #item.major = request.POST['major']
             item.address = request.POST['address']
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
@@ -493,17 +512,18 @@ def modifyUser(request):
 
 @login_required
 def deleteUser(request):
-    user = User.objects.get(id=request.user.id)
-    type = getType(user)
-    if type != 'Manager':
-        return HttpResponse('You are not a manager!')
+    # user = User.objects.get(id=request.user.id)
+    # type = getType(user)
+    # if type != 'Manager':
+    #     return HttpResponse('You are not a manager!')
     if request.method == 'GET':
         try:
             user = User.objects.get(username=request.GET['username'])
-        except:
+        except (UnboundLocalError, MultiValueDictKeyError):
             return render(request, 'manager/manager_user_delete.html')
         else:
-            if type == 'Student':
+            usertype = request.GET['type']
+            if usertype == 'Student':
                 ret = {
                     'id': user.get_username(),
                     'name': user.get_full_name(),
@@ -515,13 +535,14 @@ def deleteUser(request):
                     'name': user.get_full_name(),
                     'department': user.instructor.department.name
                 }
-            return render(request, 'manager/manager_user_delete.html', ret)
+            return JsonResponse(ret)
+            #return render(request, 'manager/manager_user_delete.html', ret)
     else:
-        usernames = request.POST['userList']
+        usernames = request.POST.getlist('userList[]')
         for username in usernames:
             user = User.objects.get(username=username)
             user.delete()
-        return HttpResponse('<script>alert("用户删除成功！");</script>')
+        return HttpResponse('用户删除成功！')
 
 
 @login_required
