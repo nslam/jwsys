@@ -30,15 +30,17 @@
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
             <div>
-                <form role="form" method="post" action="/basicInfo/addUser/">
+                <form role="form" method="post" action="/basicInfo/addUser/" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label for="uploadUserFile">上传用户文件(.txt)</label>
-                    <input type="file" id="uploadUserFile" name="uploadUserFile">
+                    <input type="file" id="uploadUserFile" name="file">
                     <input type="submit" class="btn btn-default" id="upload" value="上传">
                 </form>
                 <p class="text-left">输入格式为(每条换行)：</p>
-                <p class="text-info">学工号 姓名 性别 学院 专业 用户类型(学生/教师)</p>
-                <p class="text-info">例:3100101234 张三 男 计算机科学与技术学院 软件工程 学生</p>
+                <p class="text-info">用户类型(S/T) 学工号 姓名 性别 学院 [专业] [注册时间]</p>
+                <p class="text-info">例: S 3100101234 张三 男 计算机科学与技术学院 软件工程 2017</p>
+                <p class="text-info">例: T 1000000000 主席 男 计算机科学与技术学院</p>
+                <p class="text-info">密码默认: 12345678</p>
             </div>
             <hr><br>
         <hr>

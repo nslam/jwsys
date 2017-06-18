@@ -7,7 +7,6 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from courseArrange.models import Teaches, Section
 from django.utils.datastructures import MultiValueDictKeyError
-from django.template.loader import get_template
 import math
 
 
@@ -430,7 +429,14 @@ def dropCourse(request):
 @login_required
 def addUser(request):
     # TODO: 通过文件解析创建学生/教师
-    return HttpResponse("Function unrealized...")
+    user = User.objects.get(id=request.user.id)
+    type = getType(user)
+    if type != 'Manager':
+        return HttpResponse('You are not a manager!')
+    if request.method == 'GET':
+        return render(request, 'manager/manager_user_add.html')
+    else:
+        return HttpResponse("Function unrealized...")
 
 
 @login_required
@@ -474,10 +480,11 @@ def modifyUser(request):
         return HttpResponse('You are not a manager!')
     if request.method == 'GET':
         try:
-            user = User.objects.get(username=request.GET['username'])
+            user = User.objects.get(username=request.GET['id'])
         except (UnboundLocalError, MultiValueDictKeyError):
             return render(request, 'manager/manager_user_query_modify.html')
         else:
+
             usertype = request.GET['type']
             if usertype == 'Student':
                 item = user.student
@@ -498,7 +505,7 @@ def modifyUser(request):
                 ret['department'] = item.department.name
                 ret['major'] = ''
             return JsonResponse(ret)
-            # return render(request, 'manager/manager_user_query_modify.html', ret)
+            #return render(request, 'manager/manager_user_query_modify.html', ret)
     else:
         user = User.objects.get(username=request.POST['id'])
         usertype = request.POST['type']
@@ -506,14 +513,13 @@ def modifyUser(request):
             item = user.student
             item.gender = 1 if (request.POST['gender'] == '男') else 2
             item.major = Major.objects.get(name=request.POST['major'])
-            item.department = Department.objects.gets(name=request.POST['department'])
+            item.department = Department.objects.get(name=request.POST['department'])
             item.address = request.POST['address']
             item.phone_number = request.POST['phoneNumber']
             item.save()
         else:
             item = user.instructor
             item.gender = 1 if (request.POST['gender'] == '男') else 2
-            # item.major = request.POST['major']
             item.address = request.POST['address']
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
@@ -523,10 +529,10 @@ def modifyUser(request):
 
 @login_required
 def deleteUser(request):
-    # user = User.objects.get(id=request.user.id)
-    # type = getType(user)
-    # if type != 'Manager':
-    #     return HttpResponse('You are not a manager!')
+    user = User.objects.get(id=request.user.id)
+    type = getType(user)
+    if type != 'Manager':
+        return HttpResponse('You are not a manager!')
     if request.method == 'GET':
         try:
             user = User.objects.get(username=request.GET['username'])

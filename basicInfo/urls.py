@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^changeCourse/$', views.changeCourse),
     url(r'^dropCourse/$', views.dropCourse),
     url(r'^modifyUser/$', views.modifyUser),
+    url(r'^addUser/$', views.addUser),
     url(r'^deleteUser/$', views.deleteUser),
 ]
 
