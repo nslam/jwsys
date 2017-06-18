@@ -206,13 +206,13 @@ def stuGradeAnalysis(request):
         num += 1
         gp += getGradePoint(take.score) * take.section.course.credits
         totalCredits += take.section.course.credits
-    ret['avg'] = scores * 1.0 / num
+    ret['avg'] = 0 if(num == 0) else scores * 1.0 / num
     ret['gp'] = gp
     ret['creditEarned'] = totalCredits
     if totalCredits == 0:
         ret['gpa'] = 0
     else:
-        ret['gpa'] = gp / totalCredits
+        ret['gpa'] = 0 if(totalCredits == 0) else gp / totalCredits
     return render(request, 'student/stu_grade_analysis.html', ret)
 
 
