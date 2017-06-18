@@ -126,6 +126,16 @@ def setPassword(request):
 @login_required
 def uploadPic(request):
     # TODO: 上传照片
+    user = User.objects.get(id=request.user.id)
+    type = getType(user)
+    if type == 'Student':
+        item = user.student
+    elif type == 'Instructor':
+        item = user.instructor
+    elif type == 'Manager':
+        item = user.manager
+    item.photo_file=request.FILES['photo']
+    item.save()
     return HttpResponse('<script> alert("Function unrealized.."); </script>')
 
 
@@ -142,9 +152,10 @@ def changeInfo(request):
     elif type == 'Manager':
         item = user.manager
     if request.method == 'GET':
+        ret['picSrc'] = item.photo_file
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
-        ret['gender'] = '男' if(item.gender == 1) else '女'
+        ret['gender'] = '男' if (item.gender == 1) else '女'
         ret['userId'] = user.username  # Set username as ID shown outside
         if type == 'Student':
             ret['major'] = item.major.name
@@ -476,7 +487,7 @@ def modifyUser(request):
                 'type': usertype,
                 'id': user.username,
                 'name': user.get_full_name(),
-                'gender': '男' if(item.gender == 1) else '女',
+                'gender': '男' if (item.gender == 1) else '女',
                 'address': item.address,
                 'phoneNumber': item.phone_number
             }
@@ -487,13 +498,13 @@ def modifyUser(request):
                 ret['department'] = item.department.name
                 ret['major'] = ''
             return JsonResponse(ret)
-            #return render(request, 'manager/manager_user_query_modify.html', ret)
+            # return render(request, 'manager/manager_user_query_modify.html', ret)
     else:
         user = User.objects.get(username=request.POST['id'])
         usertype = request.POST['type']
         if usertype == 'Student':
             item = user.student
-            item.gender = 1 if(request.POST['gender'] == '男') else 2
+            item.gender = 1 if (request.POST['gender'] == '男') else 2
             item.major = Major.objects.get(name=request.POST['major'])
             item.department = Department.objects.gets(name=request.POST['department'])
             item.address = request.POST['address']
@@ -501,8 +512,8 @@ def modifyUser(request):
             item.save()
         else:
             item = user.instructor
-            item.gender = 1 if(request.POST['gender'] == '男') else 2
-            #item.major = request.POST['major']
+            item.gender = 1 if (request.POST['gender'] == '男') else 2
+            # item.major = request.POST['major']
             item.address = request.POST['address']
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
@@ -536,7 +547,7 @@ def deleteUser(request):
                     'department': user.instructor.department.name
                 }
             return JsonResponse(ret)
-            #return render(request, 'manager/manager_user_delete.html', ret)
+            # return render(request, 'manager/manager_user_delete.html', ret)
     else:
         usernames = request.POST.getlist('userList[]')
         for username in usernames:

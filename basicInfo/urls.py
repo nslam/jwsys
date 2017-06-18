@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^managerMain/$', views.managerMain),
     url(r'^setPassword/$', views.setPassword),
     url(r'^changeInfo/$', views.changeInfo),
+    url(r'^uploadPic/$', views.uploadPic),
     url(r'^addStudent/$', views.addStudent),
     url(r'^addInstructor/$', views.addInstructor),
     url(r'^stuGradeQuery/$', views.stuGradeQuery),
