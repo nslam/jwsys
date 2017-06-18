@@ -134,7 +134,8 @@ def uploadPic(request):
         item = user.instructor
     elif type == 'Manager':
         item = user.manager
-    item.photo_file=request.FILES['photo']
+    item.photo_file = request.FILES['photo']
+    item.photo_file.name = request.user.id + '__image.jpg'
     item.save()
     return HttpResponse('<script> alert("Function unrealized.."); </script>')
 
@@ -152,7 +153,7 @@ def changeInfo(request):
     elif type == 'Manager':
         item = user.manager
     if request.method == 'GET':
-        ret['picSrc'] = item.photo_file
+        ret['picSrc'] = '../media/images' + item.photo_file.name
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
         ret['gender'] = '男' if (item.gender == 1) else '女'
