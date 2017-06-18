@@ -125,7 +125,7 @@ def changeInfo(request):
     if request.method == 'GET':
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
-        ret['gender'] = '男' if(item.gender == 1) else '女'
+        ret['gender'] = '男' if (item.gender == 1) else '女'
         ret['userId'] = user.username  # Set username as ID shown outside
         if type == 'Student':
             ret['major'] = item.major.name
@@ -387,7 +387,7 @@ def dropCourse(request):
                 'weekHour': course.week_hour,
                 'method': course.method
             }]
-            return render(request, 'manager/manager_course_delete.html', {'courseList':ret})
+            return render(request, 'manager/manager_course_delete.html', {'courseList': ret})
     else:
         courseIds = request.POST['courseList']
         for courseId in courseIds:
@@ -458,7 +458,7 @@ def modifyUser(request):
                 'type': type,
                 'id': user.username,
                 'name': user.get_full_name(),
-                'gender': '男' if(item.gender == 1) else '女',
+                'gender': '男' if (item.gender == 1) else '女',
                 'address': item.address,
                 'phoneNumber': item.phone_number
             }
@@ -474,7 +474,7 @@ def modifyUser(request):
         type = request.POST['type']
         if type == 'Student':
             item = user.student
-            item.gender = 1 if(request.POST['gender'] == '男') else 2
+            item.gender = 1 if (request.POST['gender'] == '男') else 2
             item.major = Major.objects.get(name=request.POST['major'])
             item.department = Department.objects.gets(name=request.POST['department'])
             item.address = request.POST['address']
@@ -482,8 +482,8 @@ def modifyUser(request):
             item.save()
         else:
             item = user.instructor
-            item.gender = 1 if(request.POST['gender'] == '男') else 2
-            #item.major = request.POST['major']
+            item.gender = 1 if (request.POST['gender'] == '男') else 2
+            # item.major = request.POST['major']
             item.address = request.POST['address']
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
@@ -507,13 +507,13 @@ def deleteUser(request):
                 ret = {
                     'id': user.get_username(),
                     'name': user.get_full_name(),
-                    'department':user.student.major.department.name
+                    'department': user.student.major.department.name
                 }
             else:
                 ret = {
                     'id': user.get_username(),
                     'name': user.get_full_name(),
-                    'department':user.instructor.department.name
+                    'department': user.instructor.department.name
                 }
             return render(request, 'manager/manager_user_delete.html', ret)
     else:

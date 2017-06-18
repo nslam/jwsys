@@ -38,7 +38,7 @@ class Student(models.Model):
     photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
-    tot_cred = models.IntegerField(default=0)
+    tot_cred = models.FloatField(default=0)
     major = models.ForeignKey(Major, null=True, on_delete=models.SET_NULL)
     matriculate = models.IntegerField()
     graduate = models.IntegerField(null=True)
@@ -51,7 +51,7 @@ class Course(models.Model):
     course_number = models.CharField(max_length=100, unique=True)
     title = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
-    credits = models.IntegerField()
+    credits = models.FloatField()
     week_hour = models.IntegerField()
     type = models.CharField(max_length=20)
     precourse = models.ForeignKey('Course', null=True, on_delete=models.SET_NULL)
@@ -88,5 +88,5 @@ class Equipment(models.Model):
 
 class Takes(models.Model):
     section = models.ForeignKey('courseArrange.Section', on_delete=models.CASCADE)
-    score = models.IntegerField()
+    score = models.IntegerField(null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
