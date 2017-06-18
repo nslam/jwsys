@@ -45,7 +45,7 @@
                 <tbody>
                 {% for i in courseList %}
                 <tr class="item">
-                    <a href="/basicInfo/gradeModifyDetails/?sectionId={{ i.sectionId }}"><td class="section_info">{{i.section_info}}</td></a>
+                    <a href="/basicInfo/gradeModifyDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}"><td class="section_info">{{i.section_info}}</td></a>
                     <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
