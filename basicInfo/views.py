@@ -159,9 +159,12 @@ def changeInfo(request):
         if type == 'Student':
             ret['major'] = item.major.name
             ret['dept'] = item.major.department.name
-        else:
+        elif type == 'Instructor':
             ret['major'] = ""
-            ret['dept'] = ""
+            ret['dept'] = item.department.name
+        else:
+            ret['major'] = ''
+            ret['dept'] = ''
         return render(request, 'personal_info.html', ret)
     else:
         item.address = request.POST['address']
@@ -222,14 +225,16 @@ def addCourse(request):
     if request.method == 'GET':
         return render(request, 'instructor/instructor_course_apply.html', {'dept': user.instructor.department.name})
     else:
-        course = Course.objects.create()
-        course.course_number = str(course.id)
+        course = Course()
+        #course.course_number = request.POST['courseNumber']
         course.department = user.instructor.department
         course.title = request.POST['title']
         course.credits = request.POST['credits']
         course.week_hour = request.POST['weekHour']
         course.method = request.POST['method']
         course.type = request.POST['type']
+        course.save()
+        course.course_number = str(course.id)
         course.save()
         return HttpResponse('<script>alert("课程添加成功！");</script>')
 
@@ -452,7 +457,6 @@ def dropCourse(request):
 
 @login_required
 def addUser(request):
-    # TODO: 通过文件解析创建学生/教师
     user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type != 'Manager':
