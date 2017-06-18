@@ -54,7 +54,7 @@ class Course(models.Model):
     credits = models.FloatField()
     week_hour = models.IntegerField()
     type = models.CharField(max_length=20)
-    precourse = models.ForeignKey('Course', null=True, on_delete=models.SET_NULL)
+    precourse = models.ManyToManyField('Course', null=True, on_delete=models.SET_NULL)
     method = models.CharField(max_length=30)
 
 
