@@ -312,7 +312,7 @@ def gradeInputDetails(request):
         for take in takes:
             ret.append({
                 'username': take.student.user.get_username(),
-                'grade': '' if(take.score is None) else take.score
+                'grade': '' if (take.score is None) else take.score
             })
         return render(request, 'instructor/instructor_grade_input_details.html',
                       {'gradeList': ret, 'sectionId': request.GET['sectionId'],
@@ -460,7 +460,55 @@ def addUser(request):
     if request.method == 'GET':
         return render(request, 'manager/manager_user_add.html')
     else:
-        return HttpResponse("Function unrealized...")
+        f = request.FILES['file']
+        a = f.readline().decode('gbk')
+        c = 1
+        while a != '':
+            a.strip('\n')
+            a.strip('\n')
+            if a[0] == 'S':
+                addType, account, name, gender, departmentName, majorName, year = a.split(' ')
+                year = int(year)
+            elif a[0] == 'T':
+                addType, account, name, gender, departmentName = a.split(' ')
+            else:
+                return HttpResponse('Type error!')
+            if gender != '男' and gender != '女':
+                return HttpResponse('Gender is wrong!')
+            user = User.objects.create_user(account, account + '@zju.edu.cn', '12345678')
+            user.last_name = name
+            user.save()
+            department = Department.objects.filter(name=departmentName)
+            if len(department) == 0:
+                department = Department.objects.create(name=departmentName, building=None)
+            else:
+                department = department[0]
+            if addType == 'S':
+                student = Student()
+                student.user = user
+                major = Major.objects.filter(name=majorName, department=department)
+                if len(major) == 0:
+                    major = Major.objects.create(name=majorName, department=department)
+                else:
+                    major = major[0]
+                student.major = major
+                if gender == '男':
+                    student.gender = 1
+                else:
+                    student.gender = 0
+                student.matriculate = year
+                student.save()
+            else:
+                instructor = Instructor()
+                instructor.user = user
+                if gender == '男':
+                    instructor.gender = 1
+                else:
+                    instructor.gender = 0
+                instructor.department = department
+                instructor.save()
+            a = f.readline().decode('gbk')
+        return HttpResponse("Success")
 
 
 @login_required
@@ -529,7 +577,7 @@ def modifyUser(request):
                 ret['department'] = item.department.name
                 ret['major'] = ''
             return JsonResponse(ret)
-            #return render(request, 'manager/manager_user_query_modify.html', ret)
+            # return render(request, 'manager/manager_user_query_modify.html', ret)
     else:
         user = User.objects.get(username=request.POST['id'])
         usertype = request.POST['type']

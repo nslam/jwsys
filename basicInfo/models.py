@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    building = models.CharField(max_length=100)
+    building = models.CharField(max_length=100,null=True)
 
 
 class Major(models.Model):
