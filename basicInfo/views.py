@@ -125,7 +125,6 @@ def setPassword(request):
 
 @login_required
 def uploadPic(request):
-    # TODO: 上传照片
     user = User.objects.get(id=request.user.id)
     type = getType(user)
     if type == 'Student':
@@ -137,12 +136,11 @@ def uploadPic(request):
     item.photo_file = request.FILES['photo']
     item.photo_file.name = str(request.user.id) + '__image.jpg'
     item.save()
-    return HttpResponse('<script> alert("上传照片成功！"); </script>')
+    return HttpResponseRedirect('/basicInfo/changeInfo/')
 
 
 @login_required
 def changeInfo(request):
-    # TODO: 'GET'还需要返回照片地址 picSrc
     ret = {}
     user = User.objects.get(id=request.user.id)
     type = getType(user)
@@ -163,8 +161,8 @@ def changeInfo(request):
             ret['major'] = item.major.name
             ret['dept'] = item.major.department.name
         else:
-            ret['major'] = None
-            ret['dept'] = None
+            ret['major'] = ""
+            ret['dept'] = ""
         return render(request, 'personal_info.html', ret)
     else:
         item.address = request.POST['address']

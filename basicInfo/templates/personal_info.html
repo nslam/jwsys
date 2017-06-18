@@ -31,7 +31,7 @@
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
             <div>
-                <form method="post" action="/basicInfo/uploadPic/" enctype="multipart/form-data">
+                <form method="post" action="/basicInfo/uploadPic/" enctype="multipart/form-data" id="uploadPicForm">
                     {% csrf_token %}
                     <label for="uploadPic">照片上传</label>
                     <img src="{{ picSrc }}" id="pic" width="150" height="150" alt="个人照片" align="right">
@@ -89,7 +89,13 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
-
+    $(document).ready(
+        function () {
+            $("#upload").click(function () {
+                alert("上传成功！");
+            })
+        }
+    )
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.js"></script>
