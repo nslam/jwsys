@@ -27,3 +27,13 @@ class assignment_store(models.Model):
      studentid=models.CharField(max_length=15)
      file_path=models.FileField(upload_to='uploads/assignment/')
      status=models.CharField(max_length=15)
+
+class file(models.Model):
+    course_id = models.CharField(max_length=20)
+    file_id = models.IntegerField()
+    file_name = models.CharField(max_length=40)
+    file_path = models.FileField(upload_to='uploads/assignment/')
+    update_time = models.DateTimeField()
+    download_times = models.IntegerField()
+    flag = models.IntegerField()
+    flag_top = models.IntegerField()

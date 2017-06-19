@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from shareSource.models import Privilege,assignment_store,assignment
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect,StreamingHttpResponse
+from shareSource.models import Privilege,assignment_store,assignment,file
 from basicInfo.models import *
 from courseArrange.models import Section
 from django.template import loader,context,Template
 from django.http import HttpResponse
 import os
+import datetime
 from django.shortcuts import render_to_response,get_object_or_404
 from django.template import RequestContext
 import zipfile
@@ -13,10 +14,23 @@ import urllib.request,re
 def mainForm(req):
     #TODO 获取数据部分
     #section_list = Section.objects.all()
+    # user = User.objects.get(id=request.user.id)
+    # type = getType(user)
+    # section_list = []
+    # if type == 'Manager':
+    #     useid = user.manager.user_id
+    #     section_list = Section.objects.all()
+    # else:
+    #     if type == 'Student':
+    #         useid = user.student.user_id
+    #     elif type == 'Instructor':
+    #         useid = user.instructor.user_id
+    #     for i in Privilege.objects.filter(userid=useid):
+    #         section_list.append(i.section)
     contents = [
-        {'id': 1, 'title': 'course1', 'source_link': 'source/1', 'homework_link': 'homework/1'},
-        {'id': 2, 'title': 'course2', 'source_link': 'source/2', 'homework_link': 'homework/2'},
-        {'id': 3, 'title': 'course3', 'source_link': 'source/3', 'homework_link': 'homework/3'},
+        {'id': 1, 'title': 'course1', 'source_link': 'sourceForm/1', 'homework_link': 'homework/1'},
+        {'id': 2, 'title': 'course2', 'source_link': 'sourceForm/2', 'homework_link': 'homework/2'},
+        {'id': 3, 'title': 'course3', 'source_link': 'sourceForm/3', 'homework_link': 'homework/3'},
     ]
     #contents=[]
     #for onesection in section_list:
@@ -26,7 +40,7 @@ def mainForm(req):
     return render(req, 'mainForm.html', {'content': contents})
 
 def sourceForm(req, section_id):
-    return render(req, 'souceForm.html', {"section_id": section_id})
+    return seefile(req,section_id)
 
 def homeworkForm(req, section_id):
     return testuiforteacher(req,section_id)
@@ -59,7 +73,7 @@ def testhwforstudent(req,section_id,Aid):
         myFile =req.FILES.get('myfile')
         if not myFile:
             return HttpResponse("no files for upload!")
-        filepath = "D:\\uploadtest\\"+Aid+"\\"
+        filepath = "D:\\sharesource\\homework\\"+Aid+"\\"
         if os.path.exists(filepath) == 0:
             os.mkdir(filepath)
         destination = open(os.path.join(filepath,myFile.name),'wb+')
@@ -106,3 +120,62 @@ def testdownload(req,section_id,Aid):
 
 def idjudge(req,section_id):
     return render(req, 'windowfortest.html')
+
+def seefile(req,section_id):
+    if req.method == 'POST':
+        print('successful')
+        myFile =req.FILES.get('myfile')
+        if not myFile:
+            return HttpResponse("no files for upload!")
+        filepath = "D:\\sharesource\\source\\"+section_id+"\\"
+        if os.path.exists(filepath) == 0:
+            os.mkdir(filepath)
+        destination = open(os.path.join(filepath,myFile.name),'wb+')
+        for chunk in myFile.chunks():
+            destination.write(chunk)
+        destination.close()
+        f1 = file(course_id=section_id,file_id=10000,file_name=myFile.name,file_path=filepath,update_time=datetime.datetime.now(),download_times=0,flag=10000,flag_top=0)
+        if (file.objects.count()!=0):
+            a = file.objects.latest('file_id')
+            f1.file_id=(a.file_id+1)
+        f1.save()
+        return render(req,'window5.html')
+
+
+    Ffile = file.objects.all().filter(course_id=section_id).order_by("-flag_top","-file_id")
+
+    return render(req,"souceForm.html",{'file':Ffile,'sid':section_id})
+
+def filedel(req,section_id,fid):
+    file.objects.get(id=fid).delete()
+    return render(req, 'window6.html')
+
+def filetop(req,section_id,fid):
+    b = file.objects.latest('flag_top')
+    n=b.flag_top+1
+    file.objects.filter(id=fid).update(flag_top=n)
+    return render(req, 'window7.html')
+
+def fileuntop(req,section_id,fid):
+    file.objects.filter(id=fid).update(flag_top=0)
+    return render(req, 'window8.html')
+
+
+def filedownload(req,section_id,fid):
+    f = file.objects.get(id=fid)
+    file.objects.filter(id=fid).update(download_times=f.download_times+1)
+    the_file_name=f.file_name
+    filename=str(f.file_path)+f.file_name
+    response=StreamingHttpResponse(readFile(filename))
+    response['Content-Type']='application/octet-stream'
+    response['Content-Disposition']='attachment;filename="{0}"'.format(the_file_name)
+    return response
+
+def readFile(filename,chunk_size=512):
+    with open(filename,'rb') as f:
+        while True:
+            c=f.read(chunk_size)
+            if  c:
+                yield   c
+            else:
+                break

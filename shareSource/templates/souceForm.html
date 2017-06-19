@@ -1,10 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html style="height:100%;">
 <head>
-    <meta charset="UTF-8">
-    <title>课程资源</title>
+	<meta charset="utf-8">
+	<title>资源管理系统-资源共享</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body>
-    <h1>source form for {{ section_id }}</h1>
+<body style="height:100%;">
+<div class="container" style="height:100%;">
+    <div class="row clearfix">
+		<div class="col-md-1 column">
+		</div>
+		<div class="col-md-10 column">
+			<div class="page-header">
+				<h1>
+					资源管理系统 <small>资源共享</small>
+				</h1>
+			</div>
+			<h3>
+				以下是{{ sid }}课程资源
+			</h3>
+		</div>
+		<div class="col-md-1 column">
+		</div>
+	</div>
+	<div class="row clearfix"style="height:50%;">
+		<div class="col-md-2 column">
+		</div>
+		<div class="col-md-8 column"style="height:100%;">
+            <div style="height:100%; overflow:auto;">
+			<table class="table" >
+
+				<thead>
+					<tr>
+						<th>
+							文件名称
+						</th>
+						<th>
+							上传时间
+						</th>
+						<th>
+							下载次数
+						</th>
+                        <th>
+						</th>
+						<th>
+							管理
+						</th>
+					</tr>
+				</thead>
+                <tbody>
+                {% for f in file %}
+
+					<tr>
+
+						<td>
+                            <a href="{{ sid }}/download{{ f.id }}">
+                            {{ f.file_name }}</a>
+						</td>
+						<td>
+							{{ f.update_time }}
+						</td>
+						<td>
+							{{ f.download_times }}
+						</td>
+						<td>
+                        {% if f.flag_top %}
+                        <td class="col-md-3 column">
+						    <a href="{{ sid }}/untop{{ f.id }}" >
+                                <button type="button" class="btn btn-block btn-lg btn-primary" )>取消</button>
+                            </a>
+                            </td>
+                        {% else %}
+                            <td class="col-md-3 column">
+						    <a href="{{ sid }}/top{{ f.id }}" >
+                                <button type="button" class="btn btn-block btn-lg btn-primary" )>置顶</button>
+                            </a>
+                            </td>
+                        {% endif %}
+                            <td class="col-md-3 column">
+                                <a href="{{ sid }}/del{{ f.id }}" >
+                                <button type="button" class="btn btn-block btn-lg btn-primary" )>删除</button>
+                                </a>
+                            </td>
+
+						</td>
+					</tr>
+
+                {% endfor %}
+				</tbody>
+			</table>
+            </div>
+		</div>
+
+		<div class="col-md-2 column">
+		</div>
+	</div>
+<form role="form" enctype="multipart/form-data" method="POST">
+	<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+                        <div class="form-group">
+							 <label for="refer">上传文件</label>
+                                <input type="file" name="myfile"/>
+                             <input type="submit" value="确认提交">
+                        </div>
+
+		</div>
+	</div>
+</div>
+</form>
+	<div class="row clearfix">
+		<div class="col-md-3 column">
+		</div>
+		<div class="col-md-6 column">
+            <div class="row clearfix">
+
+                            <a href="..">
+		                    <div class="col-md-6 column">
+                                <button type="button" class="btn btn-block btn-lg btn-primary">返回</button>
+		                    </div>
+                            </a>
+            </div>
+		</div>
+		<div class="col-md-3 column">
+		</div>
+	</div>
+</div>
+
 </body>
 </html>

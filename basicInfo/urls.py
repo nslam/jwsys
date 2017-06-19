@@ -22,5 +22,5 @@ urlpatterns = [
     url(r'^dropCourse/$', views.dropCourse),
     url(r'^modifyUser/$', views.modifyUser),
     url(r'^deleteUser/$', views.deleteUser),
-    url(r'^shareSource/', include('shareSource.urls')),
+
 ]
