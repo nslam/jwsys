@@ -37,6 +37,7 @@
                     <th>课程号</th>
                     <th>课程名</th>
                     <th>学分</th>
+                    <th>点击分析</th>
                     <!--Join with table SECTION-->
                     <!--可加其他信息 显示已经录入的-->
                 </tr>
@@ -44,10 +45,15 @@
                 <tbody>
                 {% for i in courseList %}
                 <tr class="item">
-                    <a href="basicInfo/gradeQueryDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}"><td class="section_info">{{i.sectionId}}</td></a>
+                    <td class="section_info">{{i.sectionId}}</td></a>
                     <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
+                    <td>
+                        <a href="/basicInfo/gradeQueryDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}">
+                        点击分析
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
 

@@ -48,9 +48,9 @@
                 <tr>
                     <td>{{item.courseNumber}}</td>
                     <td>{{item.title}}</td>
-                    <td>{{item.credit}}</td>
+                    <td>{{item.credit|floatformat:"1" }}</td>
                     <td>{{item.grade}}</td>
-                    <td>{{item.gradePoint}}</td>
+                    <td>{{item.gradePoint|floatformat:"2" }}</td>
                 </tr>
                 {% endfor %}
 

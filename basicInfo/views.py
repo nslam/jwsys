@@ -121,7 +121,7 @@ def setPassword(request):
             request.user.save()
             status = 'Password changed successful!'
             auth.logout(request)
-        return HttpResponseRedirect('/basicInfo/')
+        return HttpResponse('<script>alert("密码修改成功！请重新登录");location.replace("/basicInfo/");</script>')
 
 
 @login_required
@@ -172,7 +172,7 @@ def changeInfo(request):
         item.address = request.POST['address']
         item.phone_number = request.POST['phoneNumber']
         item.save()
-        return HttpResponse('<script> alert("修改成功！"); </script>')
+        return HttpResponse('<script> alert("修改成功！"); location.replace("/basicInfo/changeInfo/");</script>')
 
 
 @login_required
@@ -184,6 +184,8 @@ def stuGradeQuery(request):
     takes = Takes.objects.filter(student=user.student)
     ret = []
     for take in takes:
+        if take.score is None:
+            continue
         ret.append({'title': take.section.course.title, 'courseNumber': take.section.course.course_number,
                     'credit': take.section.course.credits, 'grade': take.score,
                     'gradePoint': getGradePoint(take.score)})
@@ -192,7 +194,8 @@ def stuGradeQuery(request):
 
 @login_required
 def stuGradeAnalysis(request):
-    # TODO: 专业排名和学分进展功能(加入要求的总学分）
+    # TODO: 专业排名待添加
+    # 学分进展功能已添加(用student.tot_cred字段)
     user = request.user
     type = getType(user)
     if type != 'Student':
@@ -204,17 +207,20 @@ def stuGradeAnalysis(request):
     scores = 0
     num = 0
     for take in takes:
+        if take.score is None:
+            continue
         scores += take.score
         num += 1
         gp += getGradePoint(take.score) * take.section.course.credits
         totalCredits += take.section.course.credits
-    ret['avg'] = scores * 1.0 / num
+    ret['avg'] = 0 if(num == 0) else scores * 1.0 / num
     ret['gp'] = gp
     ret['creditEarned'] = totalCredits
+    ret['creditRequired'] = user.student.tot_cred
     if totalCredits == 0:
         ret['gpa'] = 0
     else:
-        ret['gpa'] = gp / totalCredits
+        ret['gpa'] = 0 if(totalCredits == 0) else gp / totalCredits
     return render(request, 'student/stu_grade_analysis.html', ret)
 
 
@@ -228,7 +234,6 @@ def addCourse(request):
         return render(request, 'instructor/instructor_course_apply.html', {'dept': user.instructor.department.name})
     else:
         course = Course()
-        #course.course_number = request.POST['courseNumber']
         course.department = user.instructor.department
         course.title = request.POST['title']
         course.credits = request.POST['credits']
@@ -238,7 +243,7 @@ def addCourse(request):
         course.save()
         course.course_number = str(course.id)
         course.save()
-        return HttpResponse('<script>alert("课程添加成功！");</script>')
+        return HttpResponse('<script>alert("课程添加成功！");location.replace("/basicInfo/addCourse/");</script>')
 
 
 @login_required
@@ -295,7 +300,7 @@ def gradeInput(request):
     for teach in teaches:
         section = teach.section
         takes = Takes.objects.filter(section=section)
-        if takes[0].score is not None:
+        if takes.__len__() == 0 or takes[0].score is not None:
             continue
         course = section.course
         ret.append({
@@ -316,14 +321,23 @@ def gradeInputDetails(request):
         return HttpResponse('You are not a instructor!')
     if request.method == 'GET':
         takes = Takes.objects.filter(section=Section.objects.get(id=request.GET['sectionId']))
+        flag = 0
         for take in takes:
+            grade = take.score
+            if grade is None:
+                flag = 1
             ret.append({
                 'username': take.student.user.get_username(),
                 'grade': '' if (take.score is None) else take.score
             })
-        return render(request, 'instructor/instructor_grade_input_details.html',
+        if flag == 1:
+            return render(request, 'instructor/instructor_grade_input_details.html',
                       {'gradeList': ret, 'sectionId': request.GET['sectionId'],
                        'courseNumber': request.GET['courseNumber']})
+        else:
+            return render(request, 'instructor/instructor_grade_modify_details.html',
+                          {'gradeList': ret, 'sectionId': request.GET['sectionId'],
+                           'courseNumber': request.GET['courseNumber']})
     else:
         section = Section.objects.get(id=request.POST['sectionId'])
         takes = Takes.objects.filter(section=section)
@@ -345,7 +359,7 @@ def gradeQuery(request):
     for teach in teaches:
         section = teach.section
         takes = Takes.objects.filter(section=section)
-        if takes[0].score is not None:
+        if takes.__len__() > 0 and takes[0].score is not None:
             ret.append({
                 'sectionId': section.id,
                 'courseNumber': section.course.course_number,
@@ -391,8 +405,9 @@ def gradeQueryDetails(request):
             dis5 += 1
     ret['avg'] = total / len(takes)
     ret['gradeList'] = gradeList
+    ret['courseNumber'] = request.GET['courseNumber']
     ret['distribution'] = [dis1, dis2, dis3, dis4, dis5]
-    render(request, 'instructor/instructor_grade_query_details.html', ret)
+    return render(request, 'instructor/instructor_grade_query_details.html', ret)
 
 
 @login_required
@@ -425,7 +440,7 @@ def changeCourse(request):
         course.department = Department.objects.get(name=request.POST['department'])
         course.week_hour = request.POST['weekHour']
         course.save()
-        return HttpResponse('<script>alert("课程修改成功！");</script>')
+        return HttpResponse('<script>alert("课程修改成功！");location.replace("/basicInfo/changeCourse/");</script>')
 
 
 @login_required
@@ -604,7 +619,7 @@ def modifyUser(request):
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
             item.save()
-        return HttpResponse('<script>alert("信息修改成功！");</script>')
+        return HttpResponse('<script>alert("信息修改成功！");location.replace("/basicInfo/modifyUser/);</script>')
 
 
 @login_required
