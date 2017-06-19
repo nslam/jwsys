@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    building = models.CharField(max_length=100,null=True)
+    building = models.CharField(max_length=100, null=True)
 
 
 class Major(models.Model):
@@ -20,7 +20,7 @@ class Instructor(models.Model):
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
     gender = models.IntegerField()
     birthday = models.DateTimeField(null=True, default=None)
-    nickName = models.DateTimeField(null=True, default=None)
+    nickName = models.CharField(max_length=100, null=True, default=None)
 
 
 class Manager(models.Model):
@@ -30,7 +30,7 @@ class Manager(models.Model):
     address = models.CharField(max_length=100)
     gender = models.IntegerField()
     birthday = models.DateTimeField(null=True, default=None)
-    nickName = models.DateTimeField(null=True, default=None)
+    nickName = models.CharField(max_length=100, null=True, default=None)
 
 
 class Student(models.Model):
@@ -44,7 +44,7 @@ class Student(models.Model):
     graduate = models.IntegerField(null=True)
     gender = models.IntegerField()
     birthday = models.DateTimeField(null=True, default=None)
-    nickName = models.DateTimeField(null=True, default=None)
+    nickName = models.CharField(max_length=100, null=True, default=None)
 
 
 class Course(models.Model):
