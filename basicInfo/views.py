@@ -109,6 +109,8 @@ def setPassword(request):
         originPwd = request.POST['originPwd']
         newPwd = request.POST['newPwd']
         newPwdAgain = request.POST['newPwdAgain']
+        if len(newPwd)>20:
+            return HttpResponse('Password too long(less than20)!')
         flag = request.user.check_password(originPwd)
         if flag is False:
             status = 'Original password is not correct!'
@@ -479,6 +481,8 @@ def addUser(request):
                 return HttpResponse('Type error!')
             if gender != '男' and gender != '女':
                 return HttpResponse('Gender is wrong!')
+            if len(account)>10:
+                return HttpResponse('The account is too long!')
             user = User.objects.create_user(account, account + '@zju.edu.cn', '12345678')
             user.last_name = name
             user.save()
