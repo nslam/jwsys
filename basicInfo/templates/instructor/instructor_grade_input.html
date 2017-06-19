@@ -37,17 +37,22 @@
                     <th>课程号</th>
                     <th>课程名</th>
                     <th>学分</th>
+                    <th>点击录入</th>
                     <!--Join with table SECTION-->
                     <!--可加其他信息 只显示未录入的-->
                 </tr>
                 </thead>
                 <tbody>
                 {% for i in courseList %}
+
                 <tr class="item">
-                    <a href="/basicInfo/gradeInputDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}"><td class="section_info">{{i.sectionId}}</td></a>
+                    <td class="section_info">{{i.sectionId}}</td>
                     <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
+                    <td><a href="/basicInfo/gradeInputDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}">
+                        点击录入
+                    </a></td>
                 </tr>
                 {% endfor %}
 
@@ -92,6 +97,5 @@
 
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="../js/bootstrap.js"></script>
 </body>
 </html>

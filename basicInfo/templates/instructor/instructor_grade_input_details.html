@@ -34,7 +34,7 @@
         <form role="form" method="post" action="/basicInfo/gradeInputDetails/" onsubmit="return check()">
         {% csrf_token %}
         <label for="sectionId">开课号</label>
-        <input type="text" class="form-row" name="sectionId" id="sectionId" value="{{ sectionId }}" disabled>
+        <input type="text" class="form-row" name="sectionId" id="sectionId" value="{{ sectionId }}">
             <table class="table table-responsive">
                 <thead>
                 <tr>
