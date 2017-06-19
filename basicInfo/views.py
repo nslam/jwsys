@@ -119,7 +119,7 @@ def setPassword(request):
             request.user.save()
             status = 'Password changed successful!'
             auth.logout(request)
-        return HttpResponseRedirect('/basicInfo/')
+        return HttpResponse('<script>alert("密码修改成功！请重新登录");location.replace("/basicInfo/");</script>')
 
 
 @login_required
@@ -170,7 +170,7 @@ def changeInfo(request):
         item.address = request.POST['address']
         item.phone_number = request.POST['phoneNumber']
         item.save()
-        return HttpResponse('<script> alert("修改成功！"); </script>')
+        return HttpResponse('<script> alert("修改成功！"); location.replace("/basicInfo/changeInfo/");</script>')
 
 
 @login_required
@@ -241,7 +241,7 @@ def addCourse(request):
         course.save()
         course.course_number = str(course.id)
         course.save()
-        return HttpResponse('<script>alert("课程添加成功！");</script>')
+        return HttpResponse('<script>alert("课程添加成功！");location.replace("/basicInfo/addCourse/");</script>')
 
 
 @login_required
@@ -438,7 +438,7 @@ def changeCourse(request):
         course.department = Department.objects.get(name=request.POST['department'])
         course.week_hour = request.POST['weekHour']
         course.save()
-        return HttpResponse('<script>alert("课程修改成功！");</script>')
+        return HttpResponse('<script>alert("课程修改成功！");location.replace("/basicInfo/changeCourse/");</script>')
 
 
 @login_required
@@ -615,7 +615,7 @@ def modifyUser(request):
             item.department = request.POST['department']
             item.phone_number = request.POST['phoneNumber']
             item.save()
-        return HttpResponse('<script>alert("信息修改成功！");</script>')
+        return HttpResponse('<script>alert("信息修改成功！");location.replace("/basicInfo/modifyUser/);</script>')
 
 
 @login_required
