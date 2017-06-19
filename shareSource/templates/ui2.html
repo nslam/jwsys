@@ -1,8 +1,11 @@
+<!--
+老师作业主界面
+-->
 <!DOCTYPE html>
 <html style="height:100%;">
 <head>
 	<meta charset="utf-8">
-	<title>资源共享系统</title>
+	<title>资源管理系统-作业系统</title>
 	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -15,7 +18,7 @@
 		<div class="col-md-10 column">
 			<div class="page-header">
 				<h1>
-					资源共享系统
+					资源管理系统 <small>作业系统</small>
 				</h1>
 			</div>
 		</div>
@@ -28,61 +31,70 @@
 		<div class="col-md-8 column"style="height:100%;">
             <div style="height:100%; overflow:auto;">
 			<table class="table" >
+
 				<thead>
 					<tr>
 						<th>
-							课程编号
+							序号
 						</th>
 						<th>
-							课程名称
+							截止时间
 						</th>
 						<th>
-							课程资源
+							参考资料
 						</th>
 						<th>
-							课程作业
+							备注
 						</th>
 					</tr>
 				</thead>
                 <tbody>
-                {% for onecontent in content %}
+                {% for ob in allob %}
+
 					<tr>
+
 						<td>
-							{{onecontent.id}}
+                            <a href="{{ ob.id }}">
+                            {{ ob.id }}</a>
 						</td>
 						<td>
-							{{onecontent.title}}
+							{{ ob.ddl }}
 						</td>
 						<td>
-							<a href="{{ onecontent.source_link }}">资源链接</a>
+							{{ ob.reference }}
 						</td>
 						<td>
-							<a href="{{ onecontent.homework_link }}">作业链接</a>
+							无
 						</td>
 					</tr>
+
                 {% endfor %}
 				</tbody>
 			</table>
             </div>
 		</div>
-        <div class="row clearfix">
-			<div class="col-md-3 column">
-			</div>
-			<div class="col-md-12 column">
-				<div class="row clearfix">
-					<div class="col-md-4 column">
-					</div>
-					<div class="col-md-4 column">
-					<a href="../">
-						<div class="col-md-8 column">
-							<button type="button" class="btn btn-block btn-lg btn-primary" )>返回系统界面</button>
-						</div>
-					</a>
-					</div>
-					<div class="col-md-4 column">
-					</div>
-				</div>
-			</div>
+		<div class="col-md-2 column">
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-3 column">
+		</div>
+		<div class="col-md-6 column">
+            <div class="row clearfix">
+		                    <a href="hw">
+                            <div class="col-md-6 column">
+                                <button type="button" class="btn btn-block btn-lg btn-primary" )>添加新的作业</button>
+                            </div>
+                            </a>
+
+                            <a href="..">
+		                    <div class="col-md-6 column">
+                                <button type="button" class="btn btn-block btn-lg btn-primary">返回</button>
+		                    </div>
+                            </a>
+            </div>
+		</div>
+		<div class="col-md-3 column">
 		</div>
 	</div>
 </div>
