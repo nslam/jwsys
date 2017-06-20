@@ -1,55 +1,64 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect,StreamingHttpResponse
-from shareSource.models import Privilege,assignment_store,assignment,file
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, StreamingHttpResponse
+from django.template import loader, context, Template, RequestContext
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render_to_response, get_object_or_404, render
+
+from shareSource.models import Privilege, assignment_store, assignment, file
 from basicInfo.models import *
+from basicInfo.views import getType
 from courseArrange.models import Section
-from django.template import loader,context,Template
-from django.http import HttpResponse
+
 import os
 import datetime
-from django.shortcuts import render_to_response,get_object_or_404
-from django.template import RequestContext
 import zipfile
-import urllib.request,re
+import urllib.request, re
+@login_required
 def mainForm(req):
-    #TODO 获取数据部分
-    #section_list = Section.objects.all()
-    # user = User.objects.get(id=request.user.id)
-    # type = getType(user)
-    # section_list = []
-    # if type == 'Manager':
-    #     useid = user.manager.user_id
-    #     section_list = Section.objects.all()
-    # else:
-    #     if type == 'Student':
-    #         useid = user.student.user_id
-    #     elif type == 'Instructor':
-    #         useid = user.instructor.user_id
-    #     for i in Privilege.objects.filter(userid=useid):
-    #         section_list.append(i.section)
-    contents = [
-        {'id': 1, 'title': 'course1', 'source_link': 'sourceForm/1', 'homework_link': 'homework/1'},
-        {'id': 2, 'title': 'course2', 'source_link': 'sourceForm/2', 'homework_link': 'homework/2'},
-        {'id': 3, 'title': 'course3', 'source_link': 'sourceForm/3', 'homework_link': 'homework/3'},
-    ]
-    #contents=[]
-    #for onesection in section_list:
-    #    newcontents={'id': onesection.course_id, 'title': onesection.course.title,
-    #                'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
-    #    contents.append(newcontents)
+    #身份检查
+    user = User.objects.get(id=req.user.id)
+    type = getType(user)
+    section_list = []
+    if type == 'Manager':
+        section_list = Section.objects.all()
+    else:
+        if type == 'Student':
+            for i in Takes.objects.fliter(student=user.student):
+                section_list.append(i.section)
+        elif type == 'Instructor':
+            for i in Teaches.objects.fliter(instructor=user.instructor):
+                section_list.append(i.section)
+    #test data
+    #contents = [
+    #    {'id': 1, 'title': 'course1', 'source_link': 'sourceForm/1', 'homework_link': 'homework/1'},
+    #    {'id': 2, 'title': 'course2', 'source_link': 'sourceForm/2', 'homework_link': 'homework/2'},
+    #    {'id': 3, 'title': 'course3', 'source_link': 'sourceForm/3', 'homework_link': 'homework/3'},
+    #]
+    contents=[]
+    for onesection in section_list:
+        newcontents={'id': onesection.id, 'title': onesection.course.title,
+                    'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
+        contents.append(newcontents)
     return render(req, 'mainForm.html', {'content': contents})
 
 def sourceForm(req, section_id):
     return seefile(req,section_id)
 
-def homeworkForm(req, section_id):
-    return testuiforteacher(req,section_id)
-# Create your views here.
-
-
-
 #==========================================================================================================================
-def testhw(req,section_id):
+def CheckStu(req,section_id):
+    if getType(req.user) == 'Student' and Takes.objects.fliter(student=req.user.student).count() != 0:
+        return 1
+    else:
+        return 0
+def CheckIns(req,section_id):
+    if getType(req.user) == 'Instructor' and Teaches.objects.fliter(instructor=req.user.instructor).count() != 0:
+        return 1
+    else:
+        return 0
+
+@login_required
+def hw(req,section_id):
+    if CheckIns(req,section_id) == 0 and CheckStu(req,section_id) == 0:
+        return HttpResponse("You have no rights")
     if req.method == 'POST':
         if req.POST['Acontent'] == "" or req.POST['Addl'] == "" or req.POST['Arefer'] == ""  :
             return render(req,'window1.html')
@@ -59,15 +68,24 @@ def testhw(req,section_id):
             return render(req,'window2.html')
     return render(req,"hw.html",{'Cid':section_id})
 
-def testuiforstudent(req,section_id):
+@login_required
+def uiforstudent(req,section_id):
+    if CheckStu(req,section_id) == 0:
+        return HttpResponse("You have no rights")
     Aassignment = assignment.objects.filter(courseid=section_id)
     return render(req,"ui.html",{'allob':Aassignment})
 
-def testuiforteacher(req,section_id):
+@login_required
+def uiforteacher(req,section_id):
+    if CheckIns(req,section_id) == 0:
+        return HttpResponse("You have no rights")
     Aassignment = assignment.objects.filter(courseid=section_id)
     return render(req,"ui2.html",{'allob':Aassignment})
 
-def testhwforstudent(req,section_id,Aid):
+@login_required
+def hwforstudent(req,section_id,Aid):
+    if CheckStu(req,section_id) == 0:
+        return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
         myFile =req.FILES.get('myfile')
@@ -80,11 +98,15 @@ def testhwforstudent(req,section_id,Aid):
         for chunk in myFile.chunks():
             destination.write(chunk)
         destination.close()
+        newhw=assignment_store(assignmentid=Aid,file_name=myFile.name)
+        newhw.save()
         return render(req,'window5.html')
     return render(req,"hwforstudent.html",{'ob':Aassignment})
 
-
-def testhwforteacher(req,section_id,Aid):
+@login_required
+def hwforteacher(req,section_id,Aid):
+    if CheckIns(req,section_id) == 0:
+        return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
         if req.POST['Acontent'] == "" or req.POST['Addl'] == "" or req.POST['Arefer'] == ""  :
@@ -97,29 +119,39 @@ def testhwforteacher(req,section_id,Aid):
             return render(req,'window3.html')
     return render(req,"hwforteacher.html",{'ob':Aassignment})
 
-def testhwdel(req,section_id,Aid):
+@login_required
+def hwdel(req,section_id,Aid):
+    if CheckIns(req,section_id) == 0:
+        return HttpResponse("You have no rights")
     assignment.objects.get(id=Aid).delete()
-
     return render(req,'window4.html')
 
-def testdownload(req,section_id,Aid):
-    #f = zipfile.ZipFile('allhomework.zip', 'w', zipfile.ZIP_DEFLATED)
-   # startdir = "d:\\uploadtest\\"+Aid+"\\"
-   # for dirpath, dirnames, filenames in os.walk(startdir):
-    #    for filename in filenames:
-    #        f.write(os.path.join(dirpath, filename))
-   # f.write('D:\\uploadtest\\5\\10 Overloaded Operators.ppt')
+@login_required
+def hwdownload(req,section_id,Aid):
+    if CheckIns(req,section_id) == 0:
+        return HttpResponse("You have no rights")
+    filepath="D:\\sharesource\\homework\\" + Aid + "\\"+"hw.zip"
+    f = zipfile.ZipFile(filepath, 'w')
+    allhw=assignment_store.objects.filter(assignmentid=Aid)
+    for eachhw in allhw:
+        f.write("D:\\sharesource\\homework\\" + Aid + "\\"+eachhw.file_name)
+    f.close()
+    response = StreamingHttpResponse(readFile(filepath))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{0}"'.format('hw.rar')
+    return response
 
-   # f.close()
-
-  #  os.chdir(r'd:')
-  #  data = urllib.request.urlopen("d:\\uploadtest\\"+Aid+"\\"+'allhomework.zip').read()
-  #  with open('download.zip', 'wb') as perunit:
-  #      perunit.write(data)
-    return HttpResponse('test')
-
+@login_required
 def idjudge(req,section_id):
-    return render(req, 'windowfortest.html')
+    whoisthis=''
+    if getType(req.user) == 'Student':
+        whoisthis = 'student'
+    else:
+        whoisthis = 'teacher'
+    if whoisthis =='teacher':
+        return HttpResponseRedirect('teacher')
+    else:
+        return HttpResponseRedirect('student')
 
 def seefile(req,section_id):
     if req.method == 'POST':
@@ -140,7 +172,6 @@ def seefile(req,section_id):
             f1.file_id=(a.file_id+1)
         f1.save()
         return render(req,'window5.html')
-
 
     Ffile = file.objects.all().filter(course_id=section_id).order_by("-flag_top","-file_id")
 

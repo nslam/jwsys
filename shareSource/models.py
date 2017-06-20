@@ -25,7 +25,7 @@ class assignment(models.Model):
 class assignment_store(models.Model):
      assignmentid=models.CharField(max_length=15)
      studentid=models.CharField(max_length=15)
-     file_path=models.FileField(upload_to='uploads/assignment/')
+     file_name=models.CharField(max_length=30)
      status=models.CharField(max_length=15)
 
 class file(models.Model):
