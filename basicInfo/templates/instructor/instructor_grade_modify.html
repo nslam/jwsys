@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="teacherId"></span></li>
+
     </ul>
 </div>
 <div class="container-fluid">
@@ -38,6 +38,7 @@
                     <th>课程号</th>
                     <th>课程名</th>
                     <th>学分</th>
+                    <th>点击修改</th>
                     <!--Join with table SECTION-->
                     <!--可加其他信息 显示已经录入的-->
                 </tr>
@@ -45,10 +46,12 @@
                 <tbody>
                 {% for i in courseList %}
                 <tr class="item">
-                    <td class="section_info">{{i.section_info}}</td>
-                    <td class="course_number">{{i.course_number}}</td>
+                    <td class="section_info">{{i.sectionId}}</td>
+                    <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
                     <td>{{i.credit}}</td>
+                    <td><a href="/basicInfo/gradeModifyDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}">
+                    点击修改</a></td>
                 </tr>
                 {% endfor %}
                 <!--<tr>-->
@@ -78,14 +81,14 @@
 <script>
     $(document).ready(
         function () {
-            $(".item").click(function () {
+           /* $(".item").click(function () {
                 var sectionInfo = $(this).children().get(0).innerHTML;
                 var courseNumber = $(this).children().get(1).innerHTML;
                 $.get("/basicInfo/gradeModifyDetails/",
                     {'section_info': sectionInfo,
                     'course_number': courseNumber});
                 //..Redirect
-            });
+            });*/
         }
     );
 

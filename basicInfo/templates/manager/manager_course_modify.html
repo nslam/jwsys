@@ -16,13 +16,13 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1 class="text-center">查询待修改课程</h1>
+            <h4 class="text-center">课程号不能修改</h4>
         </div>
     </div>
     <hr>
@@ -47,7 +47,7 @@
                         {% csrf_token %}
                         <label for="course_number" class="col-sm-2 control-label">课程号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="courseId" id="course_number" value="{{ courseId }}" disabled>
+                            <input type="text" class="form-control" name="courseId" id="course_number" value="{{ courseNumber }}" readonly="true">
                         </div>
                         <label for="title" class="col-sm-2 control-label">课程名</label>
                         <div class="col-sm-10">
@@ -91,8 +91,15 @@
         function () {
             $("#search").click(
                 function () {
-                    var info = $("#courseInfo").val();
-                    $.get("/basicInfo/changeCourse/", {'courseId': info});
+                    var info = $("#courseId").val();
+                    $.getJSON("/basicInfo/changeCourse/", {'courseId': info}, function (ret) {
+                        $("#course_number").val(ret['courseNumber']);
+                        $("#title").val(ret['title']);
+                        $("#credit").val(ret['credits']);
+                        $("#department").val(ret['department']);
+                        $("#week_hour").val(ret['weekHour']);
+                        $("#method").val(ret['method']);
+                    });
                 }
             );
         }

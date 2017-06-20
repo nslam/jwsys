@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
+
     </ul>
 </div>
 <div class="container-fluid">
@@ -30,28 +30,29 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-lg-10 col-lg-offset-1">
-             <form class="form-horizontal text-center" method="get" action="/basicInfo/deleteUser/">
+             <DIV class="form-horizontal text-center" >
                 <div class="form-group">
                     <label for="searchNo" class="col-sm-2 control-label">待搜索学工号</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="id" id="searchNo">
                     </div>
                     <label>
-                        <input type="radio" name="type" id="student" value="student" checked>
+                        <input type="radio" name="type" id="student" value="Student" checked>
                         学生
                     </label>
                     <label>
-                        <input type="radio" name="type" id="instructor" value="instructor">
+                        <input type="radio" name="type" id="instructor" value="Instructor">
                         教师
                     </label>
-                    <input type="submit" class="btn btn-default" id="search" value="搜索">
+                    <button class="btn btn-default" id="search" >搜索</button>
+                    <button class="btn btn btn-danger" id="delete">删除所选用户</button>
                 </div>
-            </form>
+            </DIV>
         </div>
     </div>
     <div class="row">
         <div class="text-left col-lg-10 col-lg-offset-1">
-            <table class="table table-striped" id="courseTable">
+            <table class="table table-striped" id="userTable">
                 <thead>
                 <tr>
                     <th>*</th>
@@ -62,14 +63,7 @@
                 </tr>
                 </thead>
                 <tbody id="tableBody">
-                {% for item in userList%}
-                <tr class="item">
-                    <td><input type="checkbox" name="check"></td>
-                    <td>{{item.id}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.department}}</td>
-                </tr>
-                {% endfor %}
+
 
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
@@ -98,6 +92,24 @@
 <script>
     $(document).ready(
         function () {
+
+            $("#search").click(
+                function () {
+                    var id = $("#searchNo").val();
+
+                    var type = $('input:radio[name="type"]:checked').val();
+                    $("#userTable tr:not(:first)").empty();
+                    $.getJSON('/basicInfo/deleteUser/',{'username':id, 'type':type}, function (ret) {
+                        var newRow = '<tr class="item"><td><input type="checkbox" name="check"></td> <td>'+
+                                ret['id'] +'</td> <td>'+
+                                ret['name']+'</td> <td>'+
+                                ret['department']+'</td> </tr>';
+                        $('#userTable').append(newRow);
+                    });
+
+                }
+            );
+
             $("#delete").click(
               function () {
                   var list = [];
@@ -112,11 +124,14 @@
                          list.push(id);
                      }
                   });
-                  if(list.empty())
+                  if(list.length == 0)
                       alert("未选中任何用户！");
                   else
                  // alert(list);
-                    $.post("/basicInfo/deleteUser/", {'userList': list});
+                    $.post("/basicInfo/deleteUser/", {'userList': list}, function (ret) {
+                        alert(ret);
+                        $("#userTable tr:not(:first)").empty();
+                    });
               }  
             );
             //Delete.... use each() to traversal

@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
+
     </ul>
 </div>
 <div class="container-fluid">
@@ -54,17 +54,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for item in courseList %}
-                <tr class="item">
-                    <td><input type="checkbox" name="check"></td>
-                    <td>{{item.courseNumber}}</td>
-                    <td>{{item.title}}</td>
-                    <td>{{item.department}}</td>
-                    <td>{{item.credits}}</td>
-                    <td>{{item.weekHour}}</td>
-                    <td>{{item.method}}</td>
-                </tr>
-                {% endfor %}
 
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
@@ -93,10 +82,27 @@
 <script>
     $(document).ready(
         function () {
+
             $("#search").click(
                 function () {
                     var id = $("#courseInfo").val();
-                    $.get("/basicInfo/dropCourse/", {"courseId":id});
+                    $("#courseTable tr:not(:first)").empty();
+                    $.getJSON("/basicInfo/dropCourse/", {"courseId":id}, function (ret) {
+                        var list = ret['courseList'];
+                        for(var i = 0; i  < list.length; i++)
+                        {
+
+                            var dict = list[i];
+                            var newRow = '<tr class="item"><td><input type="checkbox" name="check"></td> <td>'+dict['courseNumber']
+                                +'</td> <td>'+dict['title']+'</td> <td>'+
+                                dict['department']+'</td> <td>'+
+                                dict['credits']+'</td> <td>'+
+                                dict['weekHour']+'</td> <td>'+
+                                dict['method']+'</td> </tr>';
+                            $('#courseTable').append(newRow);
+                        }
+
+                    });
                 }
             );
             $("#delete").click(
@@ -113,10 +119,12 @@
                             list.push(id);
                         }
                     });
-                    if(list.empty())
+                    if(list.length == 0)
                         alert("未选中任何课程！");
                     else
-                        $.post("/basic/dropCourse/", {"courseList":list});
+                        $.post("/basicInfo/dropCourse/", {"courseList":list}, function (ret) {
+                            alert(ret);
+                        });
                     //$.post();
                 }
             );

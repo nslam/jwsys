@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1 class="text-center">课程成绩查询</h1>
-            <h2>当前课程：<span id="courseName"></span></h2>
+            <h2>当前课程号：{{ courseNumber }}</h2>
         </div>
     </div>
     <hr>
@@ -31,7 +31,7 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
-            <label>平均分：{{ avg }}</label>
+            <label>平均分：{{ avg |floatformat:"2" }}</label>
         </div>
     </div>
     <hr>
@@ -78,12 +78,13 @@
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.js"></script>
 <script>
     $(document).ready(
         function () {
             $("#print").click(
                 function () {
-
+                    $("body").print();
                 }
             );
         }
