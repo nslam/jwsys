@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'basicInfo',
     'courseArrange',
     'courseSelection',
-    'bbs',
 ]
 
 MIDDLEWARE = [
