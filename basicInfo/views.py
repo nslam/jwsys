@@ -237,7 +237,7 @@ def stuGradeAnalysis(request):
     type = getType(user)
     if type != 'Student':
         return HttpResponse('You are not a student!')
-    students = Student.objects.all()
+    students = Student.objects.filter(major=user.student.major, matriculate=user.student.matriculate)
     gpa = []
     for student in students:
         gpa.append(stuGetGPA(student.id)['gpa'])
