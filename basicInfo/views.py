@@ -58,6 +58,12 @@ def index(request):
     return render(request, 'login.html', {'status': status})
 
 
+def logCreate(event):
+    log = Log.objects.create()
+    log.event = event
+    log.save()
+
+
 def login(request):
     username = request.POST['username']
     password = request.POST['password']
@@ -68,10 +74,12 @@ def login(request):
     # pass
     if username is None or password is None:
         status = 'User name or password cannot be none!'
+        logCreate('login '+str(username) + 'failed (pwd none)')
         return render(request, 'login.html', {'status': status})
     user = authenticate(username=username, password=password)
     if user is None:
         status = 'Password is not correct!'
+        logCreate('login ' + str(username) + 'failed (pwd not correct) pwd:'+str(password))
         return render(request, 'login.html', {'status': status})
     if not user.is_active:
         status = 'User is not active!'
@@ -93,6 +101,7 @@ def login(request):
             return render(request, 'login.html', {'status': 'You are not a manager!'})
     auth.login(request=request, user=user)
     # Check type !!!!! Here I do not check that....
+    logCreate('login ' + str(username) + ' success!')
     if type == 'Student':
         return HttpResponseRedirect('/basicInfo/stuMain')
     elif type == 'Instructor':
