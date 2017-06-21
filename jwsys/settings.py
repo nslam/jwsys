@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'courseArrange',
     'courseSelection',
     'bbs',
-    'shareSource',
+	'shareSource',
 ]
 
 MIDDLEWARE = [

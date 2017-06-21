@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from courseArrange.models import Teaches, Section
 from django.utils.datastructures import MultiValueDictKeyError
 import math
+import operator
 
 
 def getGradePoint(grade):
@@ -58,6 +59,12 @@ def index(request):
     return render(request, 'login.html', {'status': status})
 
 
+def logCreate(event):
+    log = Log.objects.create()
+    log.event = event
+    log.save()
+
+
 def login(request):
     username = request.POST['username']
     password = request.POST['password']
@@ -68,10 +75,12 @@ def login(request):
     # pass
     if username is None or password is None:
         status = 'User name or password cannot be none!'
+        logCreate('login ' + str(username) + 'failed (pwd none)')
         return render(request, 'login.html', {'status': status})
     user = authenticate(username=username, password=password)
     if user is None:
         status = 'Password is not correct!'
+        logCreate('login ' + str(username) + 'failed (pwd not correct) pwd:' + str(password))
         return render(request, 'login.html', {'status': status})
     if not user.is_active:
         status = 'User is not active!'
@@ -93,6 +102,7 @@ def login(request):
             return render(request, 'login.html', {'status': 'You are not a manager!'})
     auth.login(request=request, user=user)
     # Check type !!!!! Here I do not check that....
+    logCreate('login ' + str(username) + ' success!')
     if type == 'Student':
         return HttpResponseRedirect('/basicInfo/stuMain')
     elif type == 'Instructor':
@@ -192,15 +202,9 @@ def stuGradeQuery(request):
     return render(request, 'student/stu_grade_query.html', {'gradeList': ret, 'username': user.username})
 
 
-@login_required
-def stuGradeAnalysis(request):
-    # TODO: 专业排名待添加
-    # 学分进展功能已添加(用student.tot_cred字段)
-    user = request.user
-    type = getType(user)
-    if type != 'Student':
-        return HttpResponse('You are not a student!')
-    takes = Takes.objects.filter(student=user.student)
+def stuGetGPA(studentId):
+    student = Student.objects.get(id=studentId)
+    takes = Takes.objects.filter(student=student)
     ret = {}
     gp = 0
     totalCredits = 0
@@ -215,12 +219,32 @@ def stuGradeAnalysis(request):
         totalCredits += take.section.course.credits
     ret['avg'] = 0 if (num == 0) else scores * 1.0 / num
     ret['gp'] = gp
+    ret['id'] = studentId
     ret['creditEarned'] = totalCredits
-    ret['creditRequired'] = user.student.tot_cred
+    ret['creditRequired'] = student.tot_cred
     if totalCredits == 0:
         ret['gpa'] = 0
     else:
-        ret['gpa'] = 0 if (totalCredits == 0) else gp / totalCredits
+        ret['gpa'] = round(gp / totalCredits, 2)
+    return ret
+
+
+@login_required
+def stuGradeAnalysis(request):
+    # TODO: 专业排名待添加
+    # 学分进展功能已添加(用student.tot_cred字段)
+    user = request.user
+    type = getType(user)
+    if type != 'Student':
+        return HttpResponse('You are not a student!')
+    students = Student.objects.filter(major=user.student.major, matriculate=user.student.matriculate)
+    gpa = []
+    for student in students:
+        gpa.append(stuGetGPA(student.id)['gpa'])
+    gpa.sort()
+    gpa.reverse()
+    ret = stuGetGPA(user.student.id)
+    ret['rank'] = gpa.index(ret['gpa']) + 1
     return render(request, 'student/stu_grade_analysis.html', ret)
 
 
