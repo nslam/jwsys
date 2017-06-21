@@ -84,6 +84,11 @@
             alert("新密码输入不一致！");
             return false;
         }
+        else if($("#newPwd").val() == '' || $("#newPwdAgain").val())
+        {
+            alert("新密码不能为空！");
+            return false;
+        }
         return true;
     }
 </script>
