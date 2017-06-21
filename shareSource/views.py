@@ -12,8 +12,18 @@ import os
 import datetime
 import zipfile
 import urllib.request, re
+
 @login_required
 def mainForm(req):
+    #建立需要的文件夹
+    folderpath = 'shareSource\\homework'
+    exist = os.path.exists(folderpath)
+    if not exist:
+        os.mkdir(folderpath)
+    folderpath = 'shareSource\\source'
+    exist = os.path.exists(folderpath)
+    if not exist:
+        os.mkdir(folderpath)
     #身份检查
     user = User.objects.get(id=req.user.id)
     type = getType(user)
@@ -44,54 +54,54 @@ def sourceForm(req, section_id):
     return seefile(req,section_id)
 
 #==========================================================================================================================
-def CheckStu(req,section_id):
-    if getType(req.user) == 'Student' and Takes.objects.fliter(student=req.user.student).count() != 0:
+def CheckStu(req,sid):
+    if getType(req.user) == 'Student' and Takes.objects.fliter(student=req.user.student, section_id=sid).count() != 0:
         return 1
     else:
         return 0
-def CheckIns(req,section_id):
-    if getType(req.user) == 'Instructor' and Teaches.objects.fliter(instructor=req.user.instructor).count() != 0:
+def CheckIns(req,sid):
+    if getType(req.user) == 'Instructor' and Teaches.objects.fliter(instructor=req.user.instructor, section_id=sid).count() != 0:
         return 1
     else:
         return 0
 
 @login_required
-def hw(req,section_id):
-    if CheckIns(req,section_id) == 0 and CheckStu(req,section_id) == 0:
+def hw(req,s_id):
+    if CheckIns(req,s_id) == 0 and CheckStu(req,s_id) == 0:
         return HttpResponse("You have no rights")
     if req.method == 'POST':
         if req.POST['Acontent'] == "" or req.POST['Addl'] == "" or req.POST['Arefer'] == ""  :
             return render(req,'window1.html')
         else :
-            Aassignment = assignment(info=req.POST['Acontent'],ddl=req.POST['Addl'],reference=req.POST['Arefer'],courseid=section_id)
+            Aassignment = assignment(info=req.POST['Acontent'],ddl=req.POST['Addl'],reference=req.POST['Arefer'],courseid=s_id)
             Aassignment.save()
             return render(req,'window2.html')
-    return render(req,"hw.html",{'Cid':section_id})
+    return render(req,"hw.html",{'Cid':s_id})
 
 @login_required
-def uiforstudent(req,section_id):
-    if CheckStu(req,section_id) == 0:
+def uiforstudent(req,s_id):
+    if CheckStu(req,s_id) == 0:
         return HttpResponse("You have no rights")
-    Aassignment = assignment.objects.filter(courseid=section_id)
+    Aassignment = assignment.objects.filter(courseid=s_id)
     return render(req,"ui.html",{'allob':Aassignment})
 
 @login_required
-def uiforteacher(req,section_id):
-    if CheckIns(req,section_id) == 0:
+def uiforteacher(req,s_id):
+    if CheckIns(req,s_id) == 0:
         return HttpResponse("You have no rights")
-    Aassignment = assignment.objects.filter(courseid=section_id)
+    Aassignment = assignment.objects.filter(courseid=s_id)
     return render(req,"ui2.html",{'allob':Aassignment})
 
 @login_required
-def hwforstudent(req,section_id,Aid):
-    if CheckStu(req,section_id) == 0:
+def hwforstudent(req,s_id,Aid):
+    if CheckStu(req,s_id) == 0:
         return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
         myFile =req.FILES.get('myfile')
         if not myFile:
             return HttpResponse("no files for upload!")
-        filepath = "D:\\sharesource\\homework\\"+Aid+"\\"
+        filepath = "shareSource\\homework\\"+Aid+"\\"
         if os.path.exists(filepath) == 0:
             os.mkdir(filepath)
         destination = open(os.path.join(filepath,myFile.name),'wb+')
@@ -104,8 +114,8 @@ def hwforstudent(req,section_id,Aid):
     return render(req,"hwforstudent.html",{'ob':Aassignment})
 
 @login_required
-def hwforteacher(req,section_id,Aid):
-    if CheckIns(req,section_id) == 0:
+def hwforteacher(req,s_id,Aid):
+    if CheckIns(req,s_id) == 0:
         return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
@@ -120,21 +130,21 @@ def hwforteacher(req,section_id,Aid):
     return render(req,"hwforteacher.html",{'ob':Aassignment})
 
 @login_required
-def hwdel(req,section_id,Aid):
-    if CheckIns(req,section_id) == 0:
+def hwdel(req,s_id,Aid):
+    if CheckIns(req,s_id) == 0:
         return HttpResponse("You have no rights")
     assignment.objects.get(id=Aid).delete()
     return render(req,'window4.html')
 
 @login_required
-def hwdownload(req,section_id,Aid):
-    if CheckIns(req,section_id) == 0:
+def hwdownload(req,s_id,Aid):
+    if CheckIns(req,s_id) == 0:
         return HttpResponse("You have no rights")
-    filepath="D:\\sharesource\\homework\\" + Aid + "\\"+"hw.zip"
+    filepath="shareSource\\homework\\" + Aid + "\\"+"hw.zip"
     f = zipfile.ZipFile(filepath, 'w')
     allhw=assignment_store.objects.filter(assignmentid=Aid)
     for eachhw in allhw:
-        f.write("D:\\sharesource\\homework\\" + Aid + "\\"+eachhw.file_name)
+        f.write("shareSource\\homework\\" + Aid + "\\"+eachhw.file_name)
     f.close()
     response = StreamingHttpResponse(readFile(filepath))
     response['Content-Type'] = 'application/octet-stream'
@@ -153,13 +163,14 @@ def idjudge(req,section_id):
     else:
         return HttpResponseRedirect('student')
 
+@login_required
 def seefile(req,section_id):
     if req.method == 'POST':
         print('successful')
         myFile =req.FILES.get('myfile')
         if not myFile:
             return HttpResponse("no files for upload!")
-        filepath = "D:\\sharesource\\source\\"+section_id+"\\"
+        filepath = "shareSource\\source\\"+section_id+"\\"
         if os.path.exists(filepath) == 0:
             os.mkdir(filepath)
         destination = open(os.path.join(filepath,myFile.name),'wb+')
@@ -167,31 +178,51 @@ def seefile(req,section_id):
             destination.write(chunk)
         destination.close()
         f1 = file(course_id=section_id,file_id=10000,file_name=myFile.name,file_path=filepath,update_time=datetime.datetime.now(),download_times=0,flag=10000,flag_top=0)
+        #user_id=req.user.id)
         if (file.objects.count()!=0):
             a = file.objects.latest('file_id')
             f1.file_id=(a.file_id+1)
         f1.save()
         return render(req,'window5.html')
 
-    Ffile = file.objects.all().filter(course_id=section_id).order_by("-flag_top","-file_id")
+    Ffile = file.objects.all().filter(course_id=section_id and section_id in Section.objects.Course.objects.value("course_number")).order_by("-flag_top","-file_id")
 
     return render(req,"souceForm.html",{'file':Ffile,'sid':section_id})
 
+@login_required
 def filedel(req,section_id,fid):
-    file.objects.get(id=fid).delete()
-    return render(req, 'window6.html')
+    f=file.object.get(id=fid)
+    user = User.objects.get()
+    type = getType(user)
+    if(req.user.id==f.user_id or type=='Instructor'):
+        file.objects.get(id=fid).delete()
+        return render(req, 'window6.html')
+    else:
+        return render(req,'window9,html')
 
+@login_required
 def filetop(req,section_id,fid):
     b = file.objects.latest('flag_top')
     n=b.flag_top+1
-    file.objects.filter(id=fid).update(flag_top=n)
-    return render(req, 'window7.html')
+    user = User.objects.get()
+    type=getType(user)
+    if(type=='Student'):
+        return render(req,'window10.html')
+    else:
+        file.objects.filter(id=fid).update(flag_top=n)
+        return render(req, 'window7.html')
 
+@login_required
 def fileuntop(req,section_id,fid):
-    file.objects.filter(id=fid).update(flag_top=0)
-    return render(req, 'window8.html')
+    user = User.objects.get()
+    type=getType(user)
+    if(type=='Student'):
+        return render(req,'window10.html')
+    else:
+        file.objects.filter(id=fid).update(flag_top=0)
+        return render(req, 'window8.html')
 
-
+@login_required
 def filedownload(req,section_id,fid):
     f = file.objects.get(id=fid)
     file.objects.filter(id=fid).update(download_times=f.download_times+1)
