@@ -39,15 +39,22 @@ def mainForm(req):
                 section_list.append(i.section)
     #test data
     # contents = [
-       # {'id': 1, 'title': 'course1', 'source_link': 'sourceForm/1', 'homework_link': 'homework/1'},
-       # {'id': 2, 'title': 'course2', 'source_link': 'sourceForm/2', 'homework_link': 'homework/2'},
-       # {'id': 3, 'title': 'course3', 'source_link': 'sourceForm/3', 'homework_link': 'homework/3'},
+    #    {'id': 1, 'title': 'course1', 'source_link': 'sourceForm/1', 'homework_link': 'homework/1'},
+    #    {'id': 2, 'title': 'course2', 'source_link': 'sourceForm/2', 'homework_link': 'homework/2'},
+    #    {'id': 3, 'title': 'course3', 'source_link': 'sourceForm/3', 'homework_link': 'homework/3'},
     # ]
     contents=[]
     for onesection in section_list:
         newcontents={'id': onesection.id, 'title': onesection.course.title,
                     'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
         contents.append(newcontents)
+    if req.method == 'POST':
+        if req.POST['search'] != "":
+            Ffile = file.objects.all().filter(file_name__contains=req.POST['search']).order_by("-flag_top",
+                                                                                                   "-file_id")
+            return render(req, "searchForm.html", {'file': Ffile, 'fname': req.POST['search']})
+        else:
+            return render(req, 'mainForm.html', {'content': contents})
     return render(req, 'mainForm.html', {'content': contents})
 
 def sourceForm(req, section_id):
@@ -82,7 +89,7 @@ def hw(req,section_id):
 def uiforstudent(req,section_id):
     if CheckStu(req,section_id) == 0:
         return HttpResponse("You have no rights")
-    assignment = assignment.objects.filter(courseid=section_id)
+    Aassignment = assignment.objects.filter(courseid=section_id)
     return render(req,"ui.html",{'allob':Aassignment})
 
 @login_required
@@ -194,12 +201,12 @@ def filedel(req,section_id,fid):
     user = User.objects.get()
     type = getType(user)
     file.objects.get(id=fid).delete()
-    return render(req, 'window6.html')
-    if(req.user.id==f.user_id or type=='Instructor'):
+    #return render(req, 'window6.html')
+    if req.user.id==f.user_id or type=='Instructor':
         file.objects.get(id=fid).delete()
         return render(req, 'window6.html')
     else:
-        return render(req,'window9,html')
+        return render(req,'window9.html')
 
 @login_required
 def filetop(req,section_id,fid):
