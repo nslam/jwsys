@@ -140,25 +140,26 @@ def bbsMain(request):
     is_manager = 0
     if type == 'Manager':
         typestr = 'manager'
+        backtype = 'manager'
         is_manager = 1
     elif type == 'Student':
         typestr = 'student'
+        backtype = 'stu'
     else:
         typestr = 'instructor'
+        backtype = 'instructor'
         is_teacher = 1
-    posts = Post.objects.all().order_by("-is_top", "-time")
+    posts = Post.objects.all().order_by("-is_top","-time")
     notices = Notice.objects.all().order_by("-time")[0:2]
     for var in posts:
         if var.is_best == 0:
             title = var.title
         else:
-            title = '[best]:' + var.title
-        Posts.append({'id': var.id, 'poster': var.poster.username, 'time': var.time, 'title': title})
+            title = '[best]:'+var.title
+        Posts.append({'id':var.id,'poster':var.poster.username,'time':var.time,'title': title})
     for var in notices:
-        Notices.append({'instructor': var.instructor.user.username, 'content': var.content})
-    return render(request, 'bbs_homepage.html',
-                  {'is_teacher': is_teacher, 'is_manager': is_manager, 'type': typestr, 'userid': user.id,
-                   'username': usern, 'post_list': Posts, 'notices': Notices, 'status': 'true'})  # 主界面
+        Notices.append({'instructor':var.instructor.user.username,'content':var.content})
+    return render(request,'bbs_homepage.html',{'backtype':backtype,'is_teacher':is_teacher,'is_manager':is_manager,'type':typestr,'userid':user.id,'username': usern,'post_list':Posts,'notices':Notices,'status':'true'})#主界面
 
 
 @login_required
