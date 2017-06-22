@@ -62,6 +62,7 @@ class Classroom(models.Model):
     room_number = models.IntegerField()
     capacity = models.IntegerField()
     equipment = models.ManyToManyField('Equipment')
+    type = models.IntegerField(default=1)
 
     class Meta:
         unique_together = ('building', 'room_number')

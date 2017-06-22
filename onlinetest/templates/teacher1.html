@@ -76,6 +76,7 @@
          <th>编辑老师</th>
          <th>状态</th>
          <th></th>
+         <th>开放、关闭切换</th>
          <th></th>
       </tr>
    </thead>
@@ -84,15 +85,21 @@
       {% for paper in allpaper_list %}
       <tr>
         <td>{{paper.name}}</td>
-        <td>{{paper.course}}</td>
-        <td>{{paper.instructor_name}}</td>
-        {% if paper.status != 'c' %}
+        <td>{{paper.course.title}}</td>
+        <td>{{paper.instructor.user}}</td>
+        {% if paper.status != 'c' and paper.instructor.user == user %}
           <td>可以编辑</td>
           <td><a href="/onlinetest/paper2/{{paper.id}}">修改</a></td>
+          <td><a href="/onlinetest/teacher1change/{{paper.id}}">开放试卷</a></td>
           <th><a href="/onlinetest/teacher1delete/{{paper.id}}" style="color: red">删除<a></th>
         {% else %}
           <td style = "color:red;">正在使用</td>
           <td><a href="" class="disabled">不可修改</a></td>
+          {% if paper.instructor.user == user %}
+          <td><a href="/onlinetest/teacher1change/{{paper.id}}">关闭试卷</a></td>
+          {% else %}
+          <td><a href="" class="disabled">非本人试卷</a></td>
+          {% endif %}
           <td><a href="" class="disabled">不可删除</a></td>
         {% endif %}
       </tr>
@@ -112,6 +119,7 @@
          <th>编辑老师</th>
          <th>状态</th>
          <th></th>
+         <th>开放、关闭切换</th>
          <th></th>
       </tr>
    </thead>
@@ -120,15 +128,17 @@
       {% for mypaper in mypaper_list %}
       <tr>
         <td>{{mypaper.name}}</td>
-        <td>{{mypaper.course}}</td>
-        <td>{{mypaper.instructor}}</td>
+        <td>{{mypaper.course.title}}</td>
+        <td>{{mypaper.instructor.user}}</td>
         {% if mypaper.status != 'c' %}
           <td>可以编辑</td>
-          <td><button><a href="/onlinetest/paper2/{{mypaper.id}}">修改</a></button></td>
+          <td><a href="/onlinetest/paper2/{{mypaper.id}}">修改</a></td>
+          <td><a href="/onlinetest/teacher1change/{{mypaper.id}}">开放试卷</a></td>
           <td><a href="/onlinetest/teacher1delete/{{mypaper.id}}" style="color: red">删除<a></td>
         {% else %}
           <td style = "color:red;">正在使用</td>
           <td>不可修改</td>
+          <td><a href="/onlinetest/teacher1change/{{mypaper.id}}">关闭试卷</a></td>
           <td>不可删除</td>
         {% endif %}
       </tr>
@@ -160,6 +170,6 @@ $(function () { $('#myModal').modal({
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>

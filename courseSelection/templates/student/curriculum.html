@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>在线选课系统-培养方案</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- Custom CSS -->
+    <link href="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">在线选课系统</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <span>欢迎您，</span>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> 登出</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href="index"><i class="fa fa-user fa-fw"></i> 个人信息</a>
+                        </li>
+                        <li>
+                            <a href="curriculum"><i class="fa fa-bar-chart-o fa-fw"></i> 培养方案</a>
+                        </li>
+                        <li>
+                            <a href="selection"><i class="fa fa-edit fa-fw"></i> 自主选课</a>
+                        </li>
+                        <li>
+                            <a href="schedule"><i class="fa fa-table fa-fw"></i> 我的课表</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">培养方案</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+             <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="panel panel-default c_left">
+                                    <div class="panel-heading">
+                                        <div>
+                                            <h5>专业必修课  学分：{{compulsory_credits}}</h5>
+                                        </div>
+                                    </div>
+                                    <table class="table table-hover" id="schedule-tab">
+                                        <thead>
+                                            <tr>
+                                                <th>课程号</th>
+                                                <th>课程名称</th>
+                                                <th>学分</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody>
+                                                {% for course in compulsory %}
+                                                <tr>
+                                                    <td>{{course.course_number}}</td>
+                                                    <td>{{course.title}}</td>
+                                                    <td>{{course.credits}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                    </table>
+                                </div>
+                                {% if check_curriculum == 0 %}
+                                <form action="/courseSelection/student/curriculum" method="post">
+                                <div class="panel panel-default c_left">
+                                    <div class="panel-heading">
+                                        <h5>专业选修课 总学分要求：{{demand.elective}}</h5>
+                                        <div class="pull-right">
+                                        </div>
+                                    </div>
+                                    <table class="table table-hover" id="schedule-tab">
+                                        <thead>
+                                            <tr>
+                                                <th>课程号</th>
+                                                <th>课程名称</th>
+                                                <th>学分</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody>
+                                                {% for course in elective %}
+                                                <tr>
+                                                    <td>{{course.course_number}}</td>
+                                                    <td>{{course.title}}</td>
+                                                    <td>{{course.credits}}</td>
+                                                    <td><input type="checkbox" name = "elective" value="{{course.id}}"></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                    </table>
+                                </div>
+                                <div class="panel panel-default c_left">
+                                    <div class="panel-heading">
+                                        <div>
+                                            <h5>公共课 总学分要求：{{demand.public}}</h5>
+                                        </div>
+                                    </div>
+                                    <table class="table table-hover" id="schedule-tab">
+                                        <thead>
+                                            <tr>
+                                                <th>课程号</th>
+                                                <th>课程名称</th>
+                                                <th>学分</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody>
+                                                {% for course in public %}
+                                                <tr>
+                                                    <td>{{course.course_number}}</td>
+                                                    <td>{{course.title}}</td>
+                                                    <td>{{course.credits}}</td>
+                                                    <td><input type="checkbox" name = "public" value="{{course.id}}"></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                    </table>
+                                </div>
+                                </br>
+                                <div class="">
+                                    <button type="submit" class="btn btn-primary" align="right" id="tuixuan-btn">确认制定</button>
+                                </div>
+                                </form>
+                                {% else %}
+                                <div class="panel panel-default c_left">
+                                    <div class="panel-heading">
+                                        <div>
+                                            <h5>培养方案课程  学分：{{credits}}</h5>
+                                        </div>
+                                    </div>
+                                    <table class="table table-hover" id="schedule-tab">
+                                        <thead>
+                                            <tr>
+                                                <th>课程号</th>
+                                                <th>课程名称</th>
+                                                <th>学分</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody>
+                                                {% for course in curriculum %}
+                                                <tr>
+                                                    <td>{{course.course_number}}</td>
+                                                    <td>{{course.title}}</td>
+                                                    <td>{{course.credits}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                            </div>
+<!--                             <div class="col-lg-6">
+                                <div class="col-lg-4">
+                                    <form role="form">
+                                        <div class="form-group">
+                                            <select class="form-control">
+                                                <option>课程号</option>
+                                                <option>课程名称</option>
+                                                <option>课程类别</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="sidebar-search">
+                                    <div class="input-group custom-search-form">
+                                        <input type="text" class="form-control" placeholder="Search...">
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">
+                                            <i class="fa fa-search"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="panel panel-default c_right">
+                                    <div class="panel-heading">
+                                        <div>
+                                            <h5>可选课程</h5>
+                                            <button type="button" class="btn btn-primary" id="kexuan-btn">确定</button>
+                                        </div>
+                                    </div>
+                                    <div class="tbody">
+                                        <table class="table table-hover table-condensed" id="kexuan-tab">
+                                            <thead>
+                                                <tr>
+                                                    <th>课程号</th>
+                                                    <th>课程名称</th>
+                                                    <th>学分</th>
+                                                    <th>选中</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>761T0050</td>
+                                                    <td>大学物理（丙）</td>
+                                                    <td>4.0</td>
+                                                    <td><input type="checkbox" value=""></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>771T0030</td>
+                                                    <td>无机与分析化学</td>
+                                                    <td>4.0</td>
+                                                    <td><input type="checkbox" value=""></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>16196220</td>
+                                                    <td>免疫学</td>
+                                                    <td>2.0</td>
+                                                    <td><input type="checkbox" value=""></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+   <!-- jQuery -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

@@ -77,7 +77,7 @@
           </label>
       </div>
       <br/>
-      <a class="btn" href="onlinetest/paper2delete/p1{{paper.id}}p2{{question_pd.id}}">删除</a>
+      <a class="btn" href="/onlinetest/paper2delete/p1{{paper.id}}p2{{question_pd.id}}">删除</a>
       <br/>
       {% endfor %}
       <!--p-->
@@ -117,7 +117,7 @@
         {% endif %}
  </div>
  <br/>
- <a class="btn" href="onlinetest/paper2delete/p2{{paper.id}}p2{{question_xz.id}}">删除</a>
+ <a class="btn" href="/onlinetest/paper2delete/p1{{paper.id}}p2{{question_xz.id}}">删除</a>
  {% endfor %}
       <!--x1-->
       
@@ -150,7 +150,7 @@
                 {% if question in question_pd_list or question in question_xz_list %}
                 已添加
                 {% else %}
-                <a class="btn" href="onlinetest/paper2add/p1{{paper.id}}p2{{question.id}}">添加</a>
+                <a class="btn" href="/onlinetest/paper2add/p1{{paper.id}}p2{{question.id}}">添加</a>
                 {% endif %}
               </p>
             </div>
@@ -262,6 +262,6 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>

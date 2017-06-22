@@ -64,7 +64,8 @@
         <a class="navbar-brand" href="#">搜索试题</a>
     </div>
     <div>
-        <form class="navbar-form navbar-left" role="search" action="onlinetest/teacher3search/" method="post">
+        <form class="navbar-form navbar-left" role="search" action="/onlinetest/teacher3search/" method="post">
+          {% csrf_token %}
             <div class="form-group">
                 <input type="text" name="question_title" class="form-control" placeholder="Search">
             </div>
@@ -84,7 +85,7 @@
         <div class="col-md-4">
           <div class="thumbnail">
             <div class="caption">
-              <h3>课程：{{question.course}}</h3>
+              <h3>课程：{{question.course.title}}</h3>
               <p><strong>
                 题目：{{question.title}}</strong><br/>
                 类型：
@@ -96,9 +97,9 @@
                 <br/>
                 答案：{{question.answer}}
                 <br/>
-                考点：
+                考点：{{question.test_point}}
                 <br/>
-                出题老师:{{question.instructor}}</br>
+                出题老师:{{question.instructor.user}}</br>
               </p>
               <p>
                 {% if question.status != 'c' %}
@@ -281,7 +282,7 @@
         <div class="col-md-4">
           <div class="thumbnail">
             <div class="caption">
-              <h3>课程：{{myquestion.course}}</h3>
+              <h3>课程：{{myquestion.course.title}}</h3>
               <p><strong>
                 题目：{{myquestion.title}}</strong><br/>
                 类型：
@@ -291,9 +292,9 @@
                 选择
                 {% endif %}
                 <br/>
-                考点：
+                考点：{{myquestion.test_point}}
                 <br/>
-                出题老师:{{myquestion.instru}}</br>
+                出题老师:{{myquestion.instructor.user}}</br>
               </p>
               <p>
                 {% if myquestion.status != 'c' %}
@@ -632,6 +633,6 @@ function formNXZSubmit()
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>

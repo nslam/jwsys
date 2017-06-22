@@ -32,22 +32,29 @@ def mainForm(req):
         section_list = Section.objects.all()
     else:
         if type == 'Student':
-            for i in Takes.objects.fliter(student=user.student):
+            for i in Takes.objects.filter(student=user.student):
                 section_list.append(i.section)
         elif type == 'Instructor':
-            for i in Teaches.objects.fliter(instructor=user.instructor):
+            for i in Teaches.objects.filter(instructor=user.instructor):
                 section_list.append(i.section)
     #test data
-    #contents = [
+    # contents = [
     #    {'id': 1, 'title': 'course1', 'source_link': 'sourceForm/1', 'homework_link': 'homework/1'},
     #    {'id': 2, 'title': 'course2', 'source_link': 'sourceForm/2', 'homework_link': 'homework/2'},
     #    {'id': 3, 'title': 'course3', 'source_link': 'sourceForm/3', 'homework_link': 'homework/3'},
-    #]
+    # ]
     contents=[]
     for onesection in section_list:
         newcontents={'id': onesection.id, 'title': onesection.course.title,
                     'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
         contents.append(newcontents)
+    if req.method == 'POST':
+        if req.POST['search'] != "":
+            Ffile = file.objects.all().filter(file_name__contains=req.POST['search']).order_by("-flag_top",
+                                                                                                   "-file_id")
+            return render(req, "searchForm.html", {'file': Ffile, 'fname': req.POST['search']})
+        else:
+            return render(req, 'mainForm.html', {'content': contents})
     return render(req, 'mainForm.html', {'content': contents})
 
 def sourceForm(req, section_id):
@@ -55,46 +62,46 @@ def sourceForm(req, section_id):
 
 #==========================================================================================================================
 def CheckStu(req,sid):
-    if getType(req.user) == 'Student' and Takes.objects.fliter(student=req.user.student, section_id=sid).count() != 0:
+    if getType(req.user) == 'Student' and Takes.objects.filter(student=req.user.student, section_id=sid).count() != 0:
         return 1
     else:
         return 0
 def CheckIns(req,sid):
-    if getType(req.user) == 'Instructor' and Teaches.objects.fliter(instructor=req.user.instructor, section_id=sid).count() != 0:
+    if getType(req.user) == 'Instructor' and Teaches.objects.filter(instructor=req.user.instructor, section_id=sid).count() != 0:
         return 1
     else:
         return 0
 
 @login_required
-def hw(req,s_id):
-    if CheckIns(req,s_id) == 0 and CheckStu(req,s_id) == 0:
+def hw(req,section_id):
+    if CheckIns(req,section_id) == 0 and CheckStu(req,section_id) == 0:
         return HttpResponse("You have no rights")
     if req.method == 'POST':
         if req.POST['Acontent'] == "" or req.POST['Addl'] == "" or req.POST['Arefer'] == ""  :
             return render(req,'window1.html')
         else :
-            Aassignment = assignment(info=req.POST['Acontent'],ddl=req.POST['Addl'],reference=req.POST['Arefer'],courseid=s_id)
+            Aassignment = assignment(info=req.POST['Acontent'],ddl=req.POST['Addl'],reference=req.POST['Arefer'],courseid=section_id)
             Aassignment.save()
             return render(req,'window2.html')
-    return render(req,"hw.html",{'Cid':s_id})
+    return render(req,"hw.html",{'Cid':section_id})
 
 @login_required
-def uiforstudent(req,s_id):
-    if CheckStu(req,s_id) == 0:
+def uiforstudent(req,section_id):
+    if CheckStu(req,section_id) == 0:
         return HttpResponse("You have no rights")
-    Aassignment = assignment.objects.filter(courseid=s_id)
+    Aassignment = assignment.objects.filter(courseid=section_id)
     return render(req,"ui.html",{'allob':Aassignment})
 
 @login_required
-def uiforteacher(req,s_id):
-    if CheckIns(req,s_id) == 0:
+def uiforteacher(req,section_id):
+    if CheckIns(req,section_id) == 0:
         return HttpResponse("You have no rights")
-    Aassignment = assignment.objects.filter(courseid=s_id)
+    Aassignment = assignment.objects.filter(courseid=section_id)
     return render(req,"ui2.html",{'allob':Aassignment})
 
 @login_required
-def hwforstudent(req,s_id,Aid):
-    if CheckStu(req,s_id) == 0:
+def hwforstudent(req,section_id,Aid):
+    if CheckStu(req,section_id) == 0:
         return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
@@ -114,8 +121,8 @@ def hwforstudent(req,s_id,Aid):
     return render(req,"hwforstudent.html",{'ob':Aassignment})
 
 @login_required
-def hwforteacher(req,s_id,Aid):
-    if CheckIns(req,s_id) == 0:
+def hwforteacher(req,section_id,Aid):
+    if CheckIns(req,section_id) == 0:
         return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
@@ -130,15 +137,15 @@ def hwforteacher(req,s_id,Aid):
     return render(req,"hwforteacher.html",{'ob':Aassignment})
 
 @login_required
-def hwdel(req,s_id,Aid):
-    if CheckIns(req,s_id) == 0:
+def hwdel(req,section_id,Aid):
+    if CheckIns(req,section_id) == 0:
         return HttpResponse("You have no rights")
     assignment.objects.get(id=Aid).delete()
     return render(req,'window4.html')
 
 @login_required
-def hwdownload(req,s_id,Aid):
-    if CheckIns(req,s_id) == 0:
+def hwdownload(req,section_id,Aid):
+    if CheckIns(req,section_id) == 0:
         return HttpResponse("You have no rights")
     filepath="shareSource\\homework\\" + Aid + "\\"+"hw.zip"
     f = zipfile.ZipFile(filepath, 'w')
@@ -153,7 +160,7 @@ def hwdownload(req,s_id,Aid):
 
 @login_required
 def idjudge(req,section_id):
-    whoisthis=''
+    whoisthis='teacher'
     if getType(req.user) == 'Student':
         whoisthis = 'student'
     else:
@@ -163,7 +170,6 @@ def idjudge(req,section_id):
     else:
         return HttpResponseRedirect('student')
 
-@login_required
 def seefile(req,section_id):
     if req.method == 'POST':
         print('successful')
@@ -177,34 +183,36 @@ def seefile(req,section_id):
         for chunk in myFile.chunks():
             destination.write(chunk)
         destination.close()
-        f1 = file(course_id=section_id,file_id=10000,file_name=myFile.name,file_path=filepath,update_time=datetime.datetime.now(),download_times=0,flag=10000,flag_top=0)
-        #user_id=req.user.id)
+        #f1 = file(course_id=section_id,file_id=10000,file_name=myFile.name,file_path=filepath,update_time=datetime.datetime.now(),download_times=0,flag=10000,flag_top=0)
+        f1 = file(course_id=section_id, file_id=10000, file_name=myFile.name, file_path=filepath,user_id=req.user.id,update_time=datetime.datetime.now(), download_times=0, flag=10000, flag_top=0)
         if (file.objects.count()!=0):
             a = file.objects.latest('file_id')
             f1.file_id=(a.file_id+1)
         f1.save()
         return render(req,'window5.html')
 
-    Ffile = file.objects.all().filter(course_id=section_id and section_id in Section.objects.Course.objects.value("course_number")).order_by("-flag_top","-file_id")
-
+    Ffile = file.objects.all().filter(course_id=section_id ).order_by("-flag_top","-file_id")
+	
     return render(req,"souceForm.html",{'file':Ffile,'sid':section_id})
 
 @login_required
 def filedel(req,section_id,fid):
-    f=file.object.get(id=fid)
-    user = User.objects.get()
+    f=file.objects.get(id=fid)
+    user = req.user
     type = getType(user)
-    if(req.user.id==f.user_id or type=='Instructor'):
+    file.objects.get(id=fid).delete()
+    #return render(req, 'window6.html')
+    if req.user.id==f.user_id or type=='Instructor':
         file.objects.get(id=fid).delete()
         return render(req, 'window6.html')
     else:
-        return render(req,'window9,html')
+        return render(req,'window9.html')
 
 @login_required
 def filetop(req,section_id,fid):
     b = file.objects.latest('flag_top')
     n=b.flag_top+1
-    user = User.objects.get()
+    user = req.user
     type=getType(user)
     if(type=='Student'):
         return render(req,'window10.html')
@@ -214,7 +222,7 @@ def filetop(req,section_id,fid):
 
 @login_required
 def fileuntop(req,section_id,fid):
-    user = User.objects.get()
+    user = req.user
     type=getType(user)
     if(type=='Student'):
         return render(req,'window10.html')

@@ -25,6 +25,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
+# SESSION EXPIRATION = 10 min
+SESSION_COOKIE_AGE = 60 * 10
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -36,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'basicInfo',
     'courseArrange',
+    'onlinetest',
     'courseSelection',
     'bbs',
     'shareSource',
