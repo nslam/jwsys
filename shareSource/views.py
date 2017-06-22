@@ -13,7 +13,7 @@ import datetime
 import zipfile
 import urllib.request, re
 
-#@login_required
+@login_required
 def mainForm(req):
     #建立需要的文件夹
     folderpath = 'shareSource\\homework'
@@ -198,7 +198,7 @@ def seefile(req,section_id):
 @login_required
 def filedel(req,section_id,fid):
     f=file.objects.get(id=fid)
-    user = User.objects.get()
+    user = req.user
     type = getType(user)
     file.objects.get(id=fid).delete()
     #return render(req, 'window6.html')
@@ -212,7 +212,7 @@ def filedel(req,section_id,fid):
 def filetop(req,section_id,fid):
     b = file.objects.latest('flag_top')
     n=b.flag_top+1
-    user = User.objects.get()
+    user = req.user
     type=getType(user)
     if(type=='Student'):
         return render(req,'window10.html')
@@ -222,7 +222,7 @@ def filetop(req,section_id,fid):
 
 @login_required
 def fileuntop(req,section_id,fid):
-    user = User.objects.get()
+    user = req.user
     type=getType(user)
     if(type=='Student'):
         return render(req,'window10.html')
