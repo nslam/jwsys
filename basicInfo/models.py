@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    building = models.CharField(max_length=100)
+    building = models.CharField(max_length=100, null=True)
 
 
 class Major(models.Model):
@@ -18,6 +18,7 @@ class Instructor(models.Model):
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
+    gender = models.IntegerField()
 
 
 class Manager(models.Model):
@@ -25,6 +26,7 @@ class Manager(models.Model):
     photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
+    gender = models.IntegerField()
 
 
 class Student(models.Model):
@@ -32,20 +34,22 @@ class Student(models.Model):
     photo_file = models.ImageField(upload_to='images/')
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
-    tot_cred = models.IntegerField(default=0)
+    tot_cred = models.FloatField(default=0)
     major = models.ForeignKey(Major, null=True, on_delete=models.SET_NULL)
     matriculate = models.IntegerField()
-    graduate = models.IntegerField()
+    graduate = models.IntegerField(null=True)
+    gender = models.IntegerField()
 
 
 class Course(models.Model):
     course_number = models.CharField(max_length=100, unique=True)
     title = models.CharField(max_length=100)
     department = models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
-    credits = models.IntegerField()
+    credits = models.FloatField()
     week_hour = models.IntegerField()
     type = models.CharField(max_length=20)
-    precourse = models.ForeignKey('Course', null=True, on_delete=models.SET_NULL)
+    precourse = models.ManyToManyField('Course')
+    method = models.CharField(max_length=30)
 
 
 class Log(models.Model):
@@ -65,8 +69,8 @@ class Classroom(models.Model):
 
 class TimeSlot(models.Model):
     day = models.IntegerField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.IntegerField()
+    end_time = models.IntegerField()
 
     class Meta:
         unique_together = ('day', 'start_time', 'end_time')
@@ -74,3 +78,9 @@ class TimeSlot(models.Model):
 
 class Equipment(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+
+class Takes(models.Model):
+    section = models.ForeignKey('courseArrange.Section', on_delete=models.CASCADE)
+    score = models.IntegerField(null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)

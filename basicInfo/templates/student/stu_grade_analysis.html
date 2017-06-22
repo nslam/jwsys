@@ -15,7 +15,6 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="stuId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -41,9 +40,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td id="avgPts">{{avg}}</td>
-                    <td id="gp">{{gp}}</td>
-                    <td id="gpa">{{gpa}}</td>
+                    <td id="avgPts">{{avg |floatformat:"2" }}</td>
+                    <td id="gp">{{gp|floatformat:"2" }}</td>
+                    <td id="gpa">{{gpa |floatformat:"2" }}</td>
                     <td id="rank">{{rank}}</td>
                 </tr>
                 </tbody>
@@ -60,8 +59,8 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td id="creditGet">{{credit_earned}}</td>
-                    <td id="creditRequired">{{credit_required}}</td>
+                    <td id="creditGet">{{creditEarned}}</td>
+                    <td id="creditRequired">{{creditRequired}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -88,7 +87,6 @@
 
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="../js/bootstrap.js"></script>
 <script>
     //Graph generation
 </script>

@@ -16,13 +16,13 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1 class="text-center">查询待修改课程</h1>
+            <h4 class="text-center">课程号不能修改</h4>
         </div>
     </div>
     <hr>
@@ -31,7 +31,7 @@
     <div class="row">
         <div class="text-left col-lg-10 col-lg-offset-1">
             <label for="courseInfo">搜索（课程号）</label>
-            <input type="text" class="form-control" name="courseInfo" id="courseInfo"><br>
+            <input type="text" class="form-control" name="courseId" id="courseId"><br>
             <div class="text-center">
                 <!--GET-->
                 <button id="search" class="btn btn-default">点击搜索</button>
@@ -42,32 +42,32 @@
     <div class="container">
         <div class="row">
             <div class="text-center col-md-6 col-md-offset-3">
-                <form class="form-horizontal" method="post" action="#">
+                <form class="form-horizontal" method="post" action="/basicInfo/changeCourse/" onsubmit="return check()">
                     <div class="form-group">
                         {% csrf_token %}
                         <label for="course_number" class="col-sm-2 control-label">课程号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="course_number" id="course_number">
+                            <input type="text" class="form-control" name="courseId" id="course_number" value="{{ courseNumber }}" readonly="true">
                         </div>
                         <label for="title" class="col-sm-2 control-label">课程名</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="title" id="title">
+                            <input type="text" class="form-control" name="title" id="title" value="{{ title }}">
                         </div>
                         <label for="department" class="col-sm-2 control-label">开课学院</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="department" id="department">
+                            <input type="text" class="form-control" name="department" id="department" value="{{ department }}">
                         </div>
                         <label for="credit" class="col-sm-2 control-label">学分</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="credit" id="credit">
+                            <input type="text" class="form-control" name="credits" id="credit" value="{{ credits }}">
                         </div>
                         <label for="week_hour" class="col-sm-2 control-label">学时</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="week_hour" id="week_hour">
+                            <input type="text" class="form-control" name="weekHour" id="week_hour" value="{{ weekHour }}">
                         </div>
                         <label for="method" class="col-sm-2 control-label">考核方式</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="method" id="method">
+                            <input type="text" class="form-control" name="method" id="method" value="{{ method }}">
                         </div>
                     </div>
                     <input type="submit" class="btn btn-default" id="submit" value="提交更改">
@@ -87,15 +87,42 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
-//    $(document).ready(
-//        function () {
-//            $("#search").click(
-//                function () {
-//
-//                }
-//            );
-//        }
-//    );
+    $(document).ready(
+        function () {
+            $("#search").click(
+                function () {
+                    var info = $("#courseId").val();
+                    $.getJSON("/basicInfo/changeCourse/", {'courseId': info}, function (ret) {
+                        $("#course_number").val(ret['courseNumber']);
+                        $("#title").val(ret['title']);
+                        $("#credit").val(ret['credits']);
+                        $("#department").val(ret['department']);
+                        $("#week_hour").val(ret['weekHour']);
+                        $("#method").val(ret['method']);
+                    });
+                }
+            );
+        }
+    );
+
+    function check() {
+        if($("#title").val() == '')
+        {
+            alert("课程名必须填写！");
+            return false;
+        }
+        if($("#credits").val() <= 0)
+        {
+            alert("学分不能为负！");
+            return false;
+        }
+        if($("#weekHour").val() <= 0)
+        {
+            alert("学时不能为负！");
+            return false;
+        }
+        return true;
+    }
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../js/bootstrap.js"></script>

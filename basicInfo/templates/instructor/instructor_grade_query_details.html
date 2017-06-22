@@ -17,14 +17,13 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="teacherId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1 class="text-center">课程成绩查询</h1>
-            <h2>当前课程：<span id="courseName"></span></h2>
+            <h2>当前课程号：{{ courseNumber }}</h2>
         </div>
     </div>
     <hr>
@@ -32,7 +31,7 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
-            <label>平均分：<span id="avgPts"></span></label>
+            <label>平均分：{{ avg |floatformat:"2" }}</label>
         </div>
     </div>
     <hr>
@@ -43,17 +42,15 @@
                 <tr>
                     <th>学号</th>
                     <th>成绩</th>
-                    <th>排名</th>
                 </tr>
                 </thead>
                 <tbody>
-                {{% for i in gradeList%}}
+                {% for i in gradeList %}
                 <tr>
-                    <td>{{i.id}}</td>
+                    <td>{{i.username}}</td>
                     <td>{{i.grade}}</td>
-                    <td>{{i.rank}}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
                 </tbody>
             </table>
             <button class="btn btn-default" id="print">打印成绩</button>
@@ -81,10 +78,15 @@
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.js"></script>
 <script>
     $(document).ready(
         function () {
-
+            $("#print").click(
+                function () {
+                    $("body").print();
+                }
+            );
         }
     );
 
@@ -100,10 +102,11 @@
                 fillColor : "rgba(220,220,220,0.5)",
                 strokeColor : "rgba(220,220,220,1)",
                 text: 'Score',
-                data : [5,12,40,30,12]
+                data : {{ distribution }}
             }
         ]
     };
+
     $(document).ready(function () {
         var ctx = $("#myChart").get(0).getContext("2d");
         var myBar = new Chart(ctx,
@@ -112,7 +115,7 @@
                 data: data,
                 options:{
                     legend:{
-                        position: 'top',
+                        position: 'top'
                     },
                     title:{
                         display:true,

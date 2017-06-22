@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>用户管理历史发帖</title>
+
+    <!-- Le styles -->
+    <link href="http://cdn.staticfile.org/twitter-bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/css/builder/v3/layoutit.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+	<script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/html5shiv.js"></script>
+	<![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-144-precomposed.png" rel="apple-touch-icon-precomposed" sizes="144x144">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-114-precomposed.png" rel="apple-touch-icon-precomposed" sizes="114x114">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-72-precomposed.png" rel="apple-touch-icon-precomposed" sizes="72x72">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-57-precomposed.png" rel="apple-touch-icon-precomposed">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/favicon.png" rel="shortcut icon">
+
+    <script src="//hm.baidu.com/hm.js?5d1095a7e8dafabe802aa295af4d0ce2"></script>
+    <script src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js" type="text/javascript"></script>
+    <script src="http://cdn.staticfile.org/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://cdn.staticfile.org/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
+    <script src="http://cdn.staticfile.org/twitter-bootstrap/3.0.1/js/bootstrap.min.js" type="text/javascript"></script>
+
+    <script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/jquery.htmlClean.js" type="text/javascript"></script>
+    <script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/builder/v3/scripts.min.js" type="text/javascript"></script>
+
+</head>
+<body class="devpreview" style="cursor:auto;min-height:300px;">
+<div style="margin-left: 2%; margin-right: 2%">
+    <ul class="nav  navbar-right">
+      <li role="presentation"><a href="/bbs/bbs-main/">返回</a></li>
+    </ul>
+</div>
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-3 column">
+			<h3 align="center">
+				用户管理发帖
+			</h3>
+			<br>
+		</div>
+		<div class="col-md-3 column">
+			<p align="center">
+				 <strong>用户名：</strong> {{ username }}
+			</p>
+			<br>
+			<p align="center">
+				 <strong>用户id：</strong> {{ userid }}
+			</p>
+		</div>
+
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<table class="table">
+				<thead>
+					<tr>
+						<th width="300px">
+							帖子标题
+						</th>
+						<th width="125px">
+							发布时间
+						</th>
+						<th width="125px">
+							是否删除
+						</th>
+						<th>
+							帖子内容
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for post in posts %}
+					<tr>
+						<td>
+							{{post.title}}
+						</td>
+						<td>
+							{{post.time}}
+						</td>
+						<td>
+							<form role="form" action="/bbs/manage-user/" method="post">
+								<input type="hidden" name="post_id" value="{{post.id}}">
+								<input type="hidden" name="user_id" value="{{userid}}">
+								<button class="btn btn-xs btn-primary" type="submit">删除</button>
+							</form>
+						</td>
+						<td>
+							{{post.content}}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+    <div class="row clearfix">
+		<div class="col-md-12 column">
+			<table class="table">
+				<thead>
+					<tr>
+						<th width="300px">
+							所在帖子标题
+						</th>
+						<th width="125px">
+							发布时间
+						</th>
+						<th width="125px">
+							是否删除
+						</th>
+						<th>
+							回帖内容
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for reply in replies %}
+					<tr>
+						<td>
+							{{reply.post_title}}
+						</td>
+						<td>
+							{{reply.time}}
+						</td>
+						<td>
+							<form role="form" action="/bbs/manage-user/" method="post">
+								<input type="hidden" name="reply_id" value="{{reply.id}}">
+								<input type="hidden" name="user_id" value="{{userid}}">
+								<button class="btn btn-xs btn-primary" type="submit">删除</button>
+							</form>
+						</td>
+						<td>
+							{{reply.content}}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<p align="center">
+				 <strong>copyright</strong>@软件工程基础2017王新宇老师
+			</p>
+		</div>
+	</div>
+</div>
+</body>
+</html>

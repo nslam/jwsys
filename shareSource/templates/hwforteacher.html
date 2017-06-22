@@ -1,0 +1,99 @@
+<!--
+老师作业分界面
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>资源共享系统-作业系统</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+		<div class="col-md-1 column">
+		</div>
+		<div class="col-md-10 column">
+			<div class="page-header">
+				<h1>
+					资源共享系统 <small>作业系统</small>
+				</h1>
+			</div>
+		</div>
+		<div class="col-md-1 column">
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="row clearfix">
+				<div class="col-md-2 column">
+				</div>
+				<div class="col-md-8 column">
+					<h3>
+						作业  {{ ob.id }}
+					</h3>
+
+					<form role="form" method="POST">
+						<div class="form-group">
+							 <label for="assignmentcontent">内容描述</label>
+                             <textarea  class="form-control"  placeholder="请输入内容描述" id="assignmentcontent" name="Acontent" rows="5">{{ ob.info }}</textarea>
+						</div>
+
+						<div class="form-group">
+							 <label for="ddl">截止时间</label>
+                            <input  type="text" class="form-control" id="ddl" placeholder="YYYY-MM-DD" id="ddl" name="Addl" value="{{ ob.ddl|date:"Y-m-d" }}"/>
+						</div>
+                        <div class="form-group">
+							 <label for="refer">参考资料</label>
+                             <input type="text" class="form-control" id="refer" placeholder="请输入参考资料" id="refer" name="Arefer"value="{{ ob.reference }}" />
+						</div>
+
+                        <div class="row clearfix">
+		                    <div class="col-md-2 column">
+		                    </div>
+		                    <div class="col-md-8 column">
+                                <div class="row clearfix">
+                                    <div class="col-md-6 column">
+                                        <a href="del">
+                                        <div>
+                                        <button type="button" class="btn btn-block btn-lg btn-primary">删除作业</button>
+                                        </div>
+                                        </a>
+                                    <br>
+                                        <div>
+                                        <button type="submit" class="btn btn-block btn-lg btn-primary" >修改作业</button>
+                                        </div>
+                                    </div>
+                            <!--<a href="http://127.0.0.1:8000/testui2/">-->
+		                            <div class="col-md-6 column">
+                                        <a href="download">
+                                        <div>
+                                        <button type="button" class="btn btn-block btn-lg btn-primary" >批改作业</button>
+                                        </div>
+                                        </a>
+                                        <br>
+                                        <a href="javascript:history.go(-1);">
+                                        <div>
+                                        <button type="button" class="btn btn-block btn-lg btn-primary">返回</button>
+                                        </div>
+                                        </a>
+		                            </div>
+                                </div>
+		                    </div>
+		                    <div class="col-md-2 column">
+		                    </div>
+	                    </div>
+                    </form>
+
+				</div>
+				<div class="col-md-2 column">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

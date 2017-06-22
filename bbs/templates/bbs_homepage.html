@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>论坛主页</title>
+
+    <!-- Le styles -->
+    <link href="http://cdn.staticfile.org/twitter-bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/css/builder/v3/layoutit.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+	<script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/html5shiv.js"></script>
+	<![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-144-precomposed.png" rel="apple-touch-icon-precomposed" sizes="144x144">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-114-precomposed.png" rel="apple-touch-icon-precomposed" sizes="114x114">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-72-precomposed.png" rel="apple-touch-icon-precomposed" sizes="72x72">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/apple-touch-icon-57-precomposed.png" rel="apple-touch-icon-precomposed">
+    <link href="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/img/favicon.png" rel="shortcut icon">
+
+    <script src="//hm.baidu.com/hm.js?5d1095a7e8dafabe802aa295af4d0ce2"></script>
+    <script src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js" type="text/javascript"></script>
+    <script src="http://cdn.staticfile.org/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://cdn.staticfile.org/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
+    <script src="http://cdn.staticfile.org/twitter-bootstrap/3.0.1/js/bootstrap.min.js" type="text/javascript"></script>
+
+    <script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/jquery.htmlClean.js" type="text/javascript"></script>
+    <script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/builder/v3/scripts.min.js" type="text/javascript"></script>
+
+</head>
+<body class="devpreview" style="cursor:auto;min-height:300px;">
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-4 column">
+			<h3 align="center">
+				欢迎来到王新宇老师的论坛系统~~
+			</h3>
+            <br>
+		</div>
+		<div class="col-md-2 column">
+			<p align="center">用户名：{{ username }}</p>
+            <p align="center">用户id:{{ userid }}</p>
+        </div>
+        <div class="col-md-1 column" align="center">
+            <form role="form" action="/bbs/release-post/">
+            <button class="btn btn-default btn-primary" type="submit">发帖</button>
+            </form>
+        </div>
+        <div class="col-md-1 column" align="center">
+            <form role="form" action="/bbs/look-message/">
+            <button class="btn btn-default btn-primary" type="submit">短消息</button>
+            </form>
+        </div>
+        <div class="col-md-1 column" align="center">
+            <form role="form" action="/basicInfo/changeInfo/">
+            <button class="btn btn-default btn-primary" type="submit">修改信息</button>
+            </form>
+        </div>
+        <div class="col-md-1 column" align="center">
+            <form role="form" action="/bbs/manage-post">
+            <button class="btn btn-default btn-primary" type="submit">管理发帖</button>
+            </form>
+        </div>
+        <div class="col-md-1 column" align="center">
+            <form role="form" action="/basicInfo/">
+            <button class="btn btn-default btn-primary" type="submit">登出</button>
+            </form>
+        </div>
+        {% if is_teacher or is_manager %}
+        <div class="col-md-1 column" align="center">
+            <form role="form" action="/bbs/manage-notice">
+            <button class="btn btn-default btn-primary" type="submit">管理公告</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6 column">
+			<div>
+                <h4>公告：</h4>
+                {% for notice in notices %}
+                <p>{{notice.instructor}}:</p>
+                <p>{{notice.content}}</p>
+                {% endfor %}
+            </div>
+    </div>
+    <!--新增搜索界面-->
+    <div class="col-md-6 column">
+        <form role="form" action="/bbs/search-post/" method="get">
+            <label for="search">请输入帖子关键字</label>
+            <input type="hidden" name="userid" value="{{userid}}">
+            <input class="form-control" type="text" name="search_key" id="search">
+            <br>
+            <button class="btn btn-default btn-primary" type="submit">搜索</button>
+        </form>
+    </div>
+    <!---->
+</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<table class="table" style="table-layout:fixed;width:95%;word-wrap:break-word">
+				<thead>
+					<tr>
+						<th width="125px">
+							帖子id
+						</th>
+						<th width="125px">
+							发帖人
+						</th>
+						<th width="125px">
+							发帖时间
+						</th>
+						<th>
+							标题
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in post_list %}
+                        <tr>
+                            <td>{{item.id}}</td>
+                            <td>{{item.poster}}</td>
+                            <td>{{item.time}}</td>
+                            <td>
+                                <a href="/bbs/get_post={{item.id}}/">{{item.title}}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<p align="center">
+                <strong>copyright</strong>@2017软件工程基础王新宇老师
+			</p>
+		</div>
+	</div>
+</div>
+<script>
+    var status = "{{ status }}";
+    if(status != "true")
+        alert(status);
+</script>
+</body>
+</html>

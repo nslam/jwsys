@@ -16,7 +16,6 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:{{username}}</li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -30,56 +29,59 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-md-6 col-md-offset-3">
-            <form class="form-horizontal text-center">
-
+            <DIV class="form-horizontal text-center" >
                 <div class="form-group">
                     <label for="searchNo" class="col-sm-2 control-label">待搜索学工号</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="searchNo" id="searchNo">
+                        <input type="text" class="form-control" name="id" id="searchNo">
                     </div>
                     <label>
-                        <input type="radio" name="type" id="student" value="student" checked>
+                        <input type="radio" name="type" id="student" value="Student" checked>
                         学生
                     </label>
                     <label>
-                        <input type="radio" name="type" id="teacher" value="teacher">
+                        <input type="radio" name="type" id="teacher" value="Instructor">
                         教师
                     </label>
-                    <button type="submit" class="btn btn-default" id="search">搜索</button>
+                    <button class="btn btn-default" id="search" >搜索</button>
                 </div>
-            </form>
-            <form class="form-horizontal text-center">
-                {% csrf_token %}
+            </DIV>
+            <hr>
+            <form class="form-horizontal text-center" method="post" action="/basicInfo/modifyUser/">
                 <div class="form-group">
+                    <label for="usertype" class="col-sm-2 control-label">用户类型</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="type" id="usertype" value="" readonly="true">
+                    </div>
                     <label for="id" class="col-sm-2 control-label">学工号</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="id" id="id">
+                        <input type="text" class="form-control" name="id" id="id" value="" readonly="true">
                     </div>
                     <label for="name" class="col-sm-2 control-label">姓名</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="name" id="name">
+                        <input type="text" class="form-control" name="name" id="name" value="" readonly="true">
                     </div>
                     <label for="gender" class="col-sm-2 control-label">性别</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="gender" id="gender">
+                        <input type="text" class="form-control" name="gender" id="gender" value="">
                     </div>
                     <label for="department" class="col-sm-2 control-label">学院</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="department" id="department">
+                        <input type="text" class="form-control" name="department" id="department" value="">
                     </div>
                     <label for="major" class="col-sm-2 control-label">专业</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="major">
+                        <input type="text" class="form-control" id="major"  name="major" value="">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="phone_number" class="col-sm-2 control-label">电话号码</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="phone_number" id="phone_number">
+                        <input type="text" class="form-control" name="phoneNumber" id="phone_number" value="">
                     </div>
                     <label for="address" class="col-sm-2 control-label">住址</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="address" id="address">
+                        <input type="text" class="form-control" name="address" id="address" value="">
                     </div>
                 </div>
                 <input type="submit" class="btn btn-default" value="提交修改" id="submit">
@@ -99,21 +101,27 @@
 <script>
     $(document).ready(
         function () {
-            //Fetch info
-            $("#search").click(function () {
-                //top.location.reload();
+            $("#search").click(
+                function () {
+                    var id = $("#searchNo").val();
 
-            });
+                    var type = $('input:radio[name="type"]:checked').val();
 
-            $("#submit").click(function () {
-                //top.location.reload();//Upload info & refresh
-
-            });
+                    $.getJSON('/basicInfo/modifyUser/', {'id':id, 'type':type}, function (ret) {
+                        $("#usertype").val(type);
+                        $("#id").val(ret['id']);
+                        $("#name").val(ret['name']);
+                        $("#gender").val(ret['gender']);
+                        $("#department").val(ret['department']);
+                        $("#major").val(ret['major']);
+                        $("#phone_number").val(ret['phoneNumber']);
+                        $("#address").val(ret['address']);
+                    });
+                }
+            )
         }
-    );
-
+    )
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="../js/bootstrap.js"></script>
 </body>
 </html>

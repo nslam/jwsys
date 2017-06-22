@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="stuId"></span></li>
+        <li role="presentation">欢迎:{{username}}</li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -33,29 +33,26 @@
             <table class="table table-striped" id="gradeTable">
                 <thead>
                 <tr>
-                    <th>选课号</th>
                     <th>课程号</th>
                     <th>课程名</th>
                     <th>学分</th>
                     <th>成绩</th>
                     <th>绩点</th>
-                    <th>排名</th>
+
                     <!--Join with table SECTION-->
                     <!--可加其他信息-->
                 </tr>
                 </thead>
                 <tbody>
-                {{% for item in gradeList %}}
+                {% for item in gradeList %}
                 <tr>
-                    <td>{{item.section_info}}</td>
-                    <td>{{item.course_number}}</td>
+                    <td>{{item.courseNumber}}</td>
                     <td>{{item.title}}</td>
-                    <td>{{item.credit}}</td>
+                    <td>{{item.credit|floatformat:"1" }}</td>
                     <td>{{item.grade}}</td>
-                    <td>{{item.grade_point}}</td>
-                    <td>{{item.rank}}</td>
+                    <td>{{item.gradePoint|floatformat:"2" }}</td>
                 </tr>
-                {{% endfor %}}
+                {% endfor %}
 
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
@@ -71,7 +68,7 @@
             </table>
             <div class="text-right">
                 <button class="btn btn-default" id="print">打印成绩</button>
-                <button class="btn btn-info" id="analysis">个人成绩分析</button>
+                <a href="/basicInfo/stuGradeAnalysis/"><button class="btn btn-info" id="analysis">个人成绩分析</button></a>
             </div>
         </div>
         <hr>
@@ -84,15 +81,16 @@
     </div>
 </div>
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
-<script type="javascript">
+<script src="http://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.js"></script>
+<script>
     $(document).ready(
         function () {
-            $("#analysis").click(function () {
-                $.get("123" + "/analysis/");
-            });
+            //$("#analysis").click(function () {
+              //  $.get('/basicInfo/stuGradeQuery/');
+            //});
 
             $("#print").click(function () {
-
+                $("#gradeTable").print();
             });
         }
     );

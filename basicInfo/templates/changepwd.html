@@ -27,7 +27,7 @@
 <div class="container">
   <div class="row text-center">
     <div class="col-md-6 col-md-offset-3">
-      <form class="form-horizontal" role="form" method="post" action="/basicInfo/setPassword/">
+      <form class="form-horizontal" role="form" method="post" action="/basicInfo/setPassword/" onsubmit="return check()">
           {% csrf_token %}
           <div class="form-group">
               <label for="originPwd" class="col-sm-2 control-label">原密码</label>
@@ -72,6 +72,25 @@
     var status = "{{ status }}";
     if(status != "true")
         alert(status);
+
+    function check() {
+        if($("#originPwd").val() == '')
+        {
+            alert("请输入原密码！");
+            return false;
+        }
+        else if($("#newPwd").val() != $("#newPwdAgain").val())
+        {
+            alert("新密码输入不一致！");
+            return false;
+        }
+        else if($("#newPwd").val() == '' || $("#newPwdAgain").val())
+        {
+            alert("新密码不能为空！");
+            return false;
+        }
+        return true;
+    }
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed --> 
 

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+          <form action="{% url 'courseArrange:courseInstrSetting' %}" method='post'>
+              {% csrf_token %} 
+            <fieldset>
+               <legend>开课老师设置</legend> 
+               <label>开课教师编号（如一个班有多位教师，请用空格隔开）</label><br/>
+               <input type="text" class="form-control" name = "course_instr_id"/> <br/>
+               <label>课程编号</label><br/>
+               <input type="text" class="form-control" name = "course_id"/><br/> 
+               <label>开课容量</label><br/>
+               <input type="text" class="form-control" name = "course_capacity"/><br/>
+               <label>是否需要多媒体教室</label><br/>
+               <select name="classroom_requirement" class="form-control">
+                  <option value="2">是</option> 
+                  <option value="1">否</option> 
+               </select> 
+               <br/> <button type="submit" class="btn btn-info">设置</button>
+            </fieldset>
+          </form>
+          <br /><br />
+          <form action="{% url 'courseArrange:instrBusyTimeSetting' %}" method='post'>
+              {% csrf_token %} 
+            <fieldset>
+               <legend>教师繁忙时间设置</legend> 
+               <label>教师编号</label><br/>
+               <input type="text" class="form-control col-sm-2" name = "instr_id"/><br/><br/> 
+               <label>时间段</label><br/> 
+             <div class="row">
+               <div class="col-xs-2">
+               <select name="day" class="form-control"> 
+                  <option value="1">周一</option> 
+                  <option value="2">周二</option> 
+                  <option value="3">周三</option> 
+                  <option value="4">周四</option> 
+                  <option value="5">周五</option> 
+                  <option value="6">周六</option> 
+                  <option value="7">周日</option>
+                </select> 
+                </div>
+                <div class="col-xs-3">
+                <select class="form-control" name="start_time"> 
+                  <option value="1">第1节</option>
+                   <option value="2">第2节</option> 
+                   <option value="3">第3节</option> 
+                   <option value="4">第4节</option>
+                    <option value="5">第5节</option> 
+                    <option value="6">第6节</option> 
+                    <option value="7">第7节</option> 
+                    <option value="8">第8节</option> 
+                    <option value="9">第9节</option>
+                    <option value="10">第10节</option>
+                    <option value="11">第11节</option>
+                    <option value="12">第12节</option> 
+                    <option value="13">第13节</option>
+                </select>
+               </div>
+               <div class="col-xs-1">
+                   <h5 class="text-center">至</h5>
+               </div>
+               <div class="col-xs-3">
+                   <select name="end_time" class="form-control"> 
+                    <option value="1">第1节</option> 
+                    <option value="2">第2节</option> 
+                    <option value="3">第3节</option> 
+                    <option value="4">第4节</option> 
+                    <option value="5">第5节</option> 
+                    <option value="6">第6节</option> 
+                    <option value="7">第7节</option> 
+                    <option value="8">第8节</option> 
+                    <option value="9">第9节</option> 
+                    <option value="10">第10节</option> 
+                    <option value="11">第11节</option> 
+                    <option value="12">第12节</option> 
+                    <option value="13">第13节</option>
+                  </select>
+              </div>
+            </div>
+             <br /><button type="submit" class="btn btn-info">设置</button>
+            </fieldset>
+          </form> 
+          <a class="btn btn-block btn-primary" href="{% url 'courseArrange:autoCourseArrange' %}">开始排课</a>
+{% endblock content %}

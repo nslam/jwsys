@@ -16,7 +16,6 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="teacherId"></span></li>
     </ul>
 </div>
 <div class="container-fluid">
@@ -34,32 +33,29 @@
             <table class="table table-striped" id="courseTable">
                 <thead>
                 <tr>
-                    <th>开课信息</th>
+                    <th>开课号</th>
                     <th>课程号</th>
                     <th>课程名</th>
-                    <th>开课学院</th>
                     <th>学分</th>
+                    <th>点击录入</th>
                     <!--Join with table SECTION-->
                     <!--可加其他信息 只显示未录入的-->
                 </tr>
                 </thead>
                 <tbody>
-                {{% for i in courseList %}}
+                {% for i in courseList %}
+
                 <tr class="item">
-                    <td class="section_info">{{i.section_info}}</td>
-                    <td class="course_number">{{i.course_number}}</td>
+                    <td class="section_info">{{i.sectionId}}</td>
+                    <td class="course_number">{{i.courseNumber}}</td>
                     <td>{{i.title}}</td>
-                    <td>{{i.department}}</td>
                     <td>{{i.credit}}</td>
+                    <td><a href="/basicInfo/gradeInputDetails/?sectionId={{ i.sectionId }}&courseNumber={{ i.courseNumber }}">
+                        点击录入
+                    </a></td>
                 </tr>
-                {{% endfor %}}
-                <tr class="item">
-                    <td class="section_info">XXX</td>
-                    <td class="course_number">211C00020</td>
-                    <td >面向对象的程序设计</td>
-                    <td>计算机科学与技术学院</td>
-                    <td>2.5</td>
-                </tr>
+                {% endfor %}
+
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
                 <!--<td>Mumbai</td>-->
@@ -87,19 +83,19 @@
 <script>
     $(document).ready(
         function () {
-            $(".item").click(function () {
+            /*$(".item").click(function () {
                 var sectionInfo = $(this).children().get(0).innerHTML;
                 var courseNumber = $(this).children().get(1).innerHTML;
-                   //...
-                alert(sectionInfo);
-                alert(courseNumber);
-                //..Redirect
-            });
+                $.get("/basicInfo/gradeInputDetails/",
+                    {'sectionId': sectionInfo,
+                    'courseNumber': courseNumber});
+                //..Redirect Backward
+                //alert(sectionInfo + courseNumber);
+            });*/
         }
     );
 
 </script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="../js/bootstrap.js"></script>
 </body>
 </html>

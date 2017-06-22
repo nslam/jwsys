@@ -16,7 +16,7 @@
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
     <ul class="nav nav-tabs">
-        <li role="presentation">欢迎:<span id="eduAdminId"></span></li>
+
     </ul>
 </div>
 <div class="container-fluid">
@@ -30,7 +30,7 @@
 <div class="container">
     <div class="row">
         <div class="text-left col-lg-10 col-lg-offset-1">
-            <label for="courseInfo">搜索（课程号或课程名）</label>
+            <label for="courseInfo">搜索（课程号）</label>
             <input type="text" class="form-control" name="courseInfo" id="courseInfo"><br>
             <div class="text-center">
                 <button id="search" class="btn btn-default">点击搜索</button>
@@ -54,37 +54,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{% for item in courseList %}}
-                <tr class="item">
-                    <td><input type="checkbox" name="check"></td>
-                    <td>{{item.course_number}}</td>
-                    <td>{{item.title}}</td>
-                    <td>{{item.department}}</td>
-                    <td>{{item.credit}}</td>
-                    <td>{{item.week_hour}}</td>
-                    <td>{{item.method}}</td>
-                </tr>
-                {{% endfor %}}
 
-
-                <tr class="item">
-                    <td><input type="checkbox" name="check"></td>
-                    <td>211C00020</td>
-                    <td>面向对象的程序设♂计</td>
-                    <td>计算机科学与技术学院</td>
-                    <td>2.5</td>
-                    <td>3.0</td>
-                    <td>闭卷考试</td>
-                </tr>
-                <tr class="item">
-                    <td><input type="checkbox" name="check"></td>
-                    <td>211C00040</td>
-                    <td>数字逻辑设计</td>
-                    <td>计算机科学与技术学院</td>
-                    <td>4.0</td>
-                    <td>5.0</td>
-                    <td>闭卷考试</td>
-                </tr>
                 <!--<tr>-->
                 <!--<td>Sachin</td>-->
                 <!--<td>Mumbai</td>-->
@@ -112,9 +82,27 @@
 <script>
     $(document).ready(
         function () {
+
             $("#search").click(
                 function () {
+                    var id = $("#courseInfo").val();
+                    $("#courseTable tr:not(:first)").empty();
+                    $.getJSON("/basicInfo/dropCourse/", {"courseId":id}, function (ret) {
+                        var list = ret['courseList'];
+                        for(var i = 0; i  < list.length; i++)
+                        {
 
+                            var dict = list[i];
+                            var newRow = '<tr class="item"><td><input type="checkbox" name="check"></td> <td>'+dict['courseNumber']
+                                +'</td> <td>'+dict['title']+'</td> <td>'+
+                                dict['department']+'</td> <td>'+
+                                dict['credits']+'</td> <td>'+
+                                dict['weekHour']+'</td> <td>'+
+                                dict['method']+'</td> </tr>';
+                            $('#courseTable').append(newRow);
+                        }
+
+                    });
                 }
             );
             $("#delete").click(
@@ -131,7 +119,12 @@
                             list.push(id);
                         }
                     });
-                    alert(list);
+                    if(list.length == 0)
+                        alert("未选中任何课程！");
+                    else
+                        $.post("/basicInfo/dropCourse/", {"courseList":list}, function (ret) {
+                            alert(ret);
+                        });
                     //$.post();
                 }
             );
