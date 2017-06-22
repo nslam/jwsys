@@ -82,14 +82,14 @@ def hw(req,s_id):
 def uiforstudent(req,s_id):
     if CheckStu(req,s_id) == 0:
         return HttpResponse("You have no rights")
-    Aassignment = assignment.objects.filter(courseid=s_id)
+    Aassignment = assignment.objects.fliter(courseid=s_id)
     return render(req,"ui.html",{'allob':Aassignment})
 
 @login_required
 def uiforteacher(req,s_id):
     if CheckIns(req,s_id) == 0:
         return HttpResponse("You have no rights")
-    Aassignment = assignment.objects.filter(courseid=s_id)
+    Aassignment = assignment.objects.fliter(courseid=s_id)
     return render(req,"ui2.html",{'allob':Aassignment})
 
 @login_required
@@ -142,7 +142,7 @@ def hwdownload(req,s_id,Aid):
         return HttpResponse("You have no rights")
     filepath="shareSource\\homework\\" + Aid + "\\"+"hw.zip"
     f = zipfile.ZipFile(filepath, 'w')
-    allhw=assignment_store.objects.filter(assignmentid=Aid)
+    allhw=assignment_store.objects.fliter(assignmentid=Aid)
     for eachhw in allhw:
         f.write("shareSource\\homework\\" + Aid + "\\"+eachhw.file_name)
     f.close()
@@ -185,7 +185,7 @@ def seefile(req,section_id):
         f1.save()
         return render(req,'window5.html')
 
-    Ffile = file.objects.all().filter(course_id=section_id and section_id in Section.objects.Course.objects.value("course_number")).order_by("-flag_top","-file_id")
+    Ffile = file.objects.all().fliter(course_id=section_id and section_id in Section.objects.Course.objects.value("course_number")).order_by("-flag_top","-file_id")
 
     return render(req,"souceForm.html",{'file':Ffile,'sid':section_id})
 
@@ -209,7 +209,7 @@ def filetop(req,section_id,fid):
     if(type=='Student'):
         return render(req,'window10.html')
     else:
-        file.objects.filter(id=fid).update(flag_top=n)
+        file.objects.fliter(id=fid).update(flag_top=n)
         return render(req, 'window7.html')
 
 @login_required
@@ -219,13 +219,13 @@ def fileuntop(req,section_id,fid):
     if(type=='Student'):
         return render(req,'window10.html')
     else:
-        file.objects.filter(id=fid).update(flag_top=0)
+        file.objects.fliter(id=fid).update(flag_top=0)
         return render(req, 'window8.html')
 
 @login_required
 def filedownload(req,section_id,fid):
     f = file.objects.get(id=fid)
-    file.objects.filter(id=fid).update(download_times=f.download_times+1)
+    file.objects.fliter(id=fid).update(download_times=f.download_times+1)
     the_file_name=f.file_name
     filename=str(f.file_path)+f.file_name
     response=StreamingHttpResponse(readFile(filename))
