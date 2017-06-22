@@ -166,6 +166,7 @@ def changeInfo(request):
         print(ret['picSrc'])
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
+        ret['name'] = item.user.get_full_name()
         ret['gender'] = '男' if (item.gender == 1) else '女'
         ret['userId'] = user.username  # Set username as ID shown outside
         if type == 'Student':
