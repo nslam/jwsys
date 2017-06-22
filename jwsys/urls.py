@@ -21,5 +21,4 @@ urlpatterns = [
     url(r'^basicInfo/', include('basicInfo.urls')),
     url(r'^bbs/', include('bbs.urls')),
     url(r'^shareSource/', include('shareSource.urls')),
-    url(r'^courseArrange/', include('courseArrange.urls', namespace='courseArrange')),
 ]
