@@ -21,5 +21,5 @@ urlpatterns=[
     url(r'^instrCourseQuery/$', views.instrCourseQuery, name = 'instrCourseQuery'),
     url(r'^classroomCourseQuery/$', views.classroomCourseQuery, name = 'classroomCourseQuery'),
     url(r'^instrBusyTimeSetting/$', views.instrBusyTimeSetting, name = 'instrBusyTimeSetting'),
-    url(r'^courseInstrSetting/$', views.courseInstrSetting, name = 'courseInstrSetting'),
+    url(r'^courseInstrSetting/$', views.courseInstrSetting, name = 'courseInstrSetting')
 ]

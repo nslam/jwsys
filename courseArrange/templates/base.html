@@ -1,10 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
+    <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../js/bootstrap.js"></script>
 </head>
+
 <body>
-$END$
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="row-fluid">
+        <div class="col-md-2">
+          <ul class="nav nav-list well">
+            <li class="nav-header">
+              教室资源管理
+            </li>
+            <li class="active">
+               <a href="{% url 'courseArrange:pageClassroomInput' %}">录入教室信息</a>
+            </li>
+            <li>
+               <a href="{% url 'courseArrange:pageClassroomDelete' %}">删除教室信息</a>
+            </li>
+            <li>
+               <a href="{% url 'courseArrange:pageClassroomAlter' %}">修改教室信息</a>
+            </li>
+            <li class="nav-header">
+              课程安排
+            </li>
+            <li>
+               <a href="{% url 'courseArrange:pageAutoCourseArrange' %}">自动排课</a>
+            </li>
+            <li>
+               <a href="{% url 'courseArrange:pageManuCourseArrange' %}">手动调课</a>
+            </li>
+            <li class="nav-header">
+              课表查询
+            </li>
+            <li>
+               <a href="{% url 'courseArrange:pageInstrCourseQuery' %}">教师课表查询</a>
+            </li>
+            <li>
+               <a href="{% url 'courseArrange:pageClassroomCourseQuery' %}">教室课表查询</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-8 col-md-offset-0.5">
+          {% block content %}{% endblock content %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    var status = "{{ status }}";
+    if(status)
+        alert(status);
+</script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.js"></script>
 </body>
 </html>
