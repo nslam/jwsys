@@ -1,8 +1,12 @@
  # -*- coding: utf-8 -*- 
+import xlwt  
+import re
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse
 
 from django.shortcuts import render
 
@@ -70,7 +74,29 @@ def studentlist(request):
 			ctx['selected_id'] = int(section_id)
 			ctx['student_list'] = instructorOperations.get_student_list(section_id)
 		elif request.GET['submit'] == 'down':
-			pass
+			section_id = request.GET['section']
+			ctx['selected_id'] = int(section_id)
+			student_list = instructorOperations.get_student_list(section_id)
+			ctx['student_list'] = student_list
+			wbk = xlwt.Workbook(encoding='utf-8')  
+			ws = wbk.add_sheet((instructorOperations.course_detail(section_id))['title'], \
+				cell_overwrite_ok=True)
+			ws.write(0, 0, '学号')
+			ws.write(0, 1, '姓名')
+			ws.write(0, 2, '专业')
+			ws.write(0, 3, '电话')
+			row = 1
+			for student_info in student_list:
+				ws.write(row, 0, student_info['student_id'])
+				ws.write(row, 1, student_info['name'])
+				ws.write(row, 2, student_info['major'])
+				ws.write(row, 3, student_info['phone_number'])
+				row += 1
+			response = HttpResponse(content_type='application/vnd.ms-excel') 
+			response['Content-Disposition'] = 'attachment; filename=' + \
+				(instructorOperations.course_detail(section_id))['title'] + '.xls' 
+			wbk.save(response)
+			return response
 		else:
 			return 0
 
