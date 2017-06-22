@@ -20,12 +20,36 @@ class StudentOperations(object):
 
 		student_info = {}
 
-		student_info['photo_file'] = self.student.photo_file
-		student_info['phone_number'] = self.student.phone_number
-		student_info['address'] = self.student.address
-		student_info['tot_cred'] = self.student.tot_cred
-		student_info['major'] = self.student.major.name
-		student_info['matriculate'] = self.student.matriculate
+		try:
+			student_info['photo_file'] = self.student.photo_file
+		except:
+			pass
+
+		try:
+			student_info['phone_number'] = self.student.phone_number
+		except:
+			pass
+
+		try:
+			student_info['address'] = self.student.address
+		except:
+			pass
+
+		try:
+			student_info['tot_cred'] = self.student.tot_cred
+		except:
+			pass
+
+		try:
+			student_info['major'] = self.student.major.name
+		except:
+			pass
+
+		try:
+			student_info['matriculate'] = self.student.matriculate
+		except:
+			pass
+			
 		student_info['id'] = self.student_id
 
 		user = self.student.user

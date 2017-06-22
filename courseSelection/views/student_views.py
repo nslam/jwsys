@@ -1,19 +1,59 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect 
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.models import User
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+
+from basicInfo.models import Student
 
 from courseSelection.dboperations.student_operations import StudentOperations
+from django.contrib.auth.decorators import login_required
 
 
 
 # init
-student_id = 1
-studentOperations = StudentOperations(student_id)
+# student_id = 1
+# studentOperations = StudentOperations(student_id)
 
+
+def getType(user):
+    try:
+        student = user.student
+        ret = 'Student'
+    except:
+        try:
+            instructor = user.instructor
+            ret = 'Instructor'
+        except:
+            try:
+                manager = user.manager
+                ret = 'Manager'
+            except:
+                ret = 'none'
+    return ret
+
+
+@login_required
 def index(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	student_info = studentOperations.get_student_info()
 	return render(request, 'student/index.html', student_info)
 
+@login_required
 def curriculum(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
 	ctx['demand'] = studentOperations.curriculum_demand()
 	check_curriculum = studentOperations.check_curriculum()
@@ -38,16 +78,36 @@ def curriculum(request):
 	return render(request, 'student/curriculum.html', ctx)
 
 
+@login_required
 def selection(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
-	ctx['sections'] = studentOperations.curriculum_sections()
-	ctx['selected'] = studentOperations.selected_sections()
+	try:
+		ctx['sections'] = studentOperations.curriculum_sections()
+		ctx['selected'] = studentOperations.selected_sections()
+	except Exception as err:
+		ctx['result'] = err
+		return render(request, 'student/selection_condition.html', ctx)
 	if 'metric' in request.GET and 'value' in request.GET:
 		ctx['sections'] = studentOperations.search_course(request.GET['metric'],request.GET['value'])
 	return render(request, 'student/selection.html', ctx)
 
 
+@login_required
 def dropcourse(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
 	if request.method == "POST":
 		section_id = request.POST['drop']
@@ -59,7 +119,15 @@ def dropcourse(request):
 	return render(request, 'student/selection_drop.html', ctx)
 
 
+@login_required
 def selectionpriority(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
 	if request.method == "GET":
 		section_id = request.GET['select']
@@ -72,7 +140,15 @@ def selectionpriority(request):
 		return render(request, 'student/selection_drop.html', ctx)
 
 
+@login_required
 def selectionresult(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
 	if request.method == "GET":
 		section_id = request.GET['select']
@@ -87,7 +163,15 @@ def selectionresult(request):
 		return render(request, 'student/selection_result.html', ctx)
 
 
+@login_required
 def coursedetails(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
 	if request.method == "GET":
 		if 'id' in request.GET:
@@ -96,7 +180,15 @@ def coursedetails(request):
 	return render(request, 'student/coursedetails.html', ctx)
 
 
+@login_required
 def schedule(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Student':
+	    return HttpResponse('You are not a Student!')
+	student_id = Student.objects.get(user_id=user.id).id
+	studentOperations = StudentOperations(student_id)
+
 	ctx = {}
 	ctx['years'] = studentOperations.schedule_years()
 	if 'year' in request.GET:

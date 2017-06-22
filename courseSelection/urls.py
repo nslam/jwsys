@@ -1,9 +1,10 @@
 from django.conf.urls import url
 from django.views.generic import RedirectView
 
-from .views import student_views, instructor_views, manager_views
+from .views import student_views, instructor_views, manager_views, index_views
 
 urlpatterns = [
+	url(r'^$', index_views.index),
 	# manager
 	url(r'^manager$', RedirectView.as_view(url='manager/index')),
 	url(r'^manager/index$', manager_views.show_manager),

@@ -97,9 +97,10 @@ function printit() {
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
+            <form action="/courseSelection/instructor/studentlist" method="get">
             <div class="panel panel-default c_left">
                 <div class="panel-heading">
-                    <form action="/courseSelection/instructor/studentlist" method="get">
+                    
                         <div class="col-lg-8">
                             <div class="form-group">
                                 <select name = "section" class="form-control">
@@ -114,9 +115,9 @@ function printit() {
                             </div>
                         </div>
                         <div class="pull-right">
-                            <button type="submit" class="btn btn-primary" id="print-btn">查看列表</button>
+                            <button type="submit" name="submit" value="list" class="btn btn-primary" id="print-btn">查看列表</button>
                         </div>
-                    </form>
+                    
                 </div>
                 </br>
                 <!--startprint-->
@@ -143,9 +144,11 @@ function printit() {
                 <!--endprint-->
             </div>
             <div class="">
+                <button type="submit" class="btn btn-primary" name="submit" value="down">下载</button>
                 <button type="button" class="btn btn-primary" id="print-btn" onclick="javascript:printit()">打印</button>
 <!--                 <button type="button" class="btn btn-primary" id="download-btn">下载</button> -->
             </div>
+            </form>
             <!-- /.row -->
         </div>
         <!-- /#page-wrapper -->

@@ -21,7 +21,7 @@ class Selection(models.Model):
     student = models.ForeignKey('basicInfo.Student', null=True, on_delete=models.SET_NULL)
     section = models.ForeignKey('courseArrange.Section', null=True, on_delete=models.SET_NULL)
     selection_round = models.IntegerField()
-    select_time = models.DateTimeField()
+    select_time = models.DateTimeField(null=True)
     drop_time = models.DateTimeField(null=True)
     priority = models.IntegerField()
     selection_condition = models.IntegerField()

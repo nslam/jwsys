@@ -4,16 +4,46 @@ from ..models import *
 from courseSelection.dboperations.instructor_operations import *
 from courseSelection.dboperations.student_operations import *
 from courseSelection.dboperations.manager_operations import *
-from  datetime  import  *  
+from basicInfo.models import Manager
+from datetime  import  *  
+
+from django.contrib.auth.decorators import login_required
+
 import time
 import sys
 
 
 # Create your views here.
 
-m=ManagerOperations(1)
+# m=ManagerOperations(1)
 
+
+def getType(user):
+    try:
+        student = user.student
+        ret = 'Student'
+    except:
+        try:
+            instructor = user.instructor
+            ret = 'Instructor'
+        except:
+            try:
+                manager = user.manager
+                ret = 'Manager'
+            except:
+                ret = 'none'
+    return ret
+    
+
+@login_required
 def show_manager(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	manager_info=m.get_manager_info()
 	name = manager_info['last_name'] + " " + manager_info['first_name']
 	phone_number=manager_info['phone_number']
@@ -21,12 +51,27 @@ def show_manager(request):
 	return render(request, 'manager/index.html',{'manager_name':name,'manager_phone':phone_number,'manager_addr':phone_number})
 
 
+@login_required
 def set_time(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	return render(request, 'manager/set_time.html')
 
 
+@login_required
 def time_result(request):
 	ctx = {}
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
 
 	try:
 		start=request.GET['start_time']
@@ -66,7 +111,15 @@ def time_result(request):
 	return render(request, 'manager/set_time_result.html',ctx)
 
 
+@login_required
 def confirm_result(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	ctx = {}
 	if request.GET['submit'] == 'sift':
 		# year=request.GET['year']
@@ -104,14 +157,30 @@ def confirm_result(request):
 		return render(request, 'manager/confirm_selection_result.html', ctx)
 
 
+@login_required
 def set_curriculum_demand(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	ctx = {}
 	# get section list
 	ctx['majors'] = m.all_majors()
 	return render(request, 'manager/set_curriculum.html', ctx)
 
 
+@login_required
 def curriculum_demand_result(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	ctx = {}
 	if 'major' in request.GET and 'elective_demand' in request.GET and 'public_demand' in request.GET:
 		major_id = request.GET['major']
@@ -131,14 +200,30 @@ def curriculum_demand_result(request):
 	return render(request, 'manager/curriculum_result.html', ctx)
 
 
+@login_required
 def manual_selection(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	ctx = {}
 	if 'metric' in request.GET and 'value' in request.GET:
 		ctx['sections'] = m.search_course(request.GET['metric'],request.GET['value'])
 	return render(request, 'manager/help_choose.html',ctx)
 
 
+@login_required
 def selection_result(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	ctx = {}
 	if 'select' in request.POST:
 		m.select_course(int(request.POST['select']),\
@@ -147,12 +232,26 @@ def selection_result(request):
 	return render(request, 'manager/help_choose_result.html',ctx)
 
 
-
+@login_required
 def other_setting(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
 	return render(request, 'manager/other_settings.html')
 
 
+@login_required
 def other_setting_result(request):
+	user = request.user
+	type = getType(user)
+	if type != 'Manager':
+	    return HttpResponse('You are not a Manager!')
+	manager_id = Manager.objects.get(user_id=user.id).id
+	m = ManagerOperations(manager_id)
+
 	if request.method == 'GET':
 		selection_limit=request.GET['selection_limit']
 		drop_limit=request.GET['drop_limit']
