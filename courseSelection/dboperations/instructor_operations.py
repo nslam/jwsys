@@ -106,6 +106,38 @@ class InstructorOperations(object):
 		return section_list	
 
 
+	def course_detail(self, course_id):
+		
+		course_info = {}
+
+		course = Course.objects.get(id=course_id)
+
+		course_info['id'] = course.id
+		course_info['course_number'] = course.course_number
+		course_info['title'] = course.title
+		course_info['credits'] = course.credits
+		course_info['week_hour'] = course.week_hour
+		course_info['type'] = COURSE_TYPE_DIC[course.type]
+		course_info['method'] = course.method
+		try:
+			course_info['department_name'] = course.department.name
+		except:
+			pass
+
+		try:
+			try:
+				course_info['precourse'] = ''
+				for course in course.precourse:
+					course_info['precourse'] += course.title 
+			except:
+				course_info['precourse'] = course.precourse.title
+		except:
+			pass
+
+
+		return course_info
+
+
 	def get_student_list(self, section_id):
 		
 		student_list = []
