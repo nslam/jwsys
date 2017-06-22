@@ -50,7 +50,7 @@ def dotest(request, paper_id):
 				obj = {'question':pd,'sheet':sheet,'ans':'N','mark':0}
 			_obj = Reply.objects.create(**obj)	#建立回答对象
 
-		for xz in question_xz_list_a :
+		for xz in question_xz_list :
 			q_id = ''
 			q_id = str(xz.id)
 			if q_id in request.POST:
@@ -66,11 +66,11 @@ def dotest(request, paper_id):
 
 		sheet.tot_mark=xz_score+pd_score	#记录总分
 		sheet.xz_mark=xz_score
-		sheet.pd_makr=pd_socre
+		sheet.pd_makr=pd_score
 		sheet.save()
 			
-		return HttpResponse('<script> alert("提交成功！"); </script>')
-		
+		return HttpResponseRedirect('/onlinetest/student1/')
+
 @login_required
 def student1(request):
 	user = request.user
@@ -79,7 +79,7 @@ def student1(request):
 	ta = Takes.objects.filter(student_id=stu.id)
 	takes=[]
 	for t in ta:
-		takes.append(t.section_course)
+		takes.append(t.section.course)
 	sPaper = Paper.objects.all()
 	stuPaper = []
 	for s in sPaper:
@@ -97,9 +97,13 @@ def student1(request):
 	for paper in myPaper:
 		if paper not in passedPaper:
 			waitPaper.append(paper)
+	allpaper=[]
+	for paper in stuPaper:
+		if paper not in passedPaper:
+			allpaper.append(paper)
 	
 	else:
-		return render(request,'student1.html',{'user':user,'allpaper_list':stuPaper,'mypaper_list':waitPaper})
+		return render(request,'student1.html',{'user':user,'allpaper_list':allpaper,'mypaper_list':waitPaper})
 
 @login_required
 def student2(request):
@@ -109,15 +113,10 @@ def student2(request):
 	ta = Takes.objects.filter(student_id=stu.id)
 	takes=[]
 	for t in ta:
-		takes.append(t.section_course)
-	allcourse_score_list = [[] for c in takes]
-	a = 0
-	for cour in allcourse_score_list:
-		cour = Sheet.objects.filter(paper_course_id = takes[a].id, student_id = stu.id)
-		a = a+1
+		takes.append(t.section.course)
+	allcourse_score_list = Sheet.objects.filter(student_id = stu.id)
 	
-	else:
-		return render(request,'student2.html',{'user':user,'course_list':takes,'allcourse_score_list':allcourse_score_list})
+	return render(request,'student2.html',{'user':user,'course_list':takes,'allcourse_score_list':allcourse_score_list})
 
 @login_required
 def teacher1(request):
@@ -127,7 +126,7 @@ def teacher1(request):
 	tches = Teaches.objects.filter(instructor_id = ins.id)
 	teaches = []
 	for t in tches:
-		teaches.append(t.section_course)
+		teaches.append(t.section.course)
 	iPaper = Paper.objects.all()
 	instruPaper = []
 	for p in iPaper:
@@ -152,7 +151,7 @@ def deletepaper(request,pid):
 	tches = Teaches.objects.filter(instructor_id = ins.id)
 	teaches = []
 	for t in tches:
-		teaches.append(t.section_course)
+		teaches.append(t.section.course)
 	
 	iPaper = Paper.objects.all()
 	instruPaper=[]
@@ -168,7 +167,8 @@ def deletepaper(request,pid):
 def teacher3(request):
 	ques = Question.objects.all()
 	tuser = request.user
-	myques = Question.objects.filter(instructor_id = tuser.id)
+	ins = tuser.instructor
+	myques = Question.objects.filter(instructor_id = ins.id)
 	return render(request,'teacher3.html',{'allquestion_list': ques,'user':tuser,'myquestion_list':myques})
 
 @login_required	
@@ -194,12 +194,7 @@ def newpdquestion(request):
     else:
     	qans = request.POST['question_ans']	
     	
-    if 'teacher_name' not in request.POST:
-    	error = '没有输入教师！'
-    	return render(request,'teacher3.html',{'error':error})#返回本页面，附加错误信息	
-    else:
-    	tnam = request.POST['teacher_name']
-    	tname = User.objects.get(username=tnam)
+    tname = User.objects.get(id=request.user.id)
     			
     if 'test_point' not in request.POST:
     	error = '没有输入考点！'
@@ -227,7 +222,8 @@ def newpdquestion(request):
     #insertSuccess = True
     ques = Question.objects.all()
     tuser = request.user
-    myques = Question.objects.filter(instructor_id  = tuser.id)
+    ins = tuser.instructor
+    myques = Question.objects.filter(instructor_id  = ins.id)
     return render(request,'teacher3.html',{'allquestion_list': ques,'user':tuser,'myquestion_list':myques })
 
 @login_required
@@ -275,12 +271,7 @@ def newxzquestion(request):
 	else:
 		cd = request.POST['choice4']	
 		
-	if 'teacher_name' not in request.POST:
-		error = '没有输入教师！'
-		return render(request,'teacher3.html',{'error':error})#返回本页面，附加错误信息	
-	else:
-		tnam = request.POST['teacher_name']
-		tname = User.objects.get(username=tnam)
+	tname = User.objects.get(id=request.user.id)
 				
 	if 'test_point' not in request.POST:
 		error = '没有输入考点！'
@@ -315,7 +306,8 @@ def newxzquestion(request):
 	#insertSuccess = True
 	ques = Question.objects.all()
 	tuser = request.user
-	myques = Question.objects.filter(instructor_id  = tuser.id)
+	ins = tuser.instructor
+	myques = Question.objects.filter(instructor_id  = ins.id)
 	return render(request,'teacher3.html',{'allquestion_list': ques,'user':tuser,'myquestion_list':myques })#,{'success':insertSuccess}
 
 @login_required	
@@ -326,7 +318,8 @@ def deletequestion(request,did):
         x.delete()
         ques = Question.objects.all()
         tuser = request.user
-        myques = Question.objects.filter(instructor_id  = tuser.id)
+        ins = tuser.instructor
+        myques = Question.objects.filter(instructor_id  = ins.id)
         return render(request,'teacher3.html',{'allquestion_list': ques,'user':tuser,'myquestion_list':myques })
     else:
     	return render(reuqest,'teahcer3.html',{'error':'未获得题目id'})#未得到题目信息
@@ -376,7 +369,8 @@ def changequestion(request,updID):
 
     ques = Question.objects.all()
     tuser = request.user
-    myques = Question.objects.filter(instructor_id  = tuser.id)
+    ins = tuser.instructor
+    myques = Question.objects.filter(instructor_id  = ins.id)
     return render(request,'teacher3.html',{'allquestion_list': ques,'user':tuser,'myquestion_list':myques })
 
 @login_required	
@@ -390,7 +384,8 @@ def searchquestion(request):
     ques = Question.objects.filter(title__contains = tit)#没有搜到的话为空
 
     tuser = request.user
-    myques = Question.objects.filter(instructor_id  = tuser.id)
+    ins = tuser.instructor
+    myques = Question.objects.filter(instructor_id  = ins.id)
     return render(request,'teacher3.html',{'user':tuser,'myquestion_list': myques,'allquestion_list':ques})
 
 @login_required
@@ -411,7 +406,7 @@ def paper2(request,paperId):
 	tches = Teaches.objects.filter(instructor_id=ins.id)
 	teacher = []
 	for t in tches:
-		teacher.append(t.section_course)
+		teacher.append(t.section.course)
 	
 	questions = Question.objects.filter(course_id = paper.course_id)
 	paperques = paper.question_set.all()
@@ -442,12 +437,12 @@ def paperchinfo(request,paperId):
 		p.name = request.POST['paper_name']
 		cour_name = request.POST['course_name']
 		p.course = Course.objects.get(title = cour_name)
-		ins_name = request.POST['teacher_name']
-		p.instructor = User.objects.get(username = ins_name).instructor
+		#ins_name = request.POST['teacher_name']
+		#p.instructor = User.objects.get(username = ins_name).instructor
 		p.difficulty = request.POST['difficulty']
 		#p.choice_num = request.POST['choiceNum']
 		#p.judge_num = request.POST['judgeNum']
-		p.status = request.POST['status']
+		#p.status = request.POST['status']
 		p.limit_time = request.POST['limit_time']
 		p.save()
 
@@ -743,7 +738,7 @@ def paperstatus(request,pid):
 	tches = Teaches.objects.filter(instructor_id = ins.id)
 	teaches = []
 	for t in tches:
-		teaches.append(t.section_course)
+		teaches.append(t.section.course)
 	iPaper = Paper.objects.all()
 	instruPaper = []
 	for p in iPaper:

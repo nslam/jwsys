@@ -83,9 +83,9 @@ WSGI_APPLICATION = 'jwsys.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'jwsysDB',
+        'NAME': 'jwsys',
         'USER': 'root',
-        'PASSWORD': 'thelam',
+        'PASSWORD': '43112lk',
         'HOST': 'localhost',
         'PORT': '3306',
     }
