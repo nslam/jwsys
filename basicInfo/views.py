@@ -166,6 +166,7 @@ def changeInfo(request):
         print(ret['picSrc'])
         ret['phoneNumber'] = item.phone_number
         ret['address'] = item.address
+        ret['name'] = item.user.get_full_name()
         ret['gender'] = '男' if (item.gender == 1) else '女'
         ret['userId'] = user.username  # Set username as ID shown outside
         if type == 'Student':
@@ -555,7 +556,7 @@ def addUser(request):
                 instructor.department = department
                 instructor.save()
             a = f.readline().decode('gbk')
-        return HttpResponse("Success")
+        return HttpResponse('<script>alert("用户添加成功！");location.replace("/basicInfo/addUser/);</script>')
 
 
 @login_required

@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^basicInfo/', include('basicInfo.urls')),
     url(r'^bbs/', include('bbs.urls')),
+	url(r'^shareSource/', include('shareSource.urls')),
 ]
