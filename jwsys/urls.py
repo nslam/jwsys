@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^shareSource/', include('shareSource.urls')),
     url(r'^courseSelection/', include('courseSelection.urls')),
     url(r'^courseArrange/', include('courseArrange.urls', namespace='courseArrange')),
+    url(r'^onlinetest/', include('onlinetest.urls')),
 ]

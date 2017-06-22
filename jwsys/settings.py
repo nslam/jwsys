@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'basicInfo',
     'courseArrange',
+    'onlinetest',
     'courseSelection',
     'bbs',
     'shareSource',

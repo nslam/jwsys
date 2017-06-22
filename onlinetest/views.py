@@ -387,7 +387,7 @@ def searchquestion(request):
         return render(reuqest,'teahcer3.html',{'error':error})#返回本页面，附加错误信息	
     else:
         tit = request.POST['question_title']
-    ques = Question.obejects.filter(title__contains = tit)#没有搜到的话为空
+    ques = Question.objects.filter(title__contains = tit)#没有搜到的话为空
 
     tuser = request.user
     myques = Question.objects.filter(instructor_id  = tuser.id)
@@ -412,11 +412,8 @@ def paper2(request,paperId):
 	teacher = []
 	for t in tches:
 		teacher.append(t.section_course)
-	qtions = Question.objects.all()
-	questions = []
-	for x in qtions:
-		if x.course in teacher:
-			questions.append(x)
+	
+	questions = Question.objects.filter(course_id = paper.course_id)
 	paperques = paper.question_set.all()
 	xz = []
 	pd = []
@@ -489,13 +486,8 @@ def paperadd(request,paperId,questionId):
 	user = request.user
 	ins=user.instructor
 	paper = Paper.objects.get(id=paperId)
-	#question = Question.objects.get(id=questionId)
-	tches = Teaches.objects.filter(instructor_id=ins.id)
-	teacher = []
-	for t in tches:
-		teacher.append(t.section_course)
-	questions = Question.objects.filter(course in teaches)
-	paperques = Paper.question_set.all()
+	questions = Question.objects.filter(course_id = paper.course_id)
+	paperques = paper.question_set.all()
 	xz = []
 	pd = []
 	for q in paperques:
@@ -523,13 +515,8 @@ def paperdelete(request,paperId,questionId):
 	user = request.user
 	ins=user.instructor
 	paper = Paper.objects.get(id=paperId)
-	#question = Question.objects.get(id=questionId)
-	tches = Teaches.objects.filter(instructor_id=ins.id)
-	teacher = []
-	for t in tches:
-		teacher.append(t.section_course)
-	questions = Question.objects.filter(course in teaches)
-	paperques = Paper.question_set.all()
+	questions = Question.objects.filter(course_id = paper.course_id)
+	paperques = paper.question_set.all()
 	xz = []
 	pd = []
 	for q in paperques:
@@ -566,34 +553,28 @@ def newpaper(request):
 	question_pd_list=[]
 	question_xz_list=[]
 	if ifauto == 'yes':
-		pdqueslist = Question.objects.filter(course_id = p.course_id, difficulty = p.difficulty, q_id = 'pd')
-		xzqueslist = Question.objects.filter(course_id = p.course_id, difficulty = p.difficulty, q_id = 'xz')
-		if pdqueslist.count() < pdnum:
-			pdqueslist = Question.objects.filter(course_id = p.course_id, q_id = 'pd')
-			if pdqueslist.count() < pdnum:
+		pdqueslist = Question.objects.filter(course_id = p.course_id, difficulty = p.difficulty, q_type = 'pd')
+		xzqueslist = Question.objects.filter(course_id = p.course_id, difficulty = p.difficulty, q_type = 'xz')
+		if pdqueslist.count() < int(pdnum):
+			pdqueslist = Question.objects.filter(course_id = p.course_id, q_type = 'pd')
+			if pdqueslist.count() < int(pdnum):
 				return HttpResponse('没有这么多判断题！')
-		if xzqueslist.count() < xznum:
-			xzqueslist = Question.objects.filter(course_id = p.course_id, q_id = 'xz')
-			if xzqueslist.count() < xznum:
+		if xzqueslist.count() < int(xznum):
+			xzqueslist = Question.objects.filter(course_id = p.course_id, q_type = 'xz')
+			if xzqueslist.count() < int(xznum):
 				return HttpResponse('没有这么多选择题！')
-		question_xz_list = random.sample(xzqueslist,xznum)
+		question_xz_list = random.sample(list(xzqueslist),int(xznum))
+		p.save()
 		for qxz in question_xz_list:
 			qxz.paper.add(p)
-		question_pd_list = random.sample(pdqueslist,pdnum)
+		question_pd_list = random.sample(list(pdqueslist),int(pdnum))
 		for qpd in question_pd_list:
 			qpd.paper.add(p)
-	p.save()
+	else :
+		p.save()
 
 	paper = Paper.objects.get(id=p.id)
-	tches = Teaches.objects.filter(instructor_id=ins.id)
-	teaches = []
-	for t in tches:
-		teaches.append(t.section_course)
-	qtions = Question.objects.all()
-	questions = []
-	for x in qtions:
-		if x.course in teaches:
-			questions.append(x)
+	questions = Question.objects.filter(course_id = p.course)
 	paperques = paper.question_set.all()
 	for p in questions:
 		if p in paperques:
@@ -746,3 +727,29 @@ def statistics(request):
         error = '请输入试卷或学生'
         return render(request,'teacher2.html',{'picture':"",'total_pd':"",'total_xz':"",'avgage':"",'smax':"",'smin':""})
         
+@login_required
+def paperstatus(request,pid):
+	paper = Paper.objects.get(id = pid)
+	if paper.status == 'o':
+		paper.status = 'c'
+		paper.save()
+	else:
+		paper.status = 'o'
+		paper.save()
+
+	user = User.objects.get(id=request.user.id)
+	ins = user.instructor
+	
+	tches = Teaches.objects.filter(instructor_id = ins.id)
+	teaches = []
+	for t in tches:
+		teaches.append(t.section_course)
+	iPaper = Paper.objects.all()
+	instruPaper = []
+	for p in iPaper:
+		if p.course in teaches:
+			instruPaper.append(p)
+	myPaper = []
+	myPaper = Paper.objects.filter(instructor_id = ins.id)
+	
+	return render(request,'teacher1.html',{'user':user,'allpaper_list':instruPaper,'mypaper_list':myPaper})

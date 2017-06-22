@@ -20,6 +20,7 @@ urlpatterns = [
 	url(r'paper2delete/p1(\w+)p2(\w+)/$', views.paperdelete),
     url(r'teacher3search/', views.searchquestion),
     url(r'teacher2/', views.statistics),
+    url(r'teacher1change/(\w+)/$', views.paperstatus),
 
 
 ]
