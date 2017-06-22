@@ -556,7 +556,7 @@ def addUser(request):
                 instructor.department = department
                 instructor.save()
             a = f.readline().decode('gbk')
-        return HttpResponse("Success")
+        return HttpResponse('<script>alert("用户添加成功！");location.replace("/basicInfo/addUser/);</script>')
 
 
 @login_required
