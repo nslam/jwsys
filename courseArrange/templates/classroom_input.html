@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+          <form action="{%url 'courseArrange:classroomManuInput' %}" method='post'>
+              {% csrf_token %} 
+            <fieldset>
+               <legend>手动录入</legend> 
+               <label>教学楼</label><br />
+               <input type="text" name = "building" class="form-control col-sm-2"/><br /><br/>
+               <label>门牌号</label><br />
+               <input type="text" name = "room_num" class="form-control col-sm-2"/><br /><br/> 
+               <label>教室容量</label><br />
+               <input type="text" name = "classroom_capacity" class="form-control col-sm-2"/><br /><br/>
+               <label>教室类型</label><br />
+               <select name="classroom_type" class="form-control">
+               <option value="1">普通教室</option> 
+    		   <option value="2">多媒体教室</option> 
+               </select> 
+               <br/><button type="submit" class="btn btn-info">录入</button>
+            </fieldset>
+          </form>
+          <form enctype="multipart/form-data" method="POST" action="{%url 'courseArrange:classroomFileInput' %}">
+             {% csrf_token %} 
+            <fieldset>
+               <legend>文件录入</legend> 
+               <label>文件选择</label><br />
+               <input type="file" name= "upload_file" class="btn"/>
+               <br /><button type="submit" class="btn btn-info">录入</button>
+            </fieldset>
+          </form>
+{% endblock content %}

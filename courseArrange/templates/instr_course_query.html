@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{%url 'courseArrange:instrCourseQuery' %}" method='post'>
+        {% csrf_token %}
+        <fieldset>
+             <legend>教师课表查询</legend>
+             <label>教师编号</label><br />
+             <input type="text" name = "instr_id" class="form-control col-sm-2"/> <br /><br/>
+             <br /><button type="submit" class="btn btn-info">课表查询</button>
+        </fieldset>
+    </form>
+{% endblock content %}

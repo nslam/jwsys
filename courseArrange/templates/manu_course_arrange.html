@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<form action="{%url 'courseArrange:manuCourseArrange' %}" method='post'>
+        {% csrf_token %}
+		<fieldset>
+                <legend>课程设置</legend>
+                <label>开课教师编号</label><br />
+                <input type="text" name = "course_instr_id" class="form-control col-sm-2"/><br /><br/>
+                <label>课程编号</label><br />
+                <input type="text" name = "course_id" class="form-control col-sm-2"/><br /><br/>
+                <label>开课容量</label><br />
+                <input type="text" name = "course_capacity" class="form-control col-sm-2"/><br /><br/>
+                <br/><legend>教室与时间段</legend>
+                <label>教学楼</label><br />
+                <input type="text" name = "building1" class="form-control col-sm-2"/><br /><br/>
+                <label>门牌号</label><br />
+                <input type="text" name = "room_num1" class="form-control col-sm-2"/><br /><br/>
+                <label>时间段</label><br />
+                 <div class="row">
+                   <div class="col-xs-2">
+                   <select name="day1" class="form-control">
+                      <option value="1">周一</option>
+                      <option value="2">周二</option>
+                      <option value="3">周三</option>
+                      <option value="4">周四</option>
+                      <option value="5">周五</option>
+                      <option value="6">周六</option>
+                      <option value="7">周日</option>
+                    </select>
+                    </div>
+                    <div class="col-xs-3">
+                    <select class="form-control" name="start_time1">
+                      <option value="1">第1节</option>
+                       <option value="2">第2节</option>
+                       <option value="3">第3节</option>
+                       <option value="4">第4节</option>
+                        <option value="5">第5节</option>
+                        <option value="6">第6节</option>
+                        <option value="7">第7节</option>
+                        <option value="8">第8节</option>
+                        <option value="9">第9节</option>
+                        <option value="10">第10节</option>
+                        <option value="11">第11节</option>
+                        <option value="12">第12节</option>
+                        <option value="13">第13节</option>
+                    </select>
+                   </div>
+                   <div class="col-xs-1">
+                      <h5 class="text-center">至</h5>
+                   </div>
+                   <div class="col-xs-3">
+                       <select name="end_time1" class="form-control">
+                        <option value="1">第1节</option>
+                        <option value="2">第2节</option>
+                        <option value="3">第3节</option>
+                        <option value="4">第4节</option>
+                        <option value="5">第5节</option>
+                        <option value="6">第6节</option>
+                        <option value="7">第7节</option>
+                        <option value="8">第8节</option>
+                        <option value="9">第9节</option>
+                        <option value="10">第10节</option>
+                        <option value="11">第11节</option>
+                        <option value="12">第12节</option>
+                        <option value="13">第13节</option>
+                      </select>
+                  </div>
+                </div>
+                <br/><legend>教室与第二时间段(可选)</legend>
+                <label>教学楼</label><br />
+                <input type="text" name = "building2" class="form-control col-sm-2"/><br /><br/>
+                <label>门牌号</label><br />
+                <input type="text" name = "room_num2" class="form-control col-sm-2"/><br /><br/>
+                <label>时间段</label><br />
+                 <div class="row">
+                   <div class="col-xs-2">
+                   <select name="day2" class="form-control">
+                      <option value="0">无</option>
+                      <option value="1">周一</option>
+                      <option value="2">周二</option>
+                      <option value="3">周三</option>
+                      <option value="4">周四</option>
+                      <option value="5">周五</option>
+                      <option value="6">周六</option>
+                      <option value="7">周日</option>
+                    </select>
+                    </div>
+                    <div class="col-xs-3">
+                    <select class="form-control" name="start_time2">
+                        <option value="0">无</option>
+                        <option value="1">第1节</option>
+                        <option value="2">第2节</option>
+                        <option value="3">第3节</option>
+                        <option value="4">第4节</option>
+                        <option value="5">第5节</option>
+                        <option value="6">第6节</option>
+                        <option value="7">第7节</option>
+                        <option value="8">第8节</option>
+                        <option value="9">第9节</option>
+                        <option value="10">第10节</option>
+                        <option value="11">第11节</option>
+                        <option value="12">第12节</option>
+                        <option value="13">第13节</option>
+                    </select>
+                   </div>
+                   <div class="col-xs-1">
+                      <h5 class="text-center">至</h5>
+                   </div>
+                   <div class="col-xs-3">
+                       <select name="end_time2" class="form-control">
+                        <option value="0">无</option>
+                        <option value="1">第1节</option>
+                        <option value="2">第2节</option>
+                        <option value="3">第3节</option>
+                        <option value="4">第4节</option>
+                        <option value="5">第5节</option>
+                        <option value="6">第6节</option>
+                        <option value="7">第7节</option>
+                        <option value="8">第8节</option>
+                        <option value="9">第9节</option>
+                        <option value="10">第10节</option>
+                        <option value="11">第11节</option>
+                        <option value="12">第12节</option>
+                        <option value="13">第13节</option>
+                      </select>
+                  </div>
+                </div>
+                <br /><button type="submit" class="btn btn-info">调课</button>
+                </fieldset>
+			</form>
+{% endblock content %}
