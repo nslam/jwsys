@@ -19,7 +19,8 @@ urlpatterns=[
     url(r'^autoCourseArrange/$', views.autoCourseArrange, name = 'autoCourseArrange'),
     url(r'^manuCourseArrange/$', views.manuCourseArrange, name = 'manuCourseArrange'),
     url(r'^instrCourseQuery/$', views.instrCourseQuery, name = 'instrCourseQuery'),
+    url(r'^instrCourseQuery_instr/$', views.instrCourseQuery, name = 'instrCourseQuery_instr'),
     url(r'^classroomCourseQuery/$', views.classroomCourseQuery, name = 'classroomCourseQuery'),
     url(r'^instrBusyTimeSetting/$', views.instrBusyTimeSetting, name = 'instrBusyTimeSetting'),
-    url(r'^courseInstrSetting/$', views.courseInstrSetting, name = 'courseInstrSetting'),
+    url(r'^courseInstrSetting/$', views.courseInstrSetting, name = 'courseInstrSetting')
 ]

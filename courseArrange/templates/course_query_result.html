@@ -1,10 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
+
+<script language="JavaScript">
+function print_table(oper)
+{
+    if (oper < 10){
+        bdhtml=window.document.body.innerHTML;/ /获取当前页的html代码
+        sprnstr="<!--startprint"+oper+"-->";/ /设置打印开始区域
+        eprnstr="<!--endprint"+oper+"-->";/ /设置打印结束区域
+        prnhtml=bdhtml.substring(bdhtml.indexOf(sprnstr)+18); / /从开始代码向后取html
+        prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));/ /从结束代码向前取html
+        window.document.body.innerHTML=prnhtml;
+        window.print();
+        window.document.body.innerHTML=bdhtml;
+    } else {
+        window.print();
+    }
+}
+</script>
+
+    <!-- Bootstrap -->
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- 提交统一用AJAX处理-->
 </head>
+
 <body>
-$END$
+    <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">课表查询结果</h1>
+        </div>
+    </div>
+    <hr>
+</div>
+    <div class="container">
+    <div class="row">
+        <div class="text-left col-lg-10 col-lg-offset-1">
+            <input type=button class="btn btn-info" name='button_export' title='打印1' onclick = print_table(1) value="打印课表">
+            <!--startprint1-->
+            <table class="table table-striped" id="courseTable">
+                <thead>
+                <tr>
+                    <th>课程代码</th>
+                    <th>课程名称</th>
+                    <th>教师姓名</th>
+                    <th>学期</th>
+                    <th>上课时间</th>
+                    <th>上课地点</th>
+                    <th>选课容量</th>
+                    <!--可加其他信息 显示已经录入的-->
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in ret %}
+                <tr>
+                    <td>{{i.course_num}}</td>
+                    <td>{{i.course_name}}</td>
+                    <td>{{i.teacher_name}}</td>
+                    <td>{{i.semester}}</td>
+                    <td>{{i.time}}</td>
+                    <td>{{i.room}}</td>
+                    <td>{{i.max_num}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if unarranged %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <h1 class="text-center">排课失败列表</h1>
+                </div>
+            </div>
+            <hr>
+            <table class="table table-striped" id="courseTable">
+                <thead>
+                <tr>
+                    <th>课程代码</th>
+                    <th>课程名称</th>
+                    <th>教师姓名</th>
+                    <th>学期</th>
+                    <th>上课时间</th>
+                    <th>上课地点</th>
+                    <th>选课容量</th>
+                    <!--可加其他信息 显示已经录入的-->
+                </tr>
+                </thead>
+                <tbody>
+                {% for j in unarranged %}
+                <tr>
+                    <td>{{j.course_num}}</td>
+                    <td>{{j.course_name}}</td>
+                    <td>{{j.teacher_name}}</td>
+                    <td>{{j.semester}}</td>
+                    <td>{{j.time}}</td>
+                    <td>{{j.room}}</td>
+                    <td>{{j.max_num}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            <!--endprint1-->
+        </div>
+
+        <hr>
+        <div class="row">
+            <div class="text-center col-md-6 col-md-offset-3">
+                <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.js"></script>
 </body>
 </html>

@@ -29,9 +29,13 @@ class SecTimeClassroom(models.Model):
 class InstructorBusyTime(models.Model):
     instructor = models.ForeignKey('basicInfo.Instructor', null=True, on_delete=models.SET_NULL)
     time_slot = models.ForeignKey('basicInfo.TimeSlot', null=True, on_delete=models.SET_NULL)
+    day = models.IntegerField()
+    start_time = models.IntegerField()
+    end_time = models.IntegerField()
 
 
 class CourseCandiate(models.Model):
     instructor = models.ForeignKey('basicInfo.Instructor', null=True, on_delete=models.SET_NULL)
     course = models.ForeignKey('basicInfo.Course', null=True, on_delete=models.SET_NULL)
-
+    capacity = models.IntegerField()
+    classroom_type = models.IntegerField()

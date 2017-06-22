@@ -1,99 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>教务管理系统</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教务管理系统</title>
 
-<!-- Bootstrap -->
-<link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
 <div style="margin-left: 2%; margin-right: 2%">
-  <ul class="nav nav-tabs">
-    <li role="presentation">欢迎:{{username}}</li>
-  </ul>
-  <ul class="nav navbar-right">
-    <li role="presentation"><a href="/basicInfo/setPassword/">修改密码</a></li>
-  </ul>
+    <ul class="nav nav-tabs">
+        <li role="presentation">欢迎:{{ username }}</li>
+    </ul>
+    <ul class="nav navbar-right">
+        <li role="presentation"><a href="/basicInfo/setPassword/">修改密码</a></li>
+    </ul>
 </div>
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <h1 class="text-center">教务管理系统</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">教务管理系统</h1>
+        </div>
     </div>
-  </div>
-  <hr>
+    <hr>
 </div>
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4 text-center">
-        <h4><strong>个人信息</strong></h4>
-        <p>查询/填写/修改个人信息</p>
-      <a href="/basicInfo/changeInfo"><button type="button" class="btn btn-info btn-block">点击查询&修改</button></a>
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <h4><strong>个人信息</strong></h4>
+            <p>查询/填写/修改个人信息</p>
+            <a href="/basicInfo/changeInfo">
+                <button type="button" class="btn btn-info btn-block">点击查询&修改</button>
+            </a>
+        </div>
+        <div class="text-center col-sm-4">
+            <h4><strong>申请课程</strong></h4>
+            <p>申请新课程</p>
+            <a href="/basicInfo/addCourse">
+                <button type="button" class="btn btn-info btn-block">点击申请</button>
+            </a>
+        </div>
+        <div class="text-center col-sm-4">
+            <h4><strong>查看课程</strong></h4>
+            <p>查询自己所开课程</p>
+            <a href="/basicInfo/queryCourse/">
+                <button type="button" class="btn btn-info btn-block">点击查询</button>
+            </a>
+        </div>
     </div>
-    <div class="text-center col-sm-4">
-      <h4><strong>申请课程</strong></h4>
-      <p>申请新课程</p>
-      <a href="/basicInfo/addCourse"><button type="button" class="btn btn-info btn-block">点击申请</button></a>
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <h4><strong>成绩录入</strong></h4>
+            <p>录入教学班成绩</p>
+            <a href="/basicInfo/gradeInput/">
+                <button type="button" class="btn btn-info btn-block">点击录入</button>
+            </a>
+        </div>
+        <div class="col-sm-4 text-center">
+            <h4><strong>成绩分析</strong></h4>
+            <p>分析自己各个教学班的成绩</p>
+            <a href="/basicInfo/gradeQuery/">
+                <button type="button" class="btn btn-info btn-block">点击查询</button>
+            </a>
+        </div>
+        <div class="col-sm-4 text-center">
+            <h4><strong>成绩修改</strong></h4>
+            <p>对已经录入的成绩申请进行修改</p>
+            <a href="/basicInfo/gradeModify/">
+                <button type="button" class="btn btn-info btn-block">点击申请修改</button>
+            </a>
+        </div>
     </div>
-    <div class="text-center col-sm-4">
-      <h4><strong>查看课程</strong></h4>
-      <p>查询自己所开课程</p>
-      <a href="/basicInfo/queryCourse/"><button type="button" class="btn btn-info btn-block">点击查询</button></a>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-4 text-center">
-      <h4><strong>成绩录入</strong></h4>
-      <p>录入教学班成绩</p>
-      <a href="/basicInfo/gradeInput/"><button type="button" class="btn btn-info btn-block">点击录入</button></a>
-    </div>
-    <div class="col-sm-4 text-center">
-      <h4><strong>成绩分析</strong></h4>
-      <p>分析自己各个教学班的成绩</p>
-      <a href="/basicInfo/gradeQuery/"><button type="button" class="btn btn-info btn-block">点击查询</button></a>
-    </div>
-    <div class="col-sm-4 text-center">
-      <h4><strong>成绩修改</strong></h4>
-      <p>对已经录入的成绩申请进行修改</p>
-      <a href="/basicInfo/gradeModify/"><button type="button" class="btn btn-info btn-block">点击申请修改</button></a>
-    </div>
-  </div>
-  <div class="row">
-	<div class="col-sm-4 text-center">
-        <h4><strong>资源共享</strong></h4>
-        <p>查看课程资源及作业</p>
-        <a href="/shareSource/"><button type="button" class="btn btn-info btn-block">点击查看</button></a>
-	</div>
-	<!--新增加的论坛按钮!-->
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <h4><strong>资源共享</strong></h4>
+            <p>查看课程资源及作业</p>
+            <a href="/shareSource/">
+                <button type="button" class="btn btn-info btn-block">点击查看</button>
+            </a>
+        </div>
+        <!--新增加的论坛按钮!-->
         <div class="col-sm-4 text-center">
             <h4><strong>教务论坛</strong></h4>
             <p>进入论坛</p>
-        <a href="/bbs/bbs-main/"><button type="button" class="btn btn-info btn-block">点击进入</button></a>
+            <a href="/bbs/bbs-main/">
+                <button type="button" class="btn btn-info btn-block">点击进入</button>
+            </a>
+        </div>
+        <div class="col-sm-4 text-center">
+            <h4><strong>选课管理</strong></h4>
+            <p>查看课程学生名单</p>
+            <a href="/courseSelection/instructor">
+                <button type="button" class="btn btn-info btn-block">点击查看</button>
+            </a>
+        </div>
     </div>
-    </div>
+    <div class="row">
     <div class="col-sm-4 text-center">
-        <h4><strong>选课管理</strong></h4>
-        <p>查看课程学生名单</p>
-      <a href="/courseSelection/instructor"><button type="button" class="btn btn-info btn-block">点击查看</button></a>
+        <h4><strong>查看课表</strong></h4>
+        <p>对该学期课表进行查询</p>
+        <a href="{% url 'courseArrange:instrCourseQuery_instr' %}">
+            <button type="button" class="btn btn-info btn-block">点击进入</button>
+        </a>
     </div>
-  </div>
-  <hr>
-  <div class="row">
+</div>
+</div>
+
+<hr>
+<div class="row">
     <div class="text-center col-md-6 col-md-offset-3">
-    <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
+        <p>Copyright &copy; 2017 &middot; All Rights Reserved &middot;</p>
     </div>
-  </div>
-  <hr>
+</div>
+<hr>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>

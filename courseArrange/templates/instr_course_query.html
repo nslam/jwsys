@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="{%url 'courseArrange:instrCourseQuery' %}" method='post'>
+    <form action="{% url 'courseArrange:instrCourseQuery' %}" method='post'>
         {% csrf_token %}
         <fieldset>
              <legend>教师课表查询</legend>
