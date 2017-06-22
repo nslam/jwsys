@@ -31,6 +31,7 @@ class assignment_store(models.Model):
 class file(models.Model):
     course_id = models.CharField(max_length=20)
     file_id = models.IntegerField()
+    user_id=models.IntegerField(default=0)
     file_name = models.CharField(max_length=40)
     file_path = models.FileField(upload_to='uploads/assignment/')
     update_time = models.DateTimeField()
