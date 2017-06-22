@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+<head>
+	<meta charset="utf-8">
+	<title>资源共享系统-课程资源</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style="height:100%;">
+<div class="container" style="height:100%;">
+    <div class="row clearfix">
+		<div class="col-md-1 column">
+		</div>
+		<div class="col-md-10 column">
+			<div class="page-header">
+				<h1>
+					资源共享系统 <small>搜索结果</small>
+				</h1>
+			</div>
+			<h3>
+				以下是名称中包含  {{ fname }}  的课程资源
+			</h3>
+		</div>
+		<div class="col-md-1 column">
+		</div>
+	</div>
+	<div class="row clearfix"style="height:50%;">
+		<div class="col-md-2 column">
+		</div>
+		<div class="col-md-8 column"style="height:100%;">
+            <div style="height:100%; overflow:auto;">
+			<table class="table" >
+
+				<thead>
+					<tr>
+						<th>
+							文件名称
+						</th>
+						<th>
+							上传时间
+						</th>
+						<th>
+							下载次数
+						</th>
+						<th>
+							课程编号
+						</th>
+					</tr>
+				</thead>
+                <tbody>
+                {% for f in file %}
+
+					<tr>
+
+						<td>
+                            <a href="sourceForm/download{{ f.id }}">
+                            {{ f.file_name }}</a>
+						</td>
+						<td>
+							{{ f.update_time }}
+						</td>
+						<td>
+							{{ f.download_times }}
+						</td>
+                        <td>
+							{{ f.course_id }}
+						</td>
+					</tr>
+
+                {% endfor %}
+				</tbody>
+			</table>
+            </div>
+		</div>
+
+		<div class="col-md-2 column">
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-3 column">
+		</div>
+		<div class="col-md-6 column">
+            <div class="row clearfix">
+
+                            <a href="javascript:history.go(-1);">
+		                    <div class="col-md-6 column">
+                                <button type="button" class="btn btn-block btn-lg btn-primary">返回课程资源界面</button>
+		                    </div>
+                            </a>
+            </div>
+		</div>
+		<div class="col-md-3 column">
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
