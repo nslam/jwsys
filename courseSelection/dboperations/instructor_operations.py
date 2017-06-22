@@ -1,52 +1,62 @@
-from courseSelection.models import Teaches, User, Instructor, \
-Student, Section, Course, SecTimeClassroom, TimeSlot
+ # -*- coding: utf-8 -*- 
 
+from django.contrib.auth.models import User
+from basicInfo.models import Instructor, Student, Course, TimeSlot, Takes, Classroom, Major
+from courseArrange.models import Teaches, Section, SecTimeClassroom
+
+from courseSelection.constants import *
 
 class InstructorOperations(object):
 
 	def __init__(self, instructor_id):
 		self.instructor_id = instructor_id
+		self.instructor = Instructor.objects.get(id=self.instructor_id)
 
-	def get_instructor_info(self, instructor_id = self.instructor_id):
+	def get_instructor_info(self):
 
 		instructor_info = {}
 
-		instructor = Instructor.objects.get(id=instructor_id)
+		instructor_info['photo_file'] = self.instructor.photo_file
+		instructor_info['phone_number'] = self.instructor.phone_number
+		instructor_info['address'] = self.instructor.address
+		try:
+			instructor_info['department'] = self.instructor.department.name
+		except:
+			instructor_info['department'] = "无"
 
-		instructor_info['photo_file'] = instructor.photo_file
-		instructor_info['phone_number'] = instructor.phone_number
-		instructor_info['address'] = instructor.address
-
-		user_id = instructor.user_id
-		user = User.objects.get(id=user_id)
+		user = self.instructor.user
 
 		instructor_info['first_name'] = user.first_name
 		instructor_info['last_name'] = user.last_name
+		instructor_info['name'] = instructor_info['last_name'] + " " + instructor_info['first_name']
 
 		return instructor_info
 
 
-	def get_section_list(self, instructor_id = self.instructor_id):
+	def get_section_list(self):
 		
 		section_list = []
 
-		teach_all = Teaches.objects.filter(instructor=instructor_id)
+		teach_all = Teaches.objects.filter(instructor=self.instructor_id)
 
 		for teach in teach_all:
 
-			section = Section.objects.get(id=teach.section)
+			section = Section.objects.get(id=teach.section_id)
 
 			# get section info
 			section_info = {}
 
 			section_info['section_id'] = section.id
-			section_info['course_id'] = section.course
-			section_info['semester'] = section.semester
-			section_info['year'] = section.year
+			section_info['course'] = section.course
+			try:
+				section_info['semester'] = SEMESTER_DIC[section.semester]
+			except:
+				section_info['semester'] = section.semester
+			section_info['year'] = str(section.year) + '-' + str(section.year + 1)
 			section_info['max_number'] = section.max_number
 
 			# get course info
-			course = Course.objects.get(id=section_info['course_id'])
+			course = section_info['course']
 
 			section_info['course_number'] = course.course_number
 			section_info['title'] = course.title
@@ -57,7 +67,7 @@ class InstructorOperations(object):
 			# get time & location (array)
 			section_info['time_loc'] = []
 
-			time_loc_all = SecTimeClassroom.filter(section=section_info['section_id'])
+			time_loc_all = SecTimeClassroom.objects.filter(section_id=section_info['section_id'])
 
 			for time_loc in time_loc_all:
 
@@ -66,10 +76,13 @@ class InstructorOperations(object):
 				# get time slot
 				time_slot_info = {}
 
-				time_slot_id = time_loc.time_slot
-				time_slot = TimeSlot.filter(id=time_slot_id)
+				time_slot = time_loc.time_slot
 
-				time_slot_info['day'] = time_slot.day
+				time_slot_info['id'] = time_loc.id
+				try:
+					time_slot_info['day'] = WEEK_DAY_DIC[time_slot.day]
+				except:
+					time_slot_info['day'] = time_slot.day
 				time_slot_info['start_time'] = time_slot.start_time
 				time_slot_info['end_time'] = time_slot.end_time
 
@@ -78,9 +91,9 @@ class InstructorOperations(object):
 				# get classroom
 				classroom_info = {}
 
-				classroom_id = time_loc.classroom
-				classroom = Classroom.get(id=classroom_id)
+				classroom = time_loc.classroom
 
+				classroom_info['id'] = classroom.id
 				classroom_info['building'] = classroom.building
 				classroom_info['room_number'] = classroom.room_number
 
@@ -103,17 +116,18 @@ class InstructorOperations(object):
 
 			student_info = {}
 
-			student = Student.objects.get(id=take.student)
+			student = take.student
 
 			student_info['student_id'] = student.id
 			student_info['phone_number'] = student.phone_number
-			student_info['major'] = Major.objects.get(id=student.major).name
+			student_info['major'] = student.major.name
 
-			user_id = student.user_id
-			user = User.objects.get(id=user_id)
+			user = student.user
 
+			# student_info['user_id'] = user.id
 			student_info['first_name'] = user.first_name
 			student_info['last_name'] = user.last_name
+			student_info['name'] = user.first_name + " " + user.last_name
 
 			student_list.append(student_info)
 
