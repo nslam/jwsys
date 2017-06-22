@@ -42,7 +42,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">在线选课系统</a>
+                <a class="navbar-brand" href="index">在线选课系统</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -95,35 +95,37 @@
             <div class="row">
                 <form role="form">
                     <div class="col-lg-6">
+                    <form action="/courseSelection/student/selection" method="get">
                         <div class="form-group">
-                            <select class="form-control">
-                                <option>课程名称</option>
-                                <option>课程类别</option>
-                                <option>上课教师</option>
-                                <option>上课时间</option>
-                                <option>上课地点</option>
+                            <select class="form-control" name="metric">
+                                <option value="course_title">课程名称</option>
+                                <option value="course_number">课程代码</option>
+                                <option value="instructor">上课教师</option>
+                                <option value="department">开课部门</option>
+                                <option value="timer">上课时间</option>
+                                <option value="classroom">上课地点</option>
                             </select>
                         </div>
                     </div>
                     <div class="sidebar-search">
                         <div class="input-group custom-search-form">
-                            <input type="text" class="form-control" placeholder="Search...">
+                            <input type="text" class="form-control" placeholder="搜索值"  name="value">
                             <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">
+                            <button class="btn btn-default" type="submit">
                                 <i class="fa fa-search"></i>
                             </button>
-                            <button type="button" class="btn btn-primary" id="return-btn">回到培养方案</button>
+<!--                             <button type="button" action="selection" class="btn btn-primary" id="return-btn">回到培养方案</button> -->
                         </span>
                         </div>
                                 <!-- /input-group -->
                     </div>
+                    </form>
                 </form>
             </div>
             <div class="panel panel-default c_left">
                     <div class="panel-heading">
                         <div>
                             <h5>已选课程</h5>
-                            <button type="button" class="btn btn-primary" id="tuixuan-btn">确定</button>
                         </div>
                     </div>
                     <table class="table table-hover" id="yixuan-tab">
@@ -135,19 +137,25 @@
                             <th>学期</th>
                             <th>上课时间</th>
                             <th>上课地点</th>
+                            <th>状态</th>
                             <th>退选</th>
                             </tr>
                         </thead>
                         <tbody>
+                        {% for section in selected %}
+                        <form action="/courseSelection/student/selection/drop" method="post">
                             <tr>
-                                <td>021E0040</td>
-                                <td>马克思主义基本原理概论</td>
-                                <td>A</td>
-                                <td>秋冬</td>
-                                <td>周二第3,4,5节</td>
-                                <td>西1-102</td>
-                                <td><input type="checkbox" value=""></td>
+                                <td>{{section.course_number}}</td>
+                                <td>{{section.title}}</td>
+                                <td>{{section.instructors}}</td>
+                                <td>{{section.semester}}</td>
+                                <td>{{section.time}}</td> 
+                                <td>{{section.loc}}</td>
+                                <td>{{section.selected_condition}}</td> 
+                                <td><button type="submit" name="drop" value="{{section.section_id}}">退选</button></td>
                             </tr>
+                        </form>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -155,7 +163,6 @@
                     <div class="panel-heading">
                         <div>
                             <h5>可选课程</h5>
-                            <button type="button" class="btn btn-primary" id="kexuan-btn">确定</button>
                         </div>
                     </div>
                     <div class="tbody">
@@ -168,31 +175,25 @@
                                     <th>学期</th>
                                     <th>上课时间</th>
                                     <th>上课地点</th>
-                                    <th>容量</th>
+                                    <th>余量</th>
                                     <th>选课</th>
                                 </tr>
                             </thead>
                             <tbody>
+                            {% for section in sections %}
+                            <form action="/courseSelection/student/selection/priority" method="get">
                                 <tr>
-                                    <td>061b9090</td>
-                                    <td><a href='#' onclick="window.open('course_detail.html')">概率论与数理统计</a></td>
-                                    <td>大王</td>
-                                    <td>秋冬</td>
-                                    <td>周四第3,4,5节</td>
-                                    <td>西1-215</td>
-                                    <td>100</td>
-                                    <td><a href='#' onclick="window.open('course_order.html')">转入选课</a></td>
+                                    <td>{{section.course_number}}</td>
+                                    <td><a href="selection/coursedetails?id={{section.course_id}}" >{{section.title}}</a></td>
+                                    <td>{{section.instructors}}</td>
+                                    <td>{{section.semester}}</td>
+                                    <td>{{section.time}}</td>
+                                    <td>{{section.loc}}</td>
+                                    <td>{{section.rest_capita}}/{{section.capita}}</td>
+                                    <td><button type="submit" name="select" value="{{section.section_id}}">选课</button></td>
                                 </tr>
-                                <tr>
-                                    <td>071B0051</td>
-                                    <td><a href='#' onclick="window.open('course_detail.html')">生物化学</a></td>
-                                    <td>小王</td>
-                                    <td>秋冬</td>
-                                    <td>周一第1,2节</td>
-                                    <td>西1-408</td>
-                                    <td>90</td>
-                                    <td><a href='#' onclick="window.open('course_order.html')">转入选课</a></td>
-                                </tr>
+                                </form>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

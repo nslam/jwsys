@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -85,7 +86,7 @@
             <!-- /.navbar-static-side -->
         </nav>
 
-        <div id="page-wrapper">
+        <div id="page-wrapper" style="min-height: 58px;">
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">选课</h1>
@@ -95,41 +96,33 @@
             <!-- /.row -->
             <div class="panel panel-default c_left">
                     <div class="panel-heading">
-                        <div>
-                            <h5>教学班列表</h5>
-                        </div>
-                    </div>
-                    <table class="table table-hover" id="yixuan-tab">
+                        <h5>教学班列表</h5>
+                    </div><table class="table table-hover table-condensed" id="kexuan-tab">
                         <thead>
                         <tr>
                             <th>教师姓名</th>
                             <th>学期</th>
                             <th>上课时间</th>
                             <th>上课地点</th>                     
-                            <th>容量</th>
-                            <th>待定人数</th>>
+                            <th>余量</th>
+                            <th>待定人数</th>
                             <th>选课</th>
                         </tr>
                         </thead>
                     <tbody>
+                    {% for section in sections %}
+                    <form action="/courseSelection/student/selection/result" method="get">
                         <tr>
-                            <td>大王</td>
-                            <td>秋冬</td>
-                            <td>周四第3,4,5节</td>
-                            <td>西1-215</td>
-                            <td>100</td>
-                            <td>20</td>
-                            <td><input type="checkbox" value=""></td>
+                            <td>{{section.instructors}}</td>
+                            <td>{{section.semester}}</td>
+                            <td>{{section.time}}</td>
+                            <td>{{section.loc}}</td>
+                            <td>{{section.rest_capita}}/{{section.capita}}</td>
+                            <td>{{section.undecided_capita}}</td>
+                            <td><button type="submit" name="select" value="{{section.section_id}}">选课</button></td>
                         </tr>
-                        <tr>
-                            <td>二王</td>
-                            <td>秋冬</td>
-                            <td>周一第1,2节</td>
-                            <td>西1-102</td>
-                            <td>90</td>
-                            <td>10</td>
-                            <td><input type="checkbox" value=""></td>
-                        </tr>
+                    </form>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -152,12 +145,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {% for section in sections_selected %}
                                 <tr>
-                                    <td>大王</td>
-                                    <td>秋冬</td>
-                                    <td>周四第3,4,5节</td>
-                                    <td>西1-215</td>
-                                    <td>1</td>
+                                    <td>{{section.instructors}}</td>
+                                    <td>{{section.semester}}</td>
+                                    <td>{{section.time}}</td>
+                                    <td>{{section.loc}}</td>
+                                    <td>{{section.priority}}</td>
                                     <td>
                                     <button type="button" class="btn btn-default">
                                     <span class="glyphicon glyphicon-arrow-up"></span>
@@ -167,21 +161,7 @@
                                     </button>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>二王</td>
-                                    <td>秋冬</td>
-                                    <td>周一第1,2节</td>
-                                    <td>西1-102</td>
-                                    <td>2</td>
-                                    <td>
-                                    <button type="button" class="btn btn-default">
-                                    <span class="glyphicon glyphicon-arrow-up"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default">
-                                    <span class="glyphicon glyphicon-arrow-down"></span>
-                                    </button>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -200,6 +180,7 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.js"></script>
+
 
 </body>
 

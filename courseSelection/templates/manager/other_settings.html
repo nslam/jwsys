@@ -67,19 +67,19 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="index_manager.html"><i class="fa fa-user fa-fw"></i> 个人信息</a>
+                            <a href="index"><i class="fa fa-user fa-fw"></i> 个人信息</a>
                         </li>
                         <li>
-                            <a href="set_time.html"><i class="fa fa-bar-chart-o fa-fw"></i> 设置选课时间</a>
+                            <a href="selectiontime"><i class="fa fa-bar-chart-o fa-fw"></i> 设置选课时间</a>
                         </li>
                         <li>
-                            <a href="help_choose.html"><i class="fa fa-table fa-fw"></i> 手动选课</a>
+                            <a href="manualselection"><i class="fa fa-table fa-fw"></i> 手动选课</a>
                         </li>
                         <li>
-                            <a href="set_pyfa.html"><i class="fa fa-edit fa-fw"></i> 设置培养方案要求</a>
+                            <a href="curriculum"><i class="fa fa-edit fa-fw"></i> 设置培养方案要求</a>
                         </li>
                         <li>
-                            <a href="Other_settings.html"><i class="fa fa-edit fa-fw"></i> 其他设置</a>
+                            <a href="setting"><i class="fa fa-edit fa-fw"></i> 其他设置</a>
                         </li>
                     </ul>
                 </div>
@@ -98,18 +98,18 @@
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-6">
-                    <form role="form">
+                    <form action="/courseSelection/manager/setting/result" method="get">
                         <div class="form-group">
                             <label>选课学分上限</label>
-                            <input class="form-control">
+                            <input name="selection_limit" class="form-control" placeholder="如：30">
                         </div>
                         <div class="form-group">
                             <label>补退数量上限</label>
-                            <input class="form-control">
+                            <input name="drop_limit" class="form-control" placeholder="如：1">
                         </div>
                         <div class="form-group">
-                            <label>登录过期时间</label>
-                            <input class="form-control">
+                            <label>选课优先级比例</label>
+                            <input name="privilege_percentage" class="form-control" placeholder="如：0.8">
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg">提交</button>
                     </form>

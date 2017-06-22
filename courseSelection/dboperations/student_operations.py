@@ -49,18 +49,32 @@ class StudentOperations(object):
 		course_info['title'] = course.title
 		course_info['credits'] = course.credits
 		course_info['week_hour'] = course.week_hour
-		course_info['type'] = course.type
+		course_info['type'] = COURSE_TYPE_DIC[course.type]
 		course_info['method'] = course.method
-		course_info['department_name'] = course.department.name
+		try:
+			course_info['department_name'] = course.department.name
+		except:
+			pass
 
-		course_info['precourse'] = []
+		try:
+			course_info['precourse'] = ''
+			for course in course.precourse:
+				course_info['precourse'] += course.title 
+		except:
+			course_info['precourse'] = course.precourse.title
 
 		return course_info
 
 
 
-	def course_select_list(self, course_id):
-		return Section.objects.filter(course_id=course_id)
+	def course_select_list(self, section_id):
+		n_section = Section.objects.get(id=section_id)
+		sections = Section.objects.filter(course_id=n_section.course_id)
+		sections_info = []
+		for section in sections:
+			section_info = self.section_detail(section.id)
+			sections_info.append(section_info)
+		return sections_info
 
 
 
@@ -72,9 +86,22 @@ class StudentOperations(object):
 		except:
 			section_info['semester'] = section.semester
 		section_info['year'] = section.year
+		section_info['course_id'] = section.course.id
 		section_info['course_number'] = section.course.course_number
 		section_info['title'] = section.course.title
 		section_info['capita'] = section.max_number
+		section_info['section_id'] = section.id
+
+		selections = Selection.objects.filter(section_id=section_id)
+		rest_capita = section_info['capita']
+		undecided_capita = 0
+		for selection in selections:
+			if selection.selection_condition == ELECTED:
+				rest_capita -= 1
+			if selection.selection_condition == SELECTED:
+				undecided_capita += 1
+		section_info['rest_capita'] = rest_capita
+		section_info['undecided_capita'] = undecided_capita
 
 		sectimeclassrooms = SecTimeClassroom.objects.filter(section_id=section_id)
 		section_info['timeloc'] = []
@@ -161,9 +188,9 @@ class StudentOperations(object):
 
 	def curriculum_demand(self):
 		major = self.student.major
-		demand = CurriculumDemand.objects.get(major=major)
-		elective = demand.elective
-		public = demand.public
+		demand = CurriculumDemand.objects.filter(major=major)[0]
+		elective = float(demand.elective)
+		public = float(demand.public)
 		return {'elective':elective, 'public':public}
 
 
@@ -179,14 +206,14 @@ class StudentOperations(object):
 		curriculum_formulation['public'] = []
 
 		for elective_id in curriculums['elective']:
-			curriculum_formulation['elective'].append(section_detail[elective_id])
+			(curriculum_formulation['elective']).append(self.course_detail(int(elective_id)))
 
 		for public_id in curriculums['public']:
-			curriculum_formulation['public'].append(section_detail[public_id])
+			(curriculum_formulation['public']).append(self.course_detail(int(public_id)))
 
 		# check curriculum demand
 		major = self.student.major
-		curriculum_demand = CurriculumDemand.objects.get(major=major)
+		curriculum_demand = CurriculumDemand.objects.filter(major=major)[0]
 
 		elective_demand = curriculum_demand.elective
 		public_demand = curriculum_demand.public
@@ -198,21 +225,21 @@ class StudentOperations(object):
 			elective_credits += elective_course['credits']
 
 		if elective_credits < elective_demand:
-			raise Exception("Insufficient elective course!")
+			raise Exception("选修课学分不足!")
 
 		for public_course in curriculum_formulation['public']:
 			public_credits += public_course['credits']
 
 		if public_credits < public_demand:
-			raise Exception("Insufficient public course!")
+			raise Exception("公共课学分不足！")
 
 		# insert
 		for elective_course in curriculum_formulation['elective']:
-			curriculum = Curriculum(student_id=self.student_id, course=elective_course['id'])
+			curriculum = Curriculum(student_id=self.student_id, course_id=elective_course['id'])
 			curriculum.save()
 
 		for public_course in curriculum_formulation['public']:
-			curriculum = Curriculum(student_id=self.student_id, course=public_course['id'])
+			curriculum = Curriculum(student_id=self.student_id, course_id=public_course['id'])
 			curriculum.save()
 
 
@@ -231,6 +258,75 @@ class StudentOperations(object):
 		return curriculums, credits
 
 
+
+	def curriculum_sections(self):
+		semester, year, selection_round = self.current_info()
+		curriculums = Curriculum.objects.filter(student_id=self.student_id)
+		sections = []
+		for curriculum in curriculums:
+			curriculum_sections = Section.objects.filter(course_id=curriculum.course_id)
+			for curriculum_section in curriculum_sections:
+				section = self.section_detail(curriculum_section.id)
+				sections.append(section)
+		return sections
+
+
+	def get_selection_time(self):
+		return SelectionTime.objects.order_by("-id")
+
+
+	def check_time(self, start, end):
+		now = datetime.datetime.now()
+		start = start.replace(tzinfo=None)
+		end = end.replace(tzinfo=None)
+		if now >= start and now <= end:
+			return True
+		else:
+			return False
+
+
+	def current_info(self):
+		selection_times = self.get_selection_time()
+		check_number = min(3, len(selection_times))
+		intime = False
+
+		for i in range(0, check_number):
+			selection_time = selection_times[i]
+			start = selection_time.start_time
+			end = selection_time.end_time
+			if self.check_time(start, end):
+				intime = True
+				# print(selection_time.semester + str(selection_time.year) + str(selection_time.selection_round))
+				return selection_time.semester, selection_time.year, selection_time.selection_round
+
+		if not intime:
+			raise Exception("非选课时间！")
+
+
+	def selected_sections(self):
+		semester, year, selection_round = self.current_info()
+		selected_sections = Selection.objects.filter(student_id=self.student_id)
+		selected = []
+		for selected_section in selected_sections:
+			if selected_section.section.semester in semester and\
+				selected_section.section.year == year:
+				section = self.section_detail(selected_section.section_id)
+				section['selected_condition'] = CONDITION_DIC[selected_section.selection_condition]
+				selected.append(section)
+		return selected
+
+
+	def section_selected(self, section_id):
+		sections_selected = Selection.objects.filter(student_id=self.student_id,\
+			section_id=section_id)
+		sections_selected_info = []
+		for section_selected in sections_selected:
+			section_selected_info = self.section_detail(section_selected.section_id)
+			section_selected_info['priority'] = section_selected.priority
+			sections_selected_info.append(section_selected_info)
+		return sections_selected_info
+
+
 	def check_curriculum(self):
 		curriculum = Curriculum.objects.filter(student_id=self.student_id)
 		if len(curriculum) == 0:
@@ -239,7 +335,9 @@ class StudentOperations(object):
 			return 1
 
 
-	def select_course(self, section_id, round, priority):
+	def select_course(self, section_id, priority):
+
+		semester, year, round = self.current_info()
 
 		section = Section.objects.get(id=section_id)
 
@@ -257,27 +355,27 @@ class StudentOperations(object):
 				break
 
 		if not intime:
-			raise Exception("Not Course Selection Time!")
+			raise Exception("非选课时间！")
 
 		# check curriculum
 		curriculum = Curriculum.objects.filter(student_id=self.student_id)
 
 		if len(curriculum) == 0:
-			raise Exception("Please Formulate Curriculum First!")
+			raise Exception("请先制定培养方案！")
 
 		# check capita
 		selected_num = len(Selection.objects.filter(section_id=section_id)) \
-		- len(Selection.objects.filter(section_id=section_id,condition=SIFTED))\
-		- len(Selection.objects.filter(section_id=section_id,condition=DROPPED))
+		- len(Selection.objects.filter(section_id=section_id,selection_condition=SIFTED))\
+		- len(Selection.objects.filter(section_id=section_id,selection_condition=DROPPED))
 		if selected_num >= section.max_number:
-			raise Exception("Exceed Course Capacity!")
+			raise Exception("无选课余量!")
 
 		# check selection limit
-		selection_limit = Constants.objects.get(name="selection_limit")
-		selected_credits = self.get_selection_credits(self.student_id, semester, year)
+		selection_limit = float(Constants.objects.get(name="selection_limit").value)
+		selected_credits = self.get_selection_credits(semester, year)
 
 		if selected_credits > selection_limit:
-			raise Exception("Exceed the Credit Limitation!")
+			raise Exception("超过选课上限！")
 
 		# check time conflicts
 		section_times = []
@@ -288,54 +386,39 @@ class StudentOperations(object):
 		selections = Selection.objects.filter(student_id=self.student_id)
 		for selection in selections:
 			selection_section = selection.section
-			if section.term in selection_section.term:
-				selected_sectimeclassrooms = SecTimeClassroom.filter(section=selection_section)
+			if section.semester in selection_section.semester:
+				selected_sectimeclassrooms = SecTimeClassroom.objects.filter(section=selection_section)
 				for selected_sectimeclassroom in selected_sectimeclassrooms:
-					selected_timeslot = selected_sectimeclassroom.timeslot
+					selected_timeslot = selected_sectimeclassroom.time_slot
 					for section_time in section_times:
 						if selected_timeslot.day == section_time.day:
 							overlapped = list(set(range(selected_timeslot.start_time, \
 								selected_timeslot.end_time + 1)).intersection(set(\
 								range(section_time.start_time, section_time.end_time + 1))))
 							if len(overlapped) > 0:
-								raise Exception("Time Conflicts!")
+								raise Exception("选课时间冲突！")
 
 		# check if selected
-		selected = Selection.objects.get(section_id=section_id, student_id=self.student_id)
-		if selected.condition == SELECTED or selected.condition == SIFTED \
-		or selected.condition == ELECTED:
-			raise Exception("Course Selected!")
+		try:
+			selected = Selection.objects.get(section_id=section_id, student_id=self.student_id)
+			if selected.selection_condition == SELECTED or selected.selection_condition == SIFTED \
+			or selected.selection_condition == ELECTED:
+				raise Exception("已选该课程！")
 
-		if selected.condition == DROPPED: # update
-			selected.condition = SELECTED
-			selected.save()
-			return
-
-		# insert
-		new_selection = Selection(selection_round=round,\
-			select_time=datetime.datetime.now(),\
-			priority=priority,\
-			condition=SELECTED,\
-			section_id=section_id,\
-			student_id=self.student_id)
-		new_selection.save()
-
-
-
-	def get_selection_time(self):
-		return SelectionTime.objects.order_by("-id")
-
-
-
-	def check_time(self, start, end):
-		now = datetime.datetime.now()
-		start = start.replace(tzinfo=None)
-		end = end.replace(tzinfo=None)
-		if now >= start and now <= end:
-			return True
-		else:
-			return False
-
+			if selected.selection_condition == DROPPED: # update
+				selected.selection_condition = SELECTED
+				selected.save()
+				return
+				
+		except:
+			# insert
+			new_selection = Selection(selection_round=round,\
+				select_time=datetime.datetime.now(),\
+				priority=priority,\
+				selection_condition=SELECTED,\
+				section_id=section_id,\
+				student_id=self.student_id)
+			new_selection.save()
 
 
 	def get_selection_credits(self, semester, year):
@@ -345,7 +428,8 @@ class StudentOperations(object):
 		selected_credits = 0
 
 		for selected_course in selected_courses:
-			if selected_course.condition == ELECTED or selected_course.condition == SELECTED:
+			if selected_course.selection_condition == ELECTED or \
+			selected_course.selection_condition == SELECTED:
 				section = selected_course.section
 				if section.semester in semester and section.year == year:
 					selected_credits += section.course.credits
@@ -354,33 +438,35 @@ class StudentOperations(object):
 
 
 
-	def drop_course(self, section_id, round):
+	def drop_course(self, section_id):
+
+		semester, year, round = self.current_info()
 
 		selected_courses = Selection.objects.filter(section_id=section_id, student_id=self.student_id)
 
 		# check selected or not
-		if len(selected) == 0:
-			raise Exception("Course not Selected!")
+		if len(selected_courses) == 0:
+			raise Exception("未选择该课程!")
 
 		selected = selected_courses[0]
 
-		if selected.condition == DROPPED:
-			raise Exception("Course Dropped!")
+		if selected.selection_condition == DROPPED:
+			raise Exception("课程已退!")
 
-		if selected.condition == SIFTED:
-			raise Exception("Course Sifted!")
+		if selected.selection_condition == SIFTED:
+			raise Exception("课程已刷!")
 
-		if selected.condition == SELECTED:
+		if selected.selection_condition == SELECTED:
 			selected.delete()
 
-		if selected.condition == ELECTED:
+		if selected.selection_condition == ELECTED:
 			# check drop number
-			dropped_num = self.check_drop_number(self.student_id, semester, year)
+			dropped_num = self.check_drop_number(semester, year)
 			drop_limit = Constants.objects.get(name="drop_limit").value
 			if dropped_num + 1 > drop_limit:
-				raise Exception("Exceed Drop Limit!")
+				raise Exception("超过退课限制!")
 			# drop
-			selected.condition = DROPPED
+			selected.selection_condition = DROPPED
 			selected.drop_time = datetime.datetime.now()
 			selected.save()
 
@@ -388,7 +474,8 @@ class StudentOperations(object):
 
 	def check_drop_number(self, semester, year):
 
-		selections = Selection.objects.filter(student_id=self.student_id,condition=DROPPED)
+		selections = Selection.objects.filter(student_id=self.student_id,\
+			selection_condition=DROPPED)
 
 		dropped_num = 0
 
@@ -401,38 +488,45 @@ class StudentOperations(object):
 
 
 
-	def search_course(self, semester, year, metric, value):
+	def search_course(self, metric, value):
+
+		semester, year, selection_round = self.current_info()
 
 		if metric not in ['course_title', 'course_number', 'instructor', \
 		'department', 'classroom', 'time']:
 			raise Exception("Unvalid Metric!")
 
-		sections = Section.objects.filter(semester=semester,year=year)
+		year_sections = Section.objects.filter(year=year)
+
+		sections = []
+		for year_section in year_sections:
+			if year_section.semester in semester:
+				sections.append(year_section)
 
 		results = []
 
 		if metric == 'course_title':
 			for section in sections:
 				if value in section.course.title:
-					results.append(section)
+					results.append(self.section_detail(section.id))
 			
 		elif metric == 'course_number':
 			for section in sections:
 				if value in section.course.course_number:
-					results.append(section)
+					results.append(self.section_detail(section.id))
 
 		elif metric == 'instructor':
 			for section in sections:
-				teaches = Teaches.objects.filter(section=section)
+				teaches = Teaches.objects.filter(section_id=section.id)
 				for teach in teaches:
 					instructor_name = teach.instructor.user.last_name + teach.instructor.user.first_name
 					if value in instructor_name:
-						results.append(section)
+						results.append(self.section_detail(section.id))
 
 		elif metric == 'department':
 			for section in sections:
 				if value in section.course.department.name:
-					results.append(section)
+					results.append(self.section_detail(section.id))
 
 		elif metric == 'classroom':
 			for section in sections:
@@ -440,7 +534,7 @@ class StudentOperations(object):
 				for sectimeclassroom in sectimeclassrooms:
 					classroomname = self.convert_classroom(sectimeclassroom.classroom_id)
 					if value in classroomname:
-						results.append(section)
+						results.append(self.section_detail(section.id))
 
 		elif metric == 'time':
 			for section in sections:
@@ -449,7 +543,7 @@ class StudentOperations(object):
 					time_slot_id = sectimeclassroom.time_slot_id
 					time = self.convert_timeslot(time_slot_id)
 					if value in time:
-						results.append(section)
+						results.append(self.section_detail(section.id))
 
 		return results
 
@@ -463,6 +557,7 @@ class StudentOperations(object):
 				section_details = self.section_detail(section.id)
 				schedules.append(section_details)
 		return schedules
+
 
 	def schedule_years(self):
 		takes = Takes.objects.filter(student_id=self.student_id)

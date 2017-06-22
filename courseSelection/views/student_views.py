@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect 
 
 from courseSelection.dboperations.student_operations import StudentOperations
+
 
 
 # init
@@ -22,24 +24,77 @@ def curriculum(request):
 		ctx['public'] = studentOperations.public_course()
 	else:
 		ctx['curriculum'], ctx['credits'] = studentOperations.curriculum_course()
-	# if request.POST.getlist("elective") != None:
-	# 	selected = {}
-	# 	selected['elective'] = request.POST.getlist("elective")
-	# 	selected['public'] = request.POST.getlist("public")
-	# 	studentOperations.formulate_curriculum(selected)
+
+	if request.method == 'POST':
+		selected = {}
+		selected['elective'] = request.POST.getlist("elective")
+		selected['public'] = request.POST.getlist("public")
+		try:
+			studentOperations.formulate_curriculum(selected)
+			return HttpResponseRedirect("curriculum")
+		except Exception as err:
+			return render(request, 'student/curriculum_result.html', {'result':err})
+
 	return render(request, 'student/curriculum.html', ctx)
 
+
 def selection(request):
-	a = 1
-	return render(request, 'student/selection.html')
+	ctx = {}
+	ctx['sections'] = studentOperations.curriculum_sections()
+	ctx['selected'] = studentOperations.selected_sections()
+	if 'metric' in request.GET and 'value' in request.GET:
+		ctx['sections'] = studentOperations.search_course(request.GET['metric'],request.GET['value'])
+	return render(request, 'student/selection.html', ctx)
+
+
+def dropcourse(request):
+	ctx = {}
+	if request.method == "POST":
+		section_id = request.POST['drop']
+		try:
+			studentOperations.drop_course(section_id)
+			ctx['result'] = '退课成功！'
+		except Exception as err:
+			ctx['result'] = err
+	return render(request, 'student/selection_drop.html', ctx)
+
 
 def selectionpriority(request):
-	a = 1
-	return render(request, 'student/priority.html')
+	ctx = {}
+	if request.method == "GET":
+		section_id = request.GET['select']
+		try:
+			ctx['sections'] = studentOperations.course_select_list(section_id)
+			ctx['sections_selected'] = studentOperations.section_selected(section_id)
+			return render(request, 'student/priority.html', ctx)
+		except Exception as err:
+			ctx['result'] = err
+		return render(request, 'student/selection_drop.html', ctx)
+
+
+def selectionresult(request):
+	ctx = {}
+	if request.method == "GET":
+		section_id = request.GET['select']
+		try:
+			studentOperations.select_course(int(section_id),1)
+			ctx['result'] = "选课成功！"
+		except Exception as err:
+			ctx['result'] = err
+		return render(request, 'student/selection_result.html', ctx)
+	else:
+		ctx['result'] = '未收到请求'
+		return render(request, 'student/selection_result.html', ctx)
+
 
 def coursedetails(request):
-	a = 1
-	return render(request, 'student/coursedetails.html')
+	ctx = {}
+	if request.method == "GET":
+		if 'id' in request.GET:
+			course_id = request.GET['id']
+			ctx = studentOperations.course_detail(course_id)
+	return render(request, 'student/coursedetails.html', ctx)
+
 
 def schedule(request):
 	ctx = {}

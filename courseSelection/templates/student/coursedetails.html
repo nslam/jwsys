@@ -97,33 +97,33 @@
                 <fieldset>
                     <legend>
                         <span id = "coursename">
-                            计算机视觉
+                            {{title}}
                         </span>
                     </legend>
                         <table id="Table1" width="100%" align="center" class="table table-bordered table-striped">
                             <tr>
                                 <td width="100"><span id="Label1">课程代码</span></td>
-                                <td width="400"><span id="kcdm">21191070</span></td>
+                                <td width="400"><span id="kcdm">{{course_number}}</span></td>
                             </tr>
                             <tr>
                                 <td><span id="Labe2">开课学院</span></td>
-                                <td><span id="kkxy">计算机科学与技术学院</span></td>
+                                <td><span id="kkxy">{{department_name}}</span></td>
                             </tr>
                             <tr>
                                 <td><span id="Labe3">学分</span></td>
-                                <td><span id="xf">2.0</span></td>
+                                <td><span id="xf">{{credits}}</span></td>
                             </tr>
                             <tr>
                                 <td><span id="Labe4">课程归属</span></td>
-                                <td><span id="kcgs">专业选修课</span></td>
+                                <td><span id="kcgs">{{type}}</span></td>
                             </tr>
                             <tr>
                                 <td><span id="Label5">预修要求</span></td>
-                                <td><span id="yxyq">概率论、计算机图形学、图像信息处理</span></td>
+                                <td><span id="yxyq">{{precourse}}</span></td>
                             </tr>
                             <tr>
-                                <td><span id="Label6">课程简介</span></td>
-                                <td colspan="2"><textarea name="kcjj" readonly="readonly" id="kcjj" style="border-style:None;height:150px;width:100%;">计算机视觉的主要目标是让计算机能够利用图象和图象序列来识别和认知自然中的三维世界，其终极目标是让计算机具有"视觉"功能。本课程主要介绍计算机视觉的基本概念与算法、阐述计算机视觉要解决的基本问题与基本的解决思路、并以丰富的实例讲解当前计算机视觉技术在实际系统中的若干典型应用。</textarea></td>
+                                <td><span id="Label6">教学方法</span></td>
+                                <td colspan="2"><textarea name="kcjj" readonly="readonly" id="kcjj" style="border-style:None;height:150px;width:100%;">{{method}}</textarea></td>
                             </tr>
                         </table>
                 </fieldset>

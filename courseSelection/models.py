@@ -13,7 +13,6 @@ class Curriculum(models.Model):
 
 class CurriculumDemand(models.Model):
     major = models.ForeignKey('basicInfo.Major', null=True, on_delete=models.SET_NULL)
-    compulsory = models.IntegerField()
     elective = models.IntegerField()
     public = models.IntegerField()
 

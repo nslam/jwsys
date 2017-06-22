@@ -67,19 +67,19 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="index_manager.html"><i class="fa fa-user fa-fw"></i> 个人信息</a>
+                            <a href="index"><i class="fa fa-user fa-fw"></i> 个人信息</a>
                         </li>
                         <li>
-                            <a href="set_time.html"><i class="fa fa-bar-chart-o fa-fw"></i> 设置选课时间</a>
+                            <a href="selectiontime"><i class="fa fa-bar-chart-o fa-fw"></i> 设置选课时间</a>
                         </li>
                         <li>
-                            <a href="help_choose.html"><i class="fa fa-table fa-fw"></i> 手动选课</a>
+                            <a href="manualselection"><i class="fa fa-table fa-fw"></i> 手动选课</a>
                         </li>
                         <li>
-                            <a href="set_pyfa.html"><i class="fa fa-edit fa-fw"></i> 设置培养方案要求</a>
+                            <a href="curriculum"><i class="fa fa-edit fa-fw"></i> 设置培养方案要求</a>
                         </li>
                         <li>
-                            <a href="Other_settings.html"><i class="fa fa-edit fa-fw"></i> 其他设置</a>
+                            <a href="setting"><i class="fa fa-edit fa-fw"></i> 其他设置</a>
                         </li>
                     </ul>
                 </div>
@@ -98,43 +98,60 @@
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-6">
-                    <form role="form">
+                    <form action="/courseSelection/manager/selectiontime/timeresult" method="get">
                         <div class="form-group">
                             <label>开始时间</label>
-                            <input class="form-control" placeholder="如：2017-06-17 09:00:00">
+                            <input name="start_time" class="form-control" placeholder="如：2017-06-17 09:00:00">
                         </div>
                         <div class="form-group">
                             <label>截止时间</label>
-                            <input class="form-control" placeholder="如：2017-06-17 09:00:00">
+                            <input name="end_time" class="form-control" placeholder="如：2017-06-17 09:00:00">
                         </div>
                         <div class="form-group">
                             <label>选课学年</label>
-                            <input class="form-control" placeholder="如：2017">
+                            <input name="year" class="form-control" placeholder="如：2017">
                         </div>
                         <div class="form-group">
                             <label>选课学期</label>
-                            <select class="form-control">
-                                <option>春夏</option>
-                                <option>秋冬</option>
+                            <select name="semester" class="form-control">
+                                <option value="springsummer">春夏</option>
+                                <option value="autumnwinter">秋冬</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>选课阶段</label>
-                            <select class="form-control">
-                                <option>初选</option>
-                                <option>补选</option>
+                            <select name="round" class="form-control">
+                                <option value=1>初选</option>
+                                <option value=2>补选</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg">提交</button>
                     </form>
                 </div>
+                <div class="col-lg-1">
+                </div>
                 <div class="col-lg-4">
                     <h3 class="text-center">选课管理</h3>
                     <div class="form-group">
                         <br>
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">筛选课程</button>
-                        <br>
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">确认选课</button>
+                        <form action="/courseSelection/manager/selectiontime/confirmresult" method="get">
+                        <div class="form-group">
+                            <label>选课学年</label>
+                            <input name="year" class="form-control" placeholder="如：2017">
+                        </div>
+                        <div class="form-group">
+                            <label>选课学期</label>
+                            <select name="semester" class="form-control">
+                                <option value="springsummer">春夏</option>
+                                <option value="autumnwinter">秋冬</option>
+                            </select>
+                        </br>
+                        </div>
+                        <button type="submit" name="submit" value="sift" class="btn btn-primary btn-lg">筛选课程</button>
+                        </br>
+                        </br>
+                        <button type="submit" name="submit" value="confirm" class="btn btn-primary btn-lg">确认选课</button>
+                    </form>
                     </div>
                 </div>
             </div>
