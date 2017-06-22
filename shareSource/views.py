@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, get_object_or_404, render
 from shareSource.models import Privilege, assignment_store, assignment, file
 from basicInfo.models import *
 from basicInfo.views import getType
-from courseArrange.models import Section
+from courseArrange.models import Section, Teaches
 
 import os
 import datetime
