@@ -23,4 +23,4 @@ SEMESTER_DIC = {'spring':'春', 'autumn':'秋', 'summer':'夏', 'winter':'冬', 
 CONDITION_DIC = {0:'已选', 1:'选上', 2:'已刷', 3:'已退'}
 
 # Course Type Dic
-COURSE_TYPE_DIC = {'professional':'专业课', 'general':'通识课', 'public':'公共课'}
+COURSE_TYPE_DIC = {'professional':'专业课', 'general':'通识课', 'public':'公共课', '专业课':'专业课', '公共课':'公共课', '大类课':'大类课', '通识课':'通识课'}

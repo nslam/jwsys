@@ -80,12 +80,14 @@ class StudentOperations(object):
 		except:
 			pass
 
-		try:
-			course_info['precourse'] = ''
-			for course in course.precourse:
-				course_info['precourse'] += course.title 
-		except:
-			course_info['precourse'] = course.precourse.title
+		course_info['precourse'] = ''
+
+		# try:
+		# 	course_info['precourse'] = ''
+		# 	for course in course.precourse:
+		# 		course_info['precourse'] += course.title
+		# except:
+		# 	course_info['precourse'] = course.precourse.title
 
 		return course_info
 
@@ -123,7 +125,7 @@ class StudentOperations(object):
 			if selection.selection_condition == ELECTED:
 				rest_capita -= 1
 			if selection.selection_condition == SELECTED:
-				undecided_capita += 1
+				rest_capita -= 1
 		section_info['rest_capita'] = rest_capita
 		section_info['undecided_capita'] = undecided_capita
 
@@ -364,6 +366,19 @@ class StudentOperations(object):
 		semester, year, round = self.current_info()
 
 		section = Section.objects.get(id=section_id)
+
+		try:
+			selected = Selection.objects.get(section_id=section_id, student_id=self.student_id)
+			if selected.selection_condition == SELECTED or selected.selection_condition == SIFTED \
+			or selected.selection_condition == ELECTED:
+				raise Exception("已选该课程！")
+
+			if selected.selection_condition == DROPPED: # update
+				selected.selection_condition = SELECTED
+				selected.save()
+				return
+		except:
+			pass
 
 		# check selection time
 		selection_times = self.get_selection_time()

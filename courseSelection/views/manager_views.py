@@ -129,15 +129,16 @@ def confirm_result(request):
 			year=request.GET['year']
 			semester=request.GET['semester']
 			if semester == 'springsummer':
-				semester = 'spring&autumn'
+				semester = 'spring&summer'
 			elif semester == 'autumnwinter':
 				semester = 'autumn&winter'
 			else:
 				pass
 			m.decide_selection(semester, year)
 			ctx['sift_result'] = '成功筛选课程！'
-		except:
-			ctx['sift_result'] = '筛选课程失败！'
+		except Exception as err:
+			# ctx['sift_result'] = '筛选课程失败！'
+			ctx['sift_result'] = err
 		
 		return render(request, 'manager/sift_result.html', ctx)
 	if request.GET['submit'] == 'confirm':

@@ -46,7 +46,7 @@ def mainForm(req):
     contents=[]
     for onesection in section_list:
         newcontents={'id': onesection.id, 'title': onesection.course.title,
-                    'source_link':'source/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
+                    'source_link':'sourceForm/%i'%onesection.id ,'homework_link': 'homework/%i'%onesection.id}
         contents.append(newcontents)
     if req.method == 'POST':
         if req.POST['search'] != "":
@@ -82,7 +82,11 @@ def hw(req,section_id):
         else :
             Aassignment = assignment(info=req.POST['Acontent'],ddl=req.POST['Addl'],reference=req.POST['Arefer'],courseid=section_id)
             Aassignment.save()
-            return render(req,'window2.html')
+            testassignment = assignment.objects.get(id=Aassignment.id)
+            if(datetime.date.today()>testassignment.ddl):
+                return HttpResponse("Warning: today has been over the deadline!")
+            else:
+                return render(req,'window2.html')
     return render(req,"hw.html",{'Cid':section_id})
 
 @login_required
@@ -105,6 +109,8 @@ def hwforstudent(req,section_id,Aid):
         return HttpResponse("You have no rights")
     Aassignment = assignment.objects.get(id=Aid)
     if req.method == 'POST':
+        if(datetime.date.today()>Aassignment.ddl):
+            return HttpResponse("out of date!")
         myFile =req.FILES.get('myfile')
         if not myFile:
             return HttpResponse("no files for upload!")
@@ -133,7 +139,11 @@ def hwforteacher(req,section_id,Aid):
             Aassignment.ddl=req.POST['Addl']
             Aassignment.reference=req.POST['Arefer']
             Aassignment.save()
-            return render(req,'window3.html')
+            testassignment = assignment.objects.get(id=Aassignment.id)
+            if(datetime.date.today()>testassignment.ddl):
+                return HttpResponse("Warning: today has been over the deadline!")
+            else:
+                return render(req,'window3.html')
     return render(req,"hwforteacher.html",{'ob':Aassignment})
 
 @login_required
@@ -200,7 +210,7 @@ def filedel(req,section_id,fid):
     f=file.objects.get(id=fid)
     user = req.user
     type = getType(user)
-    file.objects.get(id=fid).delete()
+    #file.objects.get(id=fid).delete()
     #return render(req, 'window6.html')
     if req.user.id==f.user_id or type=='Instructor':
         file.objects.get(id=fid).delete()

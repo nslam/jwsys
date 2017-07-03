@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import Http404
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect,StreamingHttpResponse
 from django.contrib.auth.decorators import login_required
 from basicInfo.views import getType
 from django.template import Template, Context
@@ -180,6 +180,10 @@ def releasePost(request):
                 title=ptitle,
                 content=pcontent
             )
+            if 'myfile' in request.FILES:
+                myfile = request.FILES.get('myfile')
+                post.files = myfile
+                post.files.name = str(post.id)+'___'+str(myfile.name)
             post.save()
             return bbsMain(request)
 
@@ -254,8 +258,8 @@ def sendMessage(request):
             return bbsMain(request)
             # 提交空表单的错误和刷新会返回发消息的界面
     # return HttpResponse("hehe")
-    receivername = request.GET['receivername']
-    sendername = request.GET['sendername']
+    receivername = request.GET.get('receivername')
+    sendername = request.GET.get('sendername')
     html = get_template('send_message.html').render({
         'errors': errors,
         'receivername': receivername,
@@ -498,12 +502,20 @@ def get_post(request, offset):
     # 根据post找出相应的replies
     replies = Reply.objects.filter(post=post)
     # 渲染帖子页面
+    if post[0].files != '':
+        filename = post[0].files.name#
+        exist_file = 1
+    else:
+        filename = ''
+        exist_file = 0
     if type != 'Manager':
         html = get_template('bbs_post.html').render({
             'post': post[0],
             'replies': replies,
             'is_manager': 0,
             'status': 'true',
+            'filename':filename,
+            'exist_file': exist_file,
         })
     else:
         html = get_template('bbs_post.html').render({
@@ -511,8 +523,35 @@ def get_post(request, offset):
             'replies': replies,
             'is_manager': 1,
             'status': 'true',
+            'filename': filename,
+            'exist_file': exist_file,
         })
     return HttpResponse(html)
+
+@login_required
+def download(request,offset):
+    user = request.user
+    try:
+        offset = int(offset)
+    except ValueError:
+        raise Http404()
+    post = Post.objects.get(id=offset)
+    filename = 'basicInfo/media/'+post.files.name#'README.md'
+    def file_iterator(file_name, chunk_size=512):
+        with open(file_name) as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    the_file_name = post.files.name
+    #with open(filename) as f:
+    #       c = f.read()
+    response = StreamingHttpResponse(file_iterator(filename))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{0}"'.format(the_file_name)
+    return response
 
 
 @login_required

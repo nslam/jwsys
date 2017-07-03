@@ -27,7 +27,8 @@
       <li class="active"><a href="#Paper" data-toggle="tab" style="font-size: 20px">试卷库</a></li> 
       <li><a href="/onlinetest/teacher2/"  style="font-size: 20px">成绩分析</a></li> 
       <li><a href="/onlinetest/teacher3/"  style="font-size: 20px">试题库</a></li> 
-      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 老师, 欢迎</h3></li><!--这个地方需要用户的姓名-->
+      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 老师, 欢迎</h3></li>
+      <li><a style="font-size: 20px;" href="/basicInfo/instructorMain">退出</a></li><!--这个地方需要用户的姓名-->
     </ul>
     </div>
     </div> 
@@ -87,20 +88,28 @@
         <td>{{paper.name}}</td>
         <td>{{paper.course.title}}</td>
         <td>{{paper.instructor.user}}</td>
-        {% if paper.status != 'c' and paper.instructor.user == user %}
+        {% if paper.status != 'o' and paper.instructor.user == user %}
           <td>可以编辑</td>
           <td><a href="/onlinetest/paper2/{{paper.id}}">修改</a></td>
           <td><a href="/onlinetest/teacher1change/{{paper.id}}">开放试卷</a></td>
           <th><a href="/onlinetest/teacher1delete/{{paper.id}}" style="color: red">删除<a></th>
         {% else %}
-          <td style = "color:red;">正在使用</td>
-          <td><a href="" class="disabled">不可修改</a></td>
+                    
           {% if paper.instructor.user == user %}
+          <td style = "color:red;">正在使用</td>
+          <td>不可修改</td>
           <td><a href="/onlinetest/teacher1change/{{paper.id}}">关闭试卷</a></td>
           {% else %}
+          {% if paper.status == 'o' %}
+          <td style = "color:red;">正在使用</td>
+          {% else %}
+          <td>未开放</td>
+          {% endif %}
+          <td>不可修改</td>
           <td><a href="" class="disabled">非本人试卷</a></td>
           {% endif %}
-          <td><a href="" class="disabled">不可删除</a></td>
+
+          <td>不可删除</td>
         {% endif %}
       </tr>
       {% endfor %}
@@ -130,7 +139,7 @@
         <td>{{mypaper.name}}</td>
         <td>{{mypaper.course.title}}</td>
         <td>{{mypaper.instructor.user}}</td>
-        {% if mypaper.status != 'c' %}
+        {% if mypaper.status != 'o' %}
           <td>可以编辑</td>
           <td><a href="/onlinetest/paper2/{{mypaper.id}}">修改</a></td>
           <td><a href="/onlinetest/teacher1change/{{mypaper.id}}">开放试卷</a></td>

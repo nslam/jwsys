@@ -27,7 +27,8 @@
       <li><a href="/onlinetest/teacher1/"  style="font-size: 20px">试卷库</a></li> 
       <li><a href="/onlinetest/teacher2/"  style="font-size: 20px">成绩分析</a></li> 
       <li class="active"><a href="#messages"  style="font-size: 20px">试题库</a></li> 
-      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 老师, 欢迎</h3></li><!--这里需要用户的姓名-->
+      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 老师, 欢迎</h3></li>
+      <li><a style="font-size: 20px;" href="/basicInfo/instructorMain">退出</a></li><!--这里需要用户的姓名-->
     </div>
   </div>
     </ul> 
@@ -78,6 +79,7 @@
 </nav>
 <hr/>
 <!--Search Paper-->
+<p>{{error}}</p>
                 <div class="tab-pane active" id="Allques">
                     <!--Allquestions-->
                     <div class="row">
@@ -102,13 +104,15 @@
                 出题老师:{{question.instructor.user}}</br>
               </p>
               <p>
-                {% if question.status != 'c' %}
-                 
 
                   {% if question.q_type != 'pd' %}
                       <!--修改选择题目信息表格-->
+{% if question.status == 'o' %}
 <a class="btn btn-primary" data-toggle="modal" data-target="#change{{question.id}}XZQuestion">修改</a>
 <a class="btn" href="/onlinetest/teacher3delete/{{question.id}}" style="color: red">删除</a>
+{% else %}
+<a class="btn btn-primary" data-toggle="modal" data-target="#change{{question.id}}XZQuestion">查看</a>
+{% endif %}
 <div class="modal fade" id="change{{question.id}}XZQuestion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <form id="ch{{question.id}}XZQues" class="form" action="/onlinetest/teacher3change/{{question.id}}/" method="post">
     {% csrf_token %}
@@ -120,7 +124,7 @@
         </button>
         <div class="input-group">
           <span class="input-group-addon">课程</span>
-          <input type="text" name="course_name" class="form-control" value="{{question.course}}">
+          <input type="text" name="course_name" class="form-control" value="{{question.course.title}}" disabled>
         </div>
       </div>
 
@@ -129,10 +133,12 @@
           <span class="input-group-addon"><strong>题目</strong></span>
           <input type="text" name="question_title" class="form-control" value="{{question.title}}">
         </div>
+        <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>答案</strong></span>
           <input type="text" name="question_ans" class="form-control" value="{{question.answer}}">
         </div>
+        <br/>
     <div class="input-group">
           <span class="input-group-addon"><strong>选项A</strong></span>
           <input type="text" name="choice1" class="form-control" value="{{question.choice1}}">
@@ -155,7 +161,7 @@
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师</strong></span>
-          <input type="text" name="teacher_name" class="form-control" value="{{question.instructor}}">
+          <input type="text" name="teacher_name" class="form-control" value="{{question.instructor.user}}" disabled>
         </div>
         <br/>
         <div class="input-group">
@@ -174,7 +180,11 @@
         <button type="button" class="btn btn-default" 
             data-dismiss="modal">关闭
         </button>
+        {% if question.status == 'o' %}
         <input type="submit" onclick="formchxz{{question.id}}Submit()" class="btn btn-primary btn-lg" value="确认修改">
+        {% else %}
+        <p>正在使用，不可修改</p>
+        {% endif %}
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -190,8 +200,12 @@
 <!--修改选择题目信息表格-->
                   {% else %}
                       <!--修改判断题目信息表格-->
+{% if question.status == 'o' %}
 <a class="btn btn-primary" data-toggle="modal" data-target="#change{{question.id}}PDQuestion">修改</a>
 <a class="btn" href="/onlinetest/teacher3delete/{{question.id}}" style="color: red">删除</a>
+{% else %}
+<a class="btn btn-primary" data-toggle="modal" data-target="#change{{question.id}}PDQuestion">查看</a>
+{% endif %}
 <div class="modal fade" id="change{{question.id}}PDQuestion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <form id="ch{{question.id}}XPDues" class="form" action="/onlinetest/teacher3change/{{question.id}}/" method="post">
     {% csrf_token %}
@@ -203,7 +217,7 @@
         </button>
         <div class="input-group">
           <span class="input-group-addon">课程</span>
-          <input type="text" name="course_name" class="form-control" value="{{question.course}}">
+          <input type="text" name="course_name" class="form-control" value="{{question.course.title}}" disabled>
         </div>
       </div>
 
@@ -213,30 +227,41 @@
           <input type="text" name="question_title" class="form-control" value="{{question.title}}">
         </div>
     <div class="radio">
-          <p>答案: {{question.answer}}<p>
+          <p>答案<p>
+    {% if question.answer == 'T' %}
    <label>
-      <input type="radio" name="question_ans" id="newPDanswer" 
-         value="T">T
+      <input type="radio" name="question_ans" id="chPDanswer{{question.id}}" 
+         value="T" checked>T
    </label>
    <label>
-      <input type="radio" name="question_ans" id="newPDanswer" 
+      <input type="radio" name="question_ans" id="chPDanswer{{question.id}}" 
          value="F">F
    </label>
+   {% else %}
+   <label>
+      <input type="radio" name="question_ans" id="chPDanswer{{question.id}}" 
+         value="T" >T
+   </label>
+   <label>
+      <input type="radio" name="question_ans" id="chPDanswer{{question.id}}" 
+         value="F" checked>F
+   </label>
+   {% endif %}
  </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师</strong></span>
-          <input type="text" name="teacher_name" class="form-control" value="{{question.instru}}">
+          <input type="text" name="teacher_name" class="form-control" value="{{question.instructor.user}}" disabled>
         </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>考点</strong></span>
-          <input type="text" name="test_point" class="form-control" value="">
+          <input type="text" name="test_point" class="form-control" value="{{question.test_point}}">
         </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>难度</strong></span>
-          <input type="text" name="difficulty" class="form-control" value="question.difficulty">
+          <input type="text" name="difficulty" class="form-control" value="{{question.difficulty}}">
         </div>
         <br/>
       </div>
@@ -245,7 +270,11 @@
         <button type="button" class="btn btn-default" 
             data-dismiss="modal">关闭
         </button>
+        {% if question.status == 'o' %}
         <input type="submit" onclick="formchpd{{question.id}}Submit()" class="btn btn-primary btn-lg" value="确认修改">
+        {% else %}
+        <p>正在使用，不可修改</p>
+        {% endif %}
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -260,10 +289,7 @@
 </script>
 <!--修改判断题目信息表格-->
         {% endif %}
-                
-                {% else %}
-                <a class="btn btn-primary disabled" href="#" >不可修改</a>
-                {% endif %}
+
               </p>
             </div>
           </div>
@@ -292,16 +318,23 @@
                 选择
                 {% endif %}
                 <br/>
+                答案：{{myquestion.answer}}
+                <br/>
                 考点：{{myquestion.test_point}}
                 <br/>
                 出题老师:{{myquestion.instructor.user}}</br>
               </p>
               <p>
-                {% if myquestion.status != 'c' %}
+
                 
                   {% if question.q_type != 'pd' %}
                       <!--修改选择题目信息表格-->
+{% if myquestion.status == 'o' %}
 <a class="btn btn-primary" data-toggle="modal" data-target="#changemy{{myquestion.id}}XZQuestion">修改</a>
+<a class="btn" href="onlinetest/teacher3delete/{{myquestion.id}}" style="color: red">删除</a>
+{% else %}
+<a class="btn btn-primary" data-toggle="modal" data-target="#changemy{{myquestion.id}}XZQuestion">查找</a>
+{% endif %}
 <div class="modal fade" id="changemy{{myquestion.id}}XZQuestion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <form id="chmy{{myquestion.id}}XZQues" class="form" action="/onlinetest/teacher3change/{{myquestion.id}}" method="post">
     {% csrf_token %}
@@ -313,7 +346,7 @@
         </button>
         <div class="input-group">
           <span class="input-group-addon">课程</span>
-          <input type="text" name="course_name" class="form-control" value="{{myquestion.course}}">
+          <input type="text" name="course_name" class="form-control" value="{{myquestion.course.title}}" disabled>
         </div>
       </div>
 
@@ -322,10 +355,12 @@
           <span class="input-group-addon"><strong>题目</strong></span>
           <input type="text" name="question_title" class="form-control" value="{{myquestion.title}}">
         </div>
+        <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>答案</strong></span>
           <input type="text" name="question_ans" class="form-control" value="{{myquestion.answer}}">
         </div>
+        <br/>
     <div class="input-group">
           <span class="input-group-addon"><strong>选项A</strong></span>
           <input type="text" name="choice1" class="form-control" value="{{myquestion.choice1}}">
@@ -348,12 +383,12 @@
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师</strong></span>
-          <input type="text" name="teacher_name" class="form-control" value="{{myquestion.instru}}">
+          <input type="text" name="teacher_name" class="form-control" value="{{user.username}}" disabled>
         </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>考点</strong></span>
-          <input type="text" name="test_point" class="form-control" value="">
+          <input type="text" name="test_point" class="form-control" value="{{myquestion.test_point}}">
         </div>
         <br/>
         <div class="input-group">
@@ -367,7 +402,11 @@
         <button type="button" class="btn btn-default" 
             data-dismiss="modal">关闭
         </button>
+        {% if myquestion.status == 'o' %}
         <input type="submit" onclick="formchxz{{myquestion.id}}Submit()" class="btn btn-primary btn-lg" value="确认修改">
+        {% else %}
+        <p>正在使用，不可修改</p>
+        {% endif %}
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -382,7 +421,12 @@
 <!--修改选择题目信息表格-->
                   {% else %}
                       <!--修改判断题目信息表格-->
+{% if myquestion.status == 'o' %}                                            
 <a class="btn btn-primary" data-toggle="modal" data-target="#changemy{{myquestion.id}}PDQuestion">修改</a>
+<a class="btn" href="onlinetest/teacher3delete/{{myquestion.id}}" style="color: red">删除</a>
+{% else %}
+<a class="btn btn-primary" data-toggle="modal" data-target="#changemy{{myquestion.id}}PDQuestion">查看</a>
+{% endif %}
 <div class="modal fade" id="changemy{{myquestion.id}}PDQuestion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <form id="chmy{{myquestion.id}}XPDues" class="form" action="/onlinetest/teacher3change/{{myquestion.id}}" method="post">
     {% csrf_token %}
@@ -394,7 +438,7 @@
         </button>
         <div class="input-group">
           <span class="input-group-addon">课程</span>
-          <input type="text" name="course_name" class="form-control" value="{{myquestion.course}}">
+          <input type="text" name="course_name" class="form-control" value="{{myquestion.course.title}}" disabled>
         </div>
       </div>
 
@@ -402,32 +446,42 @@
         <div class="input-group">
           <span class="input-group-addon"><strong>题目</strong></span>
           <input type="text" name="question_title" class="form-control" value="{{myquestion.title}}">
-        </div>
-    <div class="radio">
-          <p>答案: {{myquestion.answer}}<p>
+        <div class="radio">
+          <p>答案<p>
+    {% if myquestion.answer == 'T' %}
    <label>
-      <input type="radio" name="question_ans" id="chPDanswer" 
-         value="T">T
+      <input type="radio" name="question_ans" id="chPDanswer{{myquestion.id}}" 
+         value="T" checked>T
    </label>
    <label>
-      <input type="radio" name="question_ans" id="chPDanswer" 
+      <input type="radio" name="question_ans" id="chPDanswer{{myquestion.id}}" 
          value="F">F
    </label>
+   {% else %}
+   <label>
+      <input type="radio" name="question_ans" id="chPDanswer{{myquestion.id}}" 
+         value="T" >T
+   </label>
+   <label>
+      <input type="radio" name="question_ans" id="chPDanswer{{myquestion.id}}" 
+         value="F" checked>F
+   </label>
+   {% endif %}
  </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师</strong></span>
-          <input type="text" name="teacher_name" class="form-control" value="{{myquestion.instru}}">
+          <input type="text" name="teacher_name" class="form-control" value="{{user.username}}" disabled>
         </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>考点</strong></span>
-          <input type="text" name="test_point" class="form-control" value="">
+          <input type="text" name="test_point" class="form-control" value="{{myquestion.test_point}}">
         </div>
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>难度</strong></span>
-          <input type="text" name="difficulty" class="form-control" value="myquestion.difficulty">
+          <input type="text" name="difficulty" class="form-control" value="{{myquestion.difficulty}}">
         </div>
         <br/>
       </div>
@@ -436,7 +490,11 @@
         <button type="button" class="btn btn-default" 
             data-dismiss="modal">关闭
         </button>
+        {% if myquestion.status == 'o' %}
         <input type="submit" onclick="formchpd{{myquestion.id}}Submit()" class="btn btn-primary btn-lg" value="确认修改">
+        {% else %}
+        <p>正在使用，不可修改</p>
+        {% endif %}
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -450,10 +508,8 @@
 </script>
 <!--修改判断题目信息表格-->
         {% endif %}
-                <a class="btn" href="onlinetest/teacher3delete/{{myquestion.id}}" style="color: red">删除</a>
-                {% else %}
-                <a class="btn btn-primary disabled" href="#" >不可修改</a>
-                {% endif %}
+                
+
               </p>
             </div>
           </div>
@@ -495,10 +551,27 @@
           <span class="input-group-addon"><strong>题目</strong></span>
           <input type="text"  class="form-control" name="question_title">
         </div>
-        <div class="input-group">
-          <span class="input-group-addon"><strong>答案</strong></span>
-          <input type="text" name="question_ans" class="form-control" >
-        </div>
+        <br/>
+        <div class="radio">
+          <p>答案<p>
+   <label>
+      <input type="radio" name="question_ans" id="newXZanswer" 
+         value="A">A
+   </label>
+   <label>
+      <input type="radio" name="question_ans" id="newXZanswer" 
+         value="B">B
+   </label>
+   <label>
+      <input type="radio" name="question_ans" id="newXZanswer" 
+         value="C">C
+   </label>
+   <label>
+      <input type="radio" name="question_ans" id="newXZanswer" 
+         value="D">D
+   </label>
+ </div>
+        <br/>
     <div class="input-group">
           <span class="input-group-addon"><strong>选项A</strong></span>
           <input type="text" class="form-control" name="choice1">
@@ -521,7 +594,7 @@
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师</strong></span>
-          <input type="text"  class="form-control" name="teacher_name">
+          <input type="text"  class="form-control" name="teacher_name" value = "{{user.username}}" disabled>
         </div>
         <br/>
         <div class="input-group">
@@ -529,10 +602,21 @@
           <input type="text" class="form-control" name="test_point">
         </div>
         <br/>
-        <div class="input-group">
-          <span class="input-group-addon"><strong>难度</strong></span>
-          <input type="text"  class="form-control" name="difficulty">
-        </div>
+        <div class="radio">
+          <p>难度<p>
+   <label>
+      <input type="radio" name="difficulty" id="newxzdifficulty" 
+         value="e">简单
+   </label>
+   <label>
+      <input type="radio" name="difficulty" id="newxzdifficulty" 
+         value="m">中等
+   </label>
+   <label>
+      <input type="radio" name="difficulty" id="newxzdifficulty" 
+         value="h">困难
+   </label>
+ </div>
         <br/>
       </div>
 
@@ -585,7 +669,7 @@
         <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师</strong></span>
-          <input type="text" class="form-control" name="teacher_name">
+          <input type="text" class="form-control" name="teacher_name" value = "{{user.username}}" disabled>
         </div>
         <br/>
         <div class="input-group">
@@ -593,10 +677,21 @@
           <input type="text" class="form-control" name="test_point">
         </div>
         <br/>
-        <div class="input-group">
-          <span class="input-group-addon"><strong>难度</strong></span>
-          <input type="text" class="form-control" name="difficulty">
-        </div>
+        <div class="radio">
+          <p>难度<p>
+   <label>
+      <input type="radio" name="difficulty" id="newpddifficulty" 
+         value="e">简单
+   </label>
+   <label>
+      <input type="radio" name="difficulty" id="newpddifficulty" 
+         value="m">中等
+   </label>
+   <label>
+      <input type="radio" name="difficulty" id="newpddifficulty" 
+         value="h">困难
+   </label>
+ </div>
         <br/>
       </div>
 

@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^reply/$', views.lookAndReply),
     url(r'^manage-user/$', views.manageUser),
     url(r'^search-post/$', views.search_post),
+    url(r'^download=(\d+)/$', views.download),
 ]

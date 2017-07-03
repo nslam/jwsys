@@ -12,8 +12,8 @@ urlpatterns=[
     url(r'^pageInstrCourseQuery/$', views.pageInstrCourseQuery, name = 'pageInstrCourseQuery'),
     url(r'^pageClassroomCourseQuery/$', views.pageClassroomCourseQuery, name = 'pageClassroomCourseQuery'),
 
-    url(r'^ClassroomManuInput/$', views.classroomManuInput, name = 'classroomManuInput'),
-    url(r'^ClassroomFileInput/$', views.classroomFileInput, name = 'classroomFileInput'),
+    url(r'^classroomManuInput/$', views.classroomManuInput, name = 'classroomManuInput'),
+    url(r'^classroomFileInput/$', views.classroomFileInput, name = 'classroomFileInput'),
     url(r'^classroomDelete/$', views.classroomDelete, name = 'classroomDelete'),
     url(r'^classroomAlter/$', views.classroomAlter, name = 'classroomAlter'),
     url(r'^autoCourseArrange/$', views.autoCourseArrange, name = 'autoCourseArrange'),

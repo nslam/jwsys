@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import *
+from basicInfo.models import *
 from basicInfo.views import getType
 
 
@@ -41,7 +42,7 @@ def pageClassroomCourseQuery(request):
 @login_required
 def classroomManuInput(request):  # building, room_num, classroom_capacity, classroom_type("1" for 普通教室, "2" for 多媒体教室）
     building = request.POST.get('building')
-    room_num = request.POST.get('room_num')
+    room_num = int(request.POST.get('room_num'))
     classroom_capacity = int(request.POST.get('classroom_capacity'))
     classroom_type = int(request.POST.get('classroom_type'))
     if Classroom.objects.filter(building=building, room_number=room_num).exists():
@@ -62,7 +63,7 @@ def classroomFileInput(request):
         i = i + 1
         list1 = line_str.split(' ')
         building = list1[0]
-        room_num = list1[1]
+        room_num = int(list1[1])
         capacity = int(list1[2])
         type = int(list1[3])
         if Classroom.objects.filter(building=building, room_number=room_num).exists():
@@ -76,7 +77,7 @@ def classroomFileInput(request):
 @login_required
 def classroomDelete(request):  # building, room_num
     building = request.POST.get('building')
-    room_num = request.POST.get('room_num')
+    room_num = int(request.POST.get('room_num'))
     if Classroom.objects.filter(building=building, room_number=room_num).exists():
         Classroom.objects.filter(building=building, room_number=room_num).delete()
         status = "教室信息删除成功！"
@@ -87,7 +88,7 @@ def classroomDelete(request):  # building, room_num
 @login_required
 def classroomAlter(request):  # building, room_num, classroom_capacity, classroom_type("1" for 普通教室, "2" for 多媒体教室）
     building = request.POST.get('building')
-    room_num = request.POST.get('room_num')
+    room_num = int(request.POST.get('room_num'))
     classroom_capacity = int(request.POST.get('classroom_capacity'))
     classroom_type = int(request.POST.get('classroom_type'))
     if Classroom.objects.filter(building=building, room_number=room_num).exists():
@@ -104,7 +105,7 @@ def manuCourseArrange(request):
     course_num = request.POST.get('course_id')
     capacity = int(request.POST.get('course_capacity'))
     building = request.POST.get('building')
-    room_num = request.POST.get('room_num')
+    room_num = int(request.POST.get('room_num'))
     day = int(request.POST.get('day'))
     start_time = int(request.POST.get('start_time'))
     end_time = int(request.POST.get('end_time'))
@@ -259,7 +260,7 @@ def classroomCourseQuery(request):  # building, room_num
     time = ""
     room = ""
     building = request.POST.get('building')
-    room_num = request.POST.get('room_num')
+    room_num = int(request.POST.get('room_num'))
     if Classroom.objects.filter(building=building, room_number=room_num).exists():
         classroom = Classroom.objects.get(building=building, room_number=room_num)
         p = SecTimeClassroom.objects.filter(classroom=classroom).order_by('section')
@@ -355,6 +356,10 @@ def autoCourseArrange(request):  # no args
     ret = []
     unarranged = []
 
+    Section.objects.filter().delete()
+    SecTimeClassroom.objects.filter().delete()
+    Teaches.objects.filter().delete()
+
     class Classrooms:
         'Classrooms imf'
 
@@ -384,19 +389,45 @@ def autoCourseArrange(request):  # no args
     classroomtable = Classroom.objects.all()
     for line in classroomtable:
         ClassroomList.append(Classrooms(line, line.capacity, line.type))
-    sectiontable = CourseCandiate.objects.all()
 
+    # 623 classroom time
+    def back_start(temp):
+        if temp == 1:
+            return 0
+        elif temp == 3:
+            return 1
+        elif temp == 6:
+            return 2
+        elif temp == 8:
+            return 3
+        elif temp == 11:
+            return 4
+
+    def back_end(temp):
+        if temp == 2:
+            return 0
+        elif temp == 5:
+            return 1
+        elif temp == 7:
+            return 2
+        elif temp == 10:
+            return 3
+        elif temp == 13:
+            return 4
+
+    sectiontable = CourseCandiate.objects.all()
     for line in sectiontable:
         teacher = User.objects.get(instructor=line.instructor).get_full_name()
         SectionList.append(Sections(line.course, \
                                     line.capacity, line.course.week_hour, line.classroom_type, \
                                     teacher))
 
-        _621_section = Section.objects.filter(course=line.course, semester='秋冬', year=2017, max_number=line.capacity)
-        if len(_621_section) == 0:
-            _621_bala = Section(course=line.course, semester='秋冬', year=2017, max_number=line.capacity)
+        if not Section.objects.filter(course=line.course, semester='autumn&winter', year=2017,
+                                      max_number=line.capacity).exists():
+            _621_bala = Section(course=line.course, semester='autumn&winter', year=2017, max_number=line.capacity)
             _621_bala.save()
-        SectionList[-1].fuck_section = Section.objects.get(course=line.course, max_number=line.capacity)
+        SectionList[-1].fuck_section = Section.objects.get(course=line.course, semester='autumn&winter', year=2017,
+                                                           max_number=line.capacity)
 
         _621_teacher = Teaches.objects.filter(instructor=line.instructor, section=SectionList[-1].fuck_section)
         if len(_621_teacher) == 0:
@@ -404,7 +435,7 @@ def autoCourseArrange(request):  # no args
             _621_balabala.save()
 
         if InstructorBusyTime.objects.filter(instructor=line.instructor).exists():
-            temp_fuck = InstructorBusyTime.objects.filter(instructor=line.instructor)
+            temp_fuck = InstructorBusyTime.objects.get(instructor=line.instructor)
             i = temp_fuck.start_time
             while i <= temp_fuck.end_time:
                 if i in [1, 2, 3]:
@@ -425,6 +456,7 @@ def autoCourseArrange(request):  # no args
                 else:
                     break
 
+
     def sortSection(x):
         return x.capacity
 
@@ -439,7 +471,6 @@ def autoCourseArrange(request):  # no args
         else:
             return (x + 2) % 25
 
-    # 时间安排
     time = 0
     for item in SectionList:  # 放入课程
         if item.credits <= 2:  # 小于2的一个课时
@@ -459,6 +490,7 @@ def autoCourseArrange(request):  # no args
                                        'semester': item.fuck_section.semester, 'time': "unarranged", \
                                        'room': "unarranged", 'teacher_name': item.teachername,
                                        'max_num': item.capacity})
+
             item.timeSlot.append(time)
         elif item.credits > 2:  # 大于2的两个课时
             time = findSuitTime(time)
@@ -490,7 +522,13 @@ def autoCourseArrange(request):  # no args
     judgeList = [1] * len(SectionList)  # 记录未安排的课程
     count = len(SectionList)
 
+
+
+    status = ''
+
+
     for item in ClassroomList:
+        status = status + '%d ' % item.classroomID.room_number
         if count == 0:  # 如果排完所有课
             break
         while len(item.timeSlot) != 0:  # 如果当前教室还有空
@@ -501,6 +539,23 @@ def autoCourseArrange(request):  # no args
                 if judgeList[i] == 1 and SectionList[i].capacity <= item.capacity \
                         and SectionList[i].type <= item.type_equipment:  # 找到除时间外符合的教室
                     tempflag = 1
+
+                    if len(SectionList[i].timeSlot) == 1:
+                        if SectionList[i].timeSlot[0] not in item.timeSlot:
+                            for _71 in item.timeSlot:
+                                if _71 not in SectionList[i].busytime:
+                                    SectionList[i].timeSlot[0] = _71
+                                    tempflag = 1
+                    elif len(SectionList[i].timeSlot) == 2:
+                        if SectionList[i].timeSlot[0] not in item.timeSlot or SectionList[i].timeSlot[1] not in item.timeSlot:
+                            for _71 in item.timeSlot:
+                                if _71 not in SectionList[i].busytime and \
+                                    _71 + 1 in item.timeSlot and \
+                                    _71 + 1 not in SectionList[i].busytime:
+                                    SectionList[i].timeSlot[0] = _71
+                                    SectionList[i].timeSlot[0] = _71 + 1
+                                    tempflag = 1
+
                     for j in SectionList[i].timeSlot:
                         if j not in item.timeSlot:
                             tempflag = 0
@@ -515,6 +570,9 @@ def autoCourseArrange(request):  # no args
             SectionList[flag].classroomID = item.classroomID
             for j in SectionList[flag].timeSlot:
                 item.timeSlot.remove(j)
+
+
+   # return render(request, 'auto_course_arrange.html', {'status': status})
 
     if count != 0:  ##没法排完 针对剩下的多媒体课程，考虑和前面排到教室的普课交换
         for i in range(0, len(SectionList)):
@@ -556,13 +614,18 @@ def autoCourseArrange(request):  # no args
     if count != 0:
         for i in range(0, len(SectionList)):
             if judgeList[i] == 1:
-                unarranged.append({'course_num': SectionList[i].course.course_number,
-                                   'course_name': SectionList[i].course.course.title, \
-                                   'semester': SectionList[i].fuck_section.semester, 'time': "unarranged", \
-                                   'room': "unarranged", 'teacher_name': SectionList[i].teachername,
-                                   'max_num': SectionList[i].capacity})
-
+                unarranged.append({'course_num': SectionList[i].courseID.course_number, 'course_name': SectionList[i].courseID.title, \
+                     'semester': SectionList[i].fuck_section.semester, 'time': "unarranged", \
+                     'room': "unarranged", 'teacher_name': SectionList[i].teachername,
+                     'max_num': SectionList[i].capacity})
     # _output
+    '''
+    for item in SectionList:
+        print(item.courseID),
+        print(item.classroomID),
+        print(item.timeSlot)
+    '''
+
     def starttime(time):
         temp = time % 5
         if temp == 0:
@@ -589,25 +652,35 @@ def autoCourseArrange(request):  # no args
         elif temp == 4:
             return 13
 
-    for item in SectionList:
-        _day = item.timeSlot[0] / 5 + 1
-        _start = starttime(item.timeSlot[0])
-        if len(item.timeSlot) == 1:
-            _end = endtime(item.timeSlot[0])
-        else:
-            _end = endtime(item.timeSlot[-1])
+    for i in range(len(SectionList)):
+        if judgeList[i] == 0:
+            _day = SectionList[i].timeSlot[0] / 5 + 1
+            _start = starttime(SectionList[i].timeSlot[0])
+            if len(SectionList[i].timeSlot) == 1:
+                _end = endtime(SectionList[i].timeSlot[0])
+            else:
+                _end = endtime(SectionList[i].timeSlot[-1])
 
-        findTime = TimeSlot.objects.filter(day=_day, start_time=_start, end_time=_end)
-        if len(findTime) == 0:
-            fuck_fuck_fuck = TimeSlot(day=_day, start_time=_start, end_time=_end)
-            fuck_fuck_fuck.save()
-        findTime = TimeSlot.objects.get(day=_day, start_time=_start, end_time=_end)
+            findTime = TimeSlot.objects.filter(day=_day, start_time=_start, end_time=_end)
+            if len(findTime) == 0:
+                fuck_fuck_fuck = TimeSlot(day=_day, start_time=_start, end_time=_end)
+                fuck_fuck_fuck.save()
+            findTime = TimeSlot.objects.get(day=_day, start_time=_start, end_time=_end)
 
-        forget_the_fuck = SecTimeClassroom(section=item.fuck_section, time_slot=findTime, classroom=item.classroomID)
-        forget_the_fuck.save()
-        ret.append({'course_num': item.courseID.course_number, 'course_name': item.courseID.title, \
-                    'semester': item.fuck_section.semester, 'time': "周%d 第%d节 - 第%d节" % (_day, _start, _end), \
-                    'room': "%s %s" % (item.classroomID.building, item.classroomID.room_number), \
-                    'teacher_name': item.teachername, 'max_num': item.capacity})
+            if not SecTimeClassroom.objects.filter(section=SectionList[i].fuck_section, \
+                                                   time_slot=findTime, classroom=SectionList[i].classroomID).exists():
+                forget_the_fuck = SecTimeClassroom(section=SectionList[i].fuck_section, \
+                                                   time_slot=findTime, classroom=SectionList[i].classroomID)
+                forget_the_fuck.save()
+            ret.append({'course_num': SectionList[i].courseID.course_number, 'course_name': SectionList[i].courseID.title, \
+                 'semester': SectionList[i].fuck_section.semester,
+                 'time': "星期 %d 第 %d 节 - 第 %d 节" % (_day, _start, _end), \
+                 'room': "%s %s" % (SectionList[i].classroomID.building, SectionList[i].classroomID.room_number), \
+                 'teacher_name': SectionList[i].teachername, 'max_num': SectionList[i].capacity})
     CourseCandiate.objects.filter().delete()
-    return render(request, 'course_query_result.html', {'ret': ret, 'unarranged': unarranged})
+    InstructorBusyTime.objects.filter().delete()
+    # return render(request, 'auto_course_arrange.html', {'status': status})
+    InstructorBusyTime.objects.filter().delete()
+    return render(request, 'course_query_result.html', {'ret': ret, 'unarranged' : unarranged})
+
+#coding:utf-8

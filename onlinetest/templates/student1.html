@@ -27,7 +27,9 @@
       <li class="active"><a href="#Paper" data-toggle="tab" style="font-size: 20px">试卷</a></li> 
       <li><a href="/onlinetest/student2/"  style="font-size: 20px">历史成绩</a></li> 
      
-      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 同学, 欢迎</h3></li><!--这个地方需要用户信息的姓名-->
+      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 同学, 欢迎</h3></li>
+      <li><a style="font-size: 20px;" href="/basicInfo/stuMain">退出</a></li>
+      <!--这个地方需要用户信息的姓名-->
     </ul> 
 </nav>
     <!--标签-->
@@ -85,11 +87,11 @@
       <tr>
         {% if paper.status != 'c' %}
         <td><a href="/onlinetest/dotest/{{paper.id}}/">{{paper.name}}</a></td>
-        <td>{{paper.course}}</td>
+        <td>{{paper.course.title}}</td>
         <td>开放<td>
         {% else %}
         <td>{{paper.name}}</td>
-        <td>{{paper.course}}</td>
+        <td>{{paper.course.title}}</td>
         <td>未开放<td>
         {% endif %}
       </tr>
@@ -115,11 +117,11 @@
       <tr>
         {% if mypaper.status != 'c' %}
         <td><a href="/onlinetest/dotest/{{mypaper.id}}/">{{mypaper.name}}</a></td>
-        <td>{{mypaper.course}}</td>
+        <td>{{mypaper.course.title}}</td>
         <td>开放<td>
         {% else %}
         <td>{{mypaper.name}}</td>
-        <td>{{mypaper.course}}</td>
+        <td>{{mypaper.course.title}}</td>
         <td>未开放<td>
         {% endif %}
       </tr>

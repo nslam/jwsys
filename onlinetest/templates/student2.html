@@ -27,7 +27,9 @@
       <li><a href="/onlinetest/student1/"  style="font-size: 20px">试卷</a></li> 
       <li class="active"><a href="#profile" data-toggle="tab" style="font-size: 20px">历史成绩</a></li> 
       
-      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 同学, 欢迎</h3></li><!--这个地方需要用户的姓名-->
+      <li><h3 class="text-info text-center" style="font-size: 20px; margin-top: 13px; margin-left: 600px;margin-right: 0px">{{user}} 同学, 欢迎</h3></li>
+      <li><a style="font-size: 20px;" href="/basicInfo/stuMain">退出</a></li>
+      <!--这个地方需要用户的姓名-->
     </ul> 
 </nav>
     <!--标签-->
@@ -64,11 +66,12 @@
         <div class="col-md-8 column">
         <div class="tab-content">
           <!--二维数组的第一维：学生的每一门课-->
-          {% for course_score in allcourse_score_list %}
+          {% for course in course_list %}
+
           {% if forloop.counter != 1 %}<!--这个ifelse是用来选择显示的，后端不用管-->
           <div class="tab-pane" id="score{{forloop.counter}}">
             <table class="table table-striped table-hover">
-              <caption>{{course_list.forloop.counter}}</caption>
+              <caption>{{course.title}}</caption>
               <thead>
                 <tr>
                   <th>考试名称</th>
@@ -78,10 +81,14 @@
               </thead>
               <tbody>
                 <!--二维数组的第二维：学生的每一门课里的每一次考试成绩-->
-                {% for eachscore in course_score %}
-                <th>eachscore.paper</th>
-                <th>eachscore.up_time</th>
-                <th>eachscore.tot_mark</th>
+                {% for each in allcourse_score_list %}
+                {% if each.paper.course == course %}
+                <tr>
+                  <th>{{each.paper.name}}</th>
+                  <th>{{each.up_time}}</th>
+                  <th style="color:red">{{each.tot_mark}}</th>
+                </tr>
+                {% endif %}
                 {% endfor %}
               </tbody>
             </table>
@@ -89,7 +96,7 @@
           {% else %}
           <div class="tab-pane active" id="score{{forloop.counter}}">
             <table class="table table-striped table-hover">
-              <caption>{{course_list.forloop.counter}}</caption>
+              <caption>{{course.title}}</caption>
               <thead>
                 <tr>
                   <th>考试名称</th>
@@ -98,10 +105,14 @@
                 <tr>
               </thead>
               <tbody>
-                {% for eachscore in course_score %}
-                <th>eachscore.paper</th>
-                <th>eachscore.up_time</th>
-                <th>eachscore.tot_mark</th>
+                {% for each in allcourse_score_list %}
+                {% if each.paper.course == course %}
+                <tr>
+                  <th>{{each.paper.name}}</th>
+                  <th>{{each.up_time}}</th>
+                  <th style="color:red">{{each.tot_mark}}</th>
+                </tr>
+                {% endif %}
                 {% endfor %}
               </tbody>
             </table>

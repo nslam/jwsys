@@ -64,8 +64,9 @@
           <!--p-->
       {% for question_pd in question_pd_list %}
         <p class="text-left">
-          1-{{forloop.counter}} {{question_pd.paper}}<br/>{{question_pd.title}}
+          1-{{forloop.counter}}</p><p class="test-left">{{question_pd.title}}
         </p>
+        
         <div class="radio">
           <label>
       <input type="radio" name="{{question_pd.id}}" id="optionsRadios1" 
@@ -88,8 +89,9 @@
           <!--x1-->
           {% for question_xz in question_xz_list %}
       <p class="text-left">
-         2-{{forloop.counter}}<br/>{{question_xz.title}}
+         2-{{forloop.counter}}</p><p class="test-left">{{question_xz.title}}
       </p>
+      
       <div class="radio">
         {% if question_xz.choice1 != None %}
    <label>
@@ -130,7 +132,7 @@
         <div class="col-md-4">
           <div class="thumbnail">
             <div class="caption">
-              <h3>课程：{{question.course}}</h3>
+              <h3>课程：{{question.course.titile}}</h3>
               <p><strong>
                 题目：{{question.title}}</strong><br/>
                 类型：
@@ -142,9 +144,9 @@
                 <br/>
                 答案：{{question.answer}}
                 <br/>
-                考点：
+                考点：{{question.test_point}}
                 <br/>
-                出题老师:{{question.instru}}</br>
+                出题老师:{{question.instructor.user}}</br>
               </p>
               <p>
                 {% if question in question_pd_list or question in question_xz_list %}
@@ -191,7 +193,7 @@
         </button>
         <div class="input-group">
           <span class="input-group-addon">课程名称</span>
-          <input type="text" class="form-control" value="{{paper.course}}" name="course_name">
+          <input type="text" class="form-control" value="{{paper.course.title}}" name="course_name">
         </div>
       </div>
 
@@ -200,37 +202,27 @@
           <span class="input-group-addon"><strong>试卷名称</strong></span>
           <input type="text" class="form-control" value="{{paper.name}}" name="paper_name">
         </div>
+        <br/>
         <div class="input-group">
           <span class="input-group-addon"><strong>教师名称</strong></span>
-          <input type="text" class="form-control" value="{{paper.instructor}}" name="teacher_name">
+          <input type="text" class="form-control" value="{{paper.instructor.user}}" name="teacher_name" disabled>
         </div>
-    <div class="radio">
-          <p>难度：{{paper.difficulty}}<p>
-    <label>
-      <input type="radio" name="difficulty" id="diffi" 
-         value="e">简单
-   </label>
-   <label>
-      <input type="radio" name="difficulty" id="diffi" 
-         value="m">中等
-   </label>
-   <label>
-      <input type="radio" name="difficulty" id="diffi" 
-         value="h">困难
-   </label>
- </div>
         <br/>
-        <div class="radio">
-          <p>状态：{{paper.status}}<p>
-   <label>
-      <input type="radio" name="status" id="statu" 
-         value="o">开放
-   </label>
-   <label>
-      <input type="radio" name="status" id="statu" 
-         value="c">关闭
-   </label>
- </div>
+    <div class="input-group">
+          <span class="input-group-addon"><strong>难度</strong></span>
+          <input type="text" class="form-control" value="{{paper.difficulty}}" name="difficulty">
+        </div>
+        <br/>
+        <div class="input-group">
+          <span class="input-group-addon"><strong>状态</strong></span>
+          {% if paper.status == 'o' %}
+          <input type="text" class="form-control" value="开放" name="status" disabled>
+          {% else %}
+          <input type="text" class="form-control" value="关闭" name="status" disabled>
+          {% endif %}
+        </div>
+        <br/>
+        
         <div class="input-group">
       <span class="input-group-addon">考试时间</span>
       <input type="text" class="form-control" value="{{paper.limit_time}}" name="limit_time">

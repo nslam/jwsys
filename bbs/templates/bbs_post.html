@@ -48,6 +48,11 @@
                 <p align="center">
                     内容：{{post.content}}
                 </p>
+                {% if exist_file %}
+                <p align="center">
+                    文件：<a href="/bbs/download={{post.id}}/">{{filename}}</a>
+                </p>
+                {% endif %}
             </div>
             <div class="col-md-2 column">
                 <p align="center">发帖者：{{post.poster}}</p>

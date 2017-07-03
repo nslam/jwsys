@@ -18,6 +18,7 @@
 function formSubmit()
   {
   document.getElementById("myForm").submit();
+  alert('提交成功！')
   }
 </script>
   </head>
@@ -50,7 +51,7 @@ function formSubmit()
       </ul>
     </div>
     <!--List-->
-    <form id="myForm" class="form" action="/onlinetest/dotest/" method="post">
+    <form id="myForm" class="form" action="/onlinetest/dotest/{{paper.id}}/" method="post">
       {% csrf_token %}
     <div class="col-md-10 column">
       <!--HeadName-->
@@ -68,8 +69,9 @@ function formSubmit()
           <!--p-->
       {% for question_pd in question_pd_list %}
         <p class="text-left">
-          1-{{forloop.counter}} {{question_pd.paper}}<br/>{{question_pd.title}}
+          1-{{forloop.counter}}</p><p class="test-left">{{question_pd.title}}
         </p>
+        
         <div class="radio">
           <label>
       <input type="radio" name="{{question_pd.id}}" id="optionsRadios1" 
@@ -90,8 +92,9 @@ function formSubmit()
           <!--x1-->
           {% for question_xz in question_xz_list %}
       <p class="text-left">
-         2-{{forloop.counter}}<br/>{{question_xz.title}}
+         2-{{forloop.counter}}</p><p class="test-left">{{question_xz.title}}
       </p>
+      
       <div class="radio">
         {% if question_xz.choice1 != None %}
    <label>

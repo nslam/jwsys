@@ -8,5 +8,5 @@ class LogAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Log, LogAdmin)
-admin.site.register([Student, Instructor, Manager, Course, Takes])
+admin.site.register([Student, Instructor, Manager, Course, Takes, Major, Classroom, Department])
 # Register your models here.

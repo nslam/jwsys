@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from basicInfo.models import Major, Student, Instructor, Takes, Manager
+from basicInfo.models import Major, Student, Instructor, Takes, Manager, TimeSlot, Classroom
 from courseArrange.models import Teaches, Section, SecTimeClassroom
 from courseSelection.models import SelectionTime, CurriculumDemand, Selection, Constants, Curriculum
 from courseSelection.constants import *
@@ -39,6 +39,21 @@ class ManagerOperations(object):
 			semester=Semester, year=year, selection_round=SelectionRound)
 
 
+	def convert_timeslot(self, timeslot_id):
+		timeslot = TimeSlot.objects.get(id=timeslot_id)
+		time = WEEK_DAY_DIC[timeslot.day] + '第' + str(timeslot.start_time)
+		for i in range(timeslot.start_time + 1, timeslot.end_time + 1):
+			time += ','
+			time += str(i)
+		time += '节'
+		return time
+
+
+	def convert_classroom(self, classroom_id):
+		classroom = Classroom.objects.get(id=classroom_id)
+		classroomname = classroom.building + '-' + str(classroom.room_number)
+		return classroomname
+
 	def set_curriculum(self, major_id, s_elective, s_public):
 		curriculumDemand = CurriculumDemand.objects.filter(major_id=major_id)
 		if len(curriculumDemand) > 0:
@@ -70,7 +85,7 @@ class ManagerOperations(object):
 
 
 	def decide_selection(self, semester, year):
-		curriculum_percentage = Constants.objects.get(name='selection_curriculum_percentage').value
+		curriculum_percentage = Constants.objects.get(name='selection_major_percentage').value
 		sections = Section.objects.filter(year=year)
 		undecided_sections = []
 		for section in sections:
@@ -209,13 +224,13 @@ class ManagerOperations(object):
 		elected_selections = Selection.objects.filter(selection_condition=ELECTED)
 		for elected_selection in elected_selections:
 			section = elected_selection.section
-			if section.semester in semester and section.year == year:
-				take_existence = Takes.objects.filter(section_id=elected_selection.section_id,\
-					student_id=elected_selection.student_id)
-				if len(take_existence) == 0:
-					take = Takes(section_id=elected_selection.section_id,\
-						student_id=elected_selection.student_id)
-					take.save()
+			# if section.semester in semester and section.year == year:
+			# take_existence = Takes.objects.filter(section_id=section.id,\
+			# 	student_id=elected_selection.student_id)
+			# if len(take_existence) == 0:
+			take = Takes(section_id=section.id,\
+				student_id=elected_selection.student_id)
+			take.save()
 		return SUCCESS
 
 
@@ -393,7 +408,7 @@ class ManagerOperations(object):
 			new_selection = Selection(selection_round=round,\
 				select_time=datetime.datetime.now(),\
 				priority=0,\
-				selection_condition=SELECTED,\
+				selection_condition=ELECTED,\
 				section_id=section_id,\
 				student_id=student_id)
 			new_selection.save()
