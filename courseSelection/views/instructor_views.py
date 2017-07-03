@@ -79,7 +79,7 @@ def studentlist(request):
 			student_list = instructorOperations.get_student_list(section_id)
 			ctx['student_list'] = student_list
 			wbk = xlwt.Workbook(encoding='utf-8')  
-			ws = wbk.add_sheet((instructorOperations.course_detail(section_id))['title'], \
+			ws = wbk.add_sheet('list', \
 				cell_overwrite_ok=True)
 			ws.write(0, 0, '学号')
 			ws.write(0, 1, '姓名')
@@ -94,7 +94,7 @@ def studentlist(request):
 				row += 1
 			response = HttpResponse(content_type='application/vnd.ms-excel') 
 			response['Content-Disposition'] = 'attachment; filename=' + \
-				(instructorOperations.course_detail(section_id))['title'] + '.xls' 
+				'list' + '.xls'
 			wbk.save(response)
 			return response
 		else:
